@@ -3,6 +3,7 @@
 using System.Text;
 using Krizaljka.Domain.Models;
 using System.Text.Json;
+using Krizaljka.Console;
 
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -92,5 +93,19 @@ for (var x = 0; x < krizaljka.Length; x++)
 }
 
 Console.WriteLine(sb.ToString());
+
+var termsLoader = new TermsLoader();
+
+await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
+
+Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
+Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
+Console.WriteLine("Number of terms per length:");
+
+foreach (var kv in InMemoryDatabase.LengthTermsDb)
+{
+    Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
+}
+
 
 Console.WriteLine("THE END");

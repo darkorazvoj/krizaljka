@@ -1,5 +1,5 @@
 ﻿
-namespace Krizaljka.Domain.Models;
+namespace Krizaljka.Domain.Template;
 
 public enum GridCellTypes
 {
