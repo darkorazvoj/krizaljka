@@ -486,17 +486,17 @@
   { "id": 672, "o": "Glavni grad Salvadora", "w": "San Salvador" },
   {
     "id": 673,
-    "o": "Glavni grad Sjedinjenih Američkih Država",
+    "o": "Glavni grad SAD-a",
     "w": "Washington"
   },
   {
     "id": 674,
-    "o": "Glavni grad Svetog Kristofora i Nevisa",
+    "o": "Gl. grad Svetog Kristofora i Nevisa",
     "w": "Basseterre"
   },
   {
     "id": 675,
-    "o": "Glavni grad Svetog Vincenta i Grenadina",
+    "o": "Gl. grad Svetog Vincenta i Grenadina",
     "w": "Kingstown"
   },
   { "id": 676, "o": "Glavni grad Svete Lucije", "w": "Castries" },
@@ -545,7 +545,7 @@
   { "id": 719, "o": "Glavni grad Turkmenistana", "w": "Ašgabat" },
   {
     "id": 720,
-    "o": "Glavni grad Ujedinjenih Arapskih Emirata",
+    "o": "Glavni grad UAE-a",
     "w": "Abu Dhabi"
   },
   { "id": 721, "o": "Glavni grad Uzbekistana", "w": "Taškent" },
@@ -600,7 +600,7 @@
   { "id": 785, "o": "Rijeka u Kanadi", "w": "Mackenzie" },
   { "id": 786, "o": "Rijeka u Kanadi", "w": "Saint Lawrence" },
   { "id": 793, "o": "Rijeka u Egiptu", "w": "Nil" },
-  { "id": 795, "o": "Rijeka u Demokratskoj Republici Kongo", "w": "Kongo" },
+  { "id": 795, "o": "Rijeka u DR Kongo", "w": "Kongo" },
   { "id": 797, "o": "Rijeka u Zambiji", "w": "Zambezi" },
   { "id": 798, "o": "Rijeka u Južnoafričkoj Republici", "w": "Oranje" },
   { "id": 799, "o": "Rijeka u Senegalu", "w": "Senegal" },

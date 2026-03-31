@@ -17,7 +17,7 @@ public class StructureTermService
 
         if (descCleaned.Length > 36)
         {
-            return new InvalidTerm($"Description > {DescriptionMaxLength}, Length: {descCleaned.Length}");
+            return new InvalidTerm($"Description > {DescriptionMaxLength}, Length: {descCleaned.Length}, Description: {descCleaned}");
         }
 
         var termTrimmed = term.TrimExtra();

@@ -17,6 +17,7 @@ public class TermsLoader
 
     private async Task LoadAndStructureTermsAsync(List<string> termsFiles, Dictionary<string, int> filesCategories)
     {
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         foreach (var termsFile in termsFiles)
         {
             try
@@ -27,10 +28,7 @@ public class TermsLoader
                     System.Console.WriteLine($"{termsFile} is empty.");
                     continue;
                 }
-
-                System.Console.WriteLine(templateJson);
-
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                
                 var parsedTermsFile = JsonSerializer.Deserialize<List<RawTerm>>(templateJson, options);
 
                 if (parsedTermsFile is null)
@@ -68,6 +66,8 @@ public class TermsLoader
                 {
                     InMemoryDatabase.TermsDb.Add(validTerm.Value, [validTerm]);
                 }
+
+                continue;
             }
 
             if (term is InvalidTerm invalidTerm)
@@ -77,6 +77,15 @@ public class TermsLoader
             else
             {
                 invalidTerms.Add("Unknown term issue");
+            }
+        }
+
+        if (invalidTerms.Count > 0)
+        {
+            System.Console.WriteLine($"Invalid terms: {invalidTerms.Count}");
+            foreach (var invalidTerm in invalidTerms)
+            {
+                System.Console.WriteLine(invalidTerm);
             }
         }
 
