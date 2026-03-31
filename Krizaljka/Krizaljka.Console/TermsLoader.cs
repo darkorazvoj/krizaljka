@@ -67,6 +67,16 @@ public class TermsLoader
                     InMemoryDatabase.TermsDb.Add(validTerm.Value, [validTerm]);
                 }
 
+                var length = validTerm.Value.Length;
+                if (InMemoryDatabase.LengthTermsDb.TryGetValue(length, out var list))
+                {
+                    list.Add(validTerm);
+                }
+                else
+                {
+                    InMemoryDatabase.LengthTermsDb.Add(length, [validTerm]);
+                }
+
                 continue;
             }
 
