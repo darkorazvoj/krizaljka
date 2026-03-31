@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1701,
+    "o": "Ranjivo mjesto, slaba strana (pren.)",
+    "w": "Ahilova peta"
+  },
+  {
+    "id": 1702,
+    "o": "Nešto nedostižno ili iluzija (pren.)",
+    "w": "Fatamorgana"
+  },
+  {
+    "id": 1703,
+    "o": "Velika nevolja ili problem (pren.)",
+    "w": "Pandorina kutija"
+  },
+  { "id": 1704, "o": "Uzrok razdora ili svađe (pren.)", "w": "Jabuka razdora" },
+  { "id": 1705, "o": "Težak i dugotrajan posao (pren.)", "w": "Sizifov posao" },
+  { "id": 1709, "o": "Snažna i stalna veza (pren.)", "w": "Čelična volja" },
+  {
+    "id": 1710,
+    "o": "Vrlo brz tijek događaja (pren.)",
+    "w": "Munjevit razvoj"
+  },
+  { "id": 1711, "o": "Velika sreća ili uspjeh (pren.)", "w": "Zlatna prilika" },
+  {
+    "id": 1712,
+    "o": "Potpuno uništenje ili propast (pren.)",
+    "w": "Spaljena zemlja"
+  },
+  { "id": 1713, "o": "Nešto bez vrijednosti (pren.)", "w": "Prazna priča" },
+  { "id": 1714, "o": "Velika tajna ili misterij (pren.)", "w": "Crna kutija" },
+  { "id": 1715, "o": "Vrlo opasna situacija (pren.)", "w": "Tanka linija" },
+  { "id": 1716, "o": "Početak problema (pren.)", "w": "Prva iskra" },
+  { "id": 1717, "o": "Osoba bez utjecaja (pren.)", "w": "Siva eminencija" },
+  {
+    "id": 1718,
+    "o": "Nagla i velika promjena (pren.)",
+    "w": "Prekretnica života"
+  },
+  { "id": 1719, "o": "Nešto vrlo važno (pren.)", "w": "Kamen temeljac" },
+  { "id": 1720, "o": "Težak početak (pren.)", "w": "Trnovit put" },
+  { "id": 1721, "o": "Vrlo lagan zadatak (pren.)", "w": "Dječja igra" },
+  { "id": 1722, "o": "Nešto očito (pren.)", "w": "Otvorena knjiga" },
+  { "id": 1723, "o": "Nešto nepoznato (pren.)", "w": "Crna rupa" },
+  { "id": 1724, "o": "Osoba koja slijedi druge (pren.)", "w": "Slijepa ulica" },
+  { "id": 1725, "o": "Bezizlazna situacija (pren.)", "w": "Mrtva točka" },
+  { "id": 1726, "o": "Velika opasnost (pren.)", "w": "Tempirana bomba" },
+  { "id": 1727, "o": "Osoba koja izdaje (pren.)", "w": "Crna ovca" },
+  { "id": 1729, "o": "Nešto vrlo vrijedno (pren.)", "w": "Zlatna koka" },
+  { "id": 1734, "o": "Veliki uspjeh (pren.)", "w": "Velika pobjeda" },
+  { "id": 1735, "o": "Veliki neuspjeh (pren.)", "w": "Gorka pilula" },
+  { "id": 1736, "o": "Nešto vrlo brzo prolazno (pren.)", "w": "Tren oka" },
+  { "id": 1737, "o": "Velika nada (pren.)", "w": "Svjetlo na kraju tunela" },
+  { "id": 1738, "o": "Nešto vrlo komplicirano (pren.)", "w": "Gordijski čvor" },
+  { "id": 1739, "o": "Jednostavno rješenje (pren.)", "w": "Presjeći čvor" },
+  { "id": 1740, "o": "Velika nesreća (pren.)", "w": "Crni dan" },
+  { "id": 1741, "o": "Sretan period (pren.)", "w": "Zlatno doba" },
+  { "id": 1742, "o": "Nešto bez značenja (pren.)", "w": "Prazne riječi" },
+  { "id": 1746, "o": "Nešto vrlo jasno (pren.)", "w": "Kristalno jasno" },
+  {
+    "id": 1747,
+    "o": "Nešto vrlo rijetko (pren.)",
+    "w": "Igla u plastu sijena"
+  },
+  { "id": 1748, "o": "Velika buka bez smisla (pren.)", "w": "Puno buke" },
+  { "id": 1749, "o": "Nešto vrlo važno (pren.)", "w": "Srce problema" },
+  { "id": 1750, "o": "Početak nečega velikog (pren.)", "w": "Prvi korak" },
+
+  { "id": 1751, "o": "Nešto očito i jasno (pren.)", "w": "Kao na dlanu" },
+  {
+    "id": 1752,
+    "o": "Bezvrijedno ili uzaludno (pren.)",
+    "w": "Mlatiti praznu slamu"
+  },
+  {
+    "id": 1753,
+    "o": "Preuzeti veliki rizik (pren.)",
+    "w": "Ići glavom kroz zid"
+  },
+  { "id": 1754, "o": "Naglo nestati (pren.)", "w": "Nestati bez traga" },
+  {
+    "id": 1756,
+    "o": "Preuveličavati stvari (pren.)",
+    "w": "Raditi od muhe slona"
+  },
+  {
+    "id": 1761,
+    "o": "Biti u neizvjesnosti (pren.)",
+    "w": "Biti na tankom ledu"
+  },
+  { "id": 1762, "o": "Biti jako umoran (pren.)", "w": "Padati s nogu" },
+  { "id": 1763, "o": "Biti vrlo sretan (pren.)", "w": "Skakati od sreće" },
+  { "id": 1764, "o": "Biti jako ljut (pren.)", "w": "Kipjeti od bijesa" },
+  { "id": 1765, "o": "Biti vrlo tužan (pren.)", "w": "Slomljeno srce" },
+  { "id": 1766, "o": "Biti zbunjen (pren.)", "w": "Izgubiti kompas" },
+  { "id": 1767, "o": "Nešto ignorirati (pren.)", "w": "Okrenuti glavu" },
+  { "id": 1768, "o": "Nešto skrivati (pren.)", "w": "Držati u rukavu" },
+  { "id": 1769, "o": "Imati prednost (pren.)", "w": "Držati konce" },
+  { "id": 1770, "o": "Biti u problemu (pren.)", "w": "Naći se u škripcu" },
+  { "id": 1771, "o": "Nešto započeti (pren.)", "w": "Krenuti od nule" },
+  { "id": 1772, "o": "Nešto izgubiti (pren.)", "w": "Pasti u vodu" },
+  {
+    "id": 1774,
+    "o": "Biti neodlučan (pren.)",
+    "w": "Sjediti na dvije stolice"
+  },
+  { "id": 1775, "o": "Biti vrlo brz (pren.)", "w": "Letjeti kao metak" },
+  { "id": 1776, "o": "Biti vrlo spor (pren.)", "w": "Ići kao puž" },
+  { "id": 1777, "o": "Biti tvrdoglav (pren.)", "w": "Tjerati po svome" },
+  { "id": 1778, "o": "Biti lukav (pren.)", "w": "Imati zmijski jezik" },
+  { "id": 1779, "o": "Biti naivan (pren.)", "w": "Pasti s Marsa" },
+  { "id": 1780, "o": "Biti oprezan (pren.)", "w": "Držati oči otvorene" },
+  { "id": 1781, "o": "Biti nepažljiv (pren.)", "w": "Zatvoriti oči" },
+  { "id": 1782, "o": "Biti u centru pažnje (pren.)", "w": "Biti u fokusu" },
+  { "id": 1783, "o": "Biti zanemaren (pren.)", "w": "Pasti u sjenu" },
+  { "id": 1784, "o": "Nešto otkriti (pren.)", "w": "Izvući na svjetlo" },
+  { "id": 1785, "o": "Nešto sakriti (pren.)", "w": "Gurnuti pod tepih" },
+  { "id": 1786, "o": "Nešto pretjerati (pren.)", "w": "Prijeći svaku mjeru" },
+  { "id": 1787, "o": "Nešto prihvatiti (pren.)", "w": "Progutati knedlu" },
+  { "id": 1788, "o": "Biti spreman (pren.)", "w": "Stajati na nogama" },
+  { "id": 1789, "o": "Biti iscrpljen (pren.)", "w": "Bez kapi snage" },
+  { "id": 1790, "o": "Nešto zapamtiti (pren.)", "w": "Urezati u pamćenje" },
+  { "id": 1791, "o": "Nešto zaboraviti (pren.)", "w": "Izbrisati iz glave" },
+  { "id": 1792, "o": "Nešto brzo naučiti (pren.)", "w": "Pokupiti usput" },
+  { "id": 1793, "o": "Biti u prednosti (pren.)", "w": "Imati vjetar u leđa" },
+  {
+    "id": 1794,
+    "o": "Biti u nepovoljnom položaju (pren.)",
+    "w": "Imati kamen oko vrata"
+  },
+  {
+    "id": 1795,
+    "o": "Biti potpuno siguran (pren.)",
+    "w": "Stajati čvrsto na zemlji"
+  },
+  { "id": 1796, "o": "Biti nesiguran (pren.)", "w": "Plutati bez smjera" },
+  { "id": 1797, "o": "Nešto završiti (pren.)", "w": "Staviti točku" },
+  { "id": 1798, "o": "Nešto započeti (pren.)", "w": "Okrenuti novu stranicu" },
+  { "id": 1799, "o": "Biti vrlo blizu (pren.)", "w": "Na dohvat ruke" },
+  { "id": 1800, "o": "Biti vrlo daleko (pren.)", "w": "Na kraju svijeta" }
+]

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Krizaljka.Console/Krizaljka.Console.csproj" />
+  <Project Path="Krizaljka.Domain/Krizaljka.Domain.csproj" />
+</Solution>
