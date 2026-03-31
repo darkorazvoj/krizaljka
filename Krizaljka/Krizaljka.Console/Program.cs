@@ -1,8 +1,10 @@
 ﻿
 
-using System.ComponentModel.Design;
+using System.Text;
 using Krizaljka.Domain.Models;
 using System.Text.Json;
+
+Console.OutputEncoding = Encoding.UTF8;
 
 var templateIdArg = args[0];
 
@@ -39,7 +41,6 @@ foreach (var templateName in templateNames)
         if (parsedTemplate is not null && parsedTemplate.Id == templateId)
         {
             template = parsedTemplate;
-            Console.WriteLine($"Template json {templateJson}");
             break;
         }
     }
@@ -58,5 +59,38 @@ if (template is null)
 Console.WriteLine($"Template id: {template.Id}");
 Console.WriteLine($"Template Name: {template.Name}");
 Console.WriteLine($"Template Num of Rows: {template.Rows.Length}");
+
+StringBuilder sb = new();
+var krizaljka = template.Rows;
+for (var x = 0; x < krizaljka.Length; x++)
+{
+    for (var y = 0; y < krizaljka[x].Length; y++)
+    {
+        sb.Append(GetCellCharacter(krizaljka[x][y]));
+
+        string GetCellCharacter(int i)
+        {
+            switch (i)
+            {
+                case 0:
+                    return "\u25CF";
+                case 1:
+                case 2:
+                case 3:
+                    return "\u25A0";
+                default:
+                    return "-";
+            }
+        }
+
+        sb.Append("   ");
+    }
+
+    sb
+        .AppendLine()
+        .AppendLine();
+}
+
+Console.WriteLine(sb.ToString());
 
 Console.WriteLine("THE END");
