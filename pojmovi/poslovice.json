@@ -1,0 +1,46 @@
+[
+  { "id": 1, "o": "Carpe ...", "w": "diem" },
+  { "id": 2, "o": "Veni, vidi, ...", "w": "vici" },
+  { "id": 3, "o": "Cogito, ergo ...", "w": "sum" },
+  { "id": 4, "o": "Alea iacta ...", "w": "est" },
+  { "id": 5, "o": "In vino ...", "w": "veritas" },
+  { "id": 6, "o": "Homo homini ...", "w": "lupus" },
+  { "id": 7, "o": "Divide et ...", "w": "impera" },
+  { "id": 8, "o": "Fortuna audaces ...", "w": "iuvat" },
+  { "id": 9, "o": "Dura lex, sed ...", "w": "lex" },
+  { "id": 10, "o": "Errare humanum ...", "w": "est" },
+
+  { "id": 11, "o": "Si vis pacem, para ...", "w": "bellum" },
+  { "id": 12, "o": "Acta est ...", "w": "fabula" },
+  { "id": 13, "o": "Ars longa, vita ...", "w": "brevis" },
+  { "id": 14, "o": "Audi alteram ...", "w": "partem" },
+  { "id": 15, "o": "Memento ...", "w": "mori" },
+  { "id": 16, "o": "Per aspera ad ...", "w": "astra" },
+  { "id": 17, "o": "Nomen est ...", "w": "omen" },
+  { "id": 18, "o": "Ubi societas, ibi ...", "w": "ius" },
+  { "id": 19, "o": "Amor vincit ...", "w": "omnia" },
+  { "id": 20, "o": "Verba volant, ... manent", "w": "scripta" },
+
+  { "id": 1, "o": "Bez muke nema ...", "w": "nauke" },
+  { "id": 2, "o": "Tko rano rani, dvije sreće ...", "w": "grabi" },
+  { "id": 3, "o": "Bolje ikad nego ...", "w": "nikad" },
+  { "id": 4, "o": "Ispeci pa ...", "w": "reci" },
+
+  { "id": 6, "o": "Koga nema, bez njega se ...", "w": "može" },
+  { "id": 7, "o": "Nije zlato sve što ...", "w": "sjaji" },
+  { "id": 8, "o": "Tiha voda brege ...", "w": "dere" },
+  { "id": 9, "o": "U laži su kratke ...", "w": "noge" },
+  { "id": 10, "o": "Daleko od očiju, daleko od ...", "w": "srca" },
+
+  { "id": 11, "o": "Tko pita, ne ...", "w": "skita" },
+  { "id": 12, "o": "Gdje ima dima, ima i ...", "w": "vatre" },
+  { "id": 13, "o": "S kim si, takav ...", "w": "si" },
+  { "id": 14, "o": "Svaka ptica svome jatu ...", "w": "leti" },
+  { "id": 15, "o": "Pas koji laje ne ...", "w": "grize" },
+
+  { "id": 16, "o": "Tko drugome jamu kopa, sam u nju ...", "w": "pada" },
+  { "id": 17, "o": "Bez alata nema ...", "w": "zanata" },
+  { "id": 18, "o": "Koliko para, toliko ...", "w": "muzike" },
+  { "id": 19, "o": "Tko visoko leti, nisko ...", "w": "pada" },
+  { "id": 20, "o": "Ruka ruku ...", "w": "mije" }
+]

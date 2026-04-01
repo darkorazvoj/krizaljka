@@ -132,5 +132,30 @@
   { "id": 2234, "o": "začinski cvijet", "w": "šafran" },
   { "id": 2235, "o": "planinski grm", "w": "vrijesak" },
   { "id": 2236, "o": "žuti šumski cvijet", "w": "zlatica" },
-  { "id": 2243, "o": "šareni vrtni cvijet", "w": "maćuhica" }
+  { "id": 2243, "o": "šareni vrtni cvijet", "w": "maćuhica" },
+
+  { "id": 1, "o": "središnji živčani organ", "w": "mozak" },
+  { "id": 2, "o": "krvna pumpa", "w": "srce" },
+  { "id": 3, "o": "dišni organ", "w": "pluća" },
+  { "id": 6, "o": "velika probavna žlijezda", "w": "jetra" },
+  { "id": 7, "o": "krvni filter", "w": "bubreg" },
+  { "id": 8, "o": "spremnik mokraće", "w": "mjehur" },
+  { "id": 9, "o": "plućni mjehurići", "w": "alveole" },
+  { "id": 10, "o": "organ njuha", "w": "nos" },
+
+  { "id": 11, "o": "organ sluha", "w": "uho" },
+  { "id": 12, "o": "organ vida", "w": "oko" },
+  { "id": 13, "o": "organ okusa", "w": "jezik" },
+  { "id": 14, "o": "glasovni organ", "w": "grkljan" },
+
+  { "id": 16, "o": "glavna endokrina žlijezda", "w": "hipofiza" },
+  { "id": 17, "o": "žlijezda vrata", "w": "štitnjača" },
+  { "id": 18, "o": "žlijezda probave", "w": "gušterača" },
+  { "id": 19, "o": "žlijezde iznad bubrega", "w": "nadbubrežne žlijezde" },
+
+  { "id": 24, "o": "unutrašnjost kosti", "w": "koštana srž" },
+  { "id": 25, "o": "krvni rezervoar", "w": "slezena" },
+
+  { "id": 26, "o": "vanjski omotač tijela", "w": "koža" },
+  { "id": 27, "o": "pokretačko tkivo", "w": "mišić" }
 ]

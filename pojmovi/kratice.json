@@ -131,5 +131,157 @@
   { "id": 2465, "o": "United Nations Volunteers", "w": "UNV" },
   { "id": 2469, "o": "World Intellectual Property Org.", "w": "WIPO" },
   { "id": 2473, "o": "Int. Organization for Migration", "w": "IOM" },
-  { "id": 2476, "o": "Economic Commission for Africa", "w": "ECA" }
+  { "id": 2476, "o": "Economic Commission for Africa", "w": "ECA" },
+
+  { "id": 1, "o": "amper", "w": "A" },
+  { "id": 2, "o": "volt", "w": "V" },
+  { "id": 3, "o": "vat", "w": "W" },
+  { "id": 4, "o": "tesla", "w": "T" },
+  { "id": 5, "o": "kelvin", "w": "K" },
+  { "id": 6, "o": "sekunda", "w": "s" },
+  { "id": 7, "o": "metar", "w": "m" },
+  { "id": 8, "o": "gram", "w": "g" },
+  { "id": 9, "o": "kulon", "w": "C" },
+  { "id": 10, "o": "farad", "w": "F" },
+  { "id": 11, "o": "herc", "w": "H" },
+
+  { "id": 12, "o": "sjever", "w": "S" },
+  { "id": 13, "o": "jug", "w": "J" },
+  { "id": 14, "o": "istok", "w": "I" },
+  { "id": 15, "o": "zapad", "w": "Z" },
+
+  { "id": 12, "o": "North", "w": "N" },
+  { "id": 13, "o": "South", "w": "S" },
+  { "id": 14, "o": "East", "w": "E" },
+  { "id": 15, "o": "West", "w": "W" },
+
+  { "id": 1, "o": "NorthEast", "w": "NE" },
+  { "id": 2, "o": "NorthWest", "w": "NW" },
+  { "id": 3, "o": "SouthEast", "w": "SE" },
+  { "id": 4, "o": "SouthWest", "w": "SW" },
+
+  { "id": 16, "o": "temperatura", "w": "T" },
+  { "id": 17, "o": "vrijeme", "w": "t" },
+  { "id": 18, "o": "brzina", "w": "v" },
+  { "id": 19, "o": "masa", "w": "m" },
+  { "id": 20, "o": "sila", "w": "F" },
+  { "id": 1, "o": "sjeveroistok", "w": "SI" },
+  { "id": 2, "o": "sjeverozapad", "w": "SZ" },
+  { "id": 3, "o": "jugoistok", "w": "JI" },
+  { "id": 4, "o": "jugozapad", "w": "JZ" },
+
+  { "id": 1, "o": "... kao Zagreb", "w": "Z" },
+  { "id": 2, "o": "... kao Zadar", "w": "Z" },
+  { "id": 3, "o": "... kao Zlatar", "w": "Z" },
+
+  { "id": 4, "o": "... kao Split", "w": "S" },
+  { "id": 5, "o": "... kao Sisak", "w": "S" },
+  { "id": 6, "o": "... kao Samobor", "w": "S" },
+
+  { "id": 7, "o": "... kao Rijeka", "w": "R" },
+  { "id": 8, "o": "... kao Rab", "w": "R" },
+  { "id": 9, "o": "... kao Rovinj", "w": "R" },
+
+  { "id": 10, "o": "... kao Osijek", "w": "O" },
+  { "id": 11, "o": "... kao Omiš", "w": "O" },
+  { "id": 12, "o": "... kao Ogulin", "w": "O" },
+
+  { "id": 13, "o": "... kao Karlovac", "w": "K" },
+  { "id": 14, "o": "... kao Knin", "w": "K" },
+  { "id": 15, "o": "... kao Koprivnica", "w": "K" },
+
+  { "id": 16, "o": "... kao Dubrovnik", "w": "D" },
+  { "id": 17, "o": "... kao Delnice", "w": "D" },
+  { "id": 18, "o": "... kao Daruvar", "w": "D" },
+
+  { "id": 19, "o": "... kao Varaždin", "w": "V" },
+  { "id": 20, "o": "... kao Vukovar", "w": "V" },
+  { "id": 21, "o": "... kao Vis", "w": "V" },
+
+  { "id": 22, "o": "... kao Pula", "w": "P" },
+  { "id": 23, "o": "... kao Požega", "w": "P" },
+  { "id": 24, "o": "... kao Pag", "w": "P" },
+
+  { "id": 25, "o": "... kao Čakovec", "w": "Č" },
+  { "id": 26, "o": "... kao Čazma", "w": "Č" },
+  { "id": 27, "o": "... kao Čabar", "w": "Č" },
+
+  { "id": 28, "o": "... kao Ćićarija", "w": "Ć" },
+  { "id": 29, "o": "... kao Ćunski", "w": "Ć" },
+  { "id": 30, "o": "... kao Ćelavac", "w": "Ć" },
+
+  { "id": 31, "o": "... kao Đakovo", "w": "Đ" },
+  { "id": 32, "o": "... kao Đurđevac", "w": "Đ" },
+  { "id": 33, "o": "... kao Đeletovci", "w": "Đ" },
+
+  { "id": 34, "o": "... kao Šibenik", "w": "Š" },
+  { "id": 35, "o": "... kao Šolta", "w": "Š" },
+  { "id": 36, "o": "... kao Špičkovina", "w": "Š" },
+
+  { "id": 37, "o": "... kao Županja", "w": "Ž" },
+  { "id": 38, "o": "... kao Žminj", "w": "Ž" },
+  { "id": 39, "o": "... kao Žrnovnica", "w": "Ž" },
+
+  { "id": 40, "o": "... kao Bjelovar", "w": "B" },
+  { "id": 41, "o": "... kao Biograd", "w": "B" },
+  { "id": 42, "o": "... kao Benkovac", "w": "B" },
+
+  { "id": 43, "o": "... kao Makarska", "w": "M" },
+  { "id": 44, "o": "... kao Metković", "w": "M" },
+  { "id": 45, "o": "... kao Mali Lošinj", "w": "M" },
+
+  { "id": 46, "o": "... kao Trogir", "w": "T" },
+  { "id": 47, "o": "... kao Trilj", "w": "T" },
+  { "id": 48, "o": "... kao Tounj", "w": "T" },
+
+  { "id": 49, "o": "... kao Udbina", "w": "U" },
+  { "id": 50, "o": "... kao Umag", "w": "U" },
+  { "id": 51, "o": "... kao Ugljan", "w": "U" },
+
+  { "id": 52, "o": "... kao Gora", "w": "G" },
+  { "id": 53, "o": "... kao Gospić", "w": "G" },
+  { "id": 54, "o": "... kao Glina", "w": "G" },
+
+  { "id": 55, "o": "... kao Hvar", "w": "H" },
+  { "id": 56, "o": "... kao Hrvatska", "w": "H" },
+  { "id": 57, "o": "... kao Hrašće", "w": "H" },
+
+  { "id": 58, "o": "... kao Ivanec", "w": "I" },
+  { "id": 59, "o": "... kao Ilok", "w": "I" },
+  { "id": 60, "o": "... kao Imotski", "w": "I" },
+
+  { "id": 61, "o": "... kao Jastrebarsko", "w": "J" },
+  { "id": 62, "o": "... kao Jelsa", "w": "J" },
+  { "id": 63, "o": "... kao Jablanac", "w": "J" },
+
+  { "id": 64, "o": "... kao Lika", "w": "L" },
+  { "id": 65, "o": "... kao Labin", "w": "L" },
+  { "id": 66, "o": "... kao Lipik", "w": "L" },
+
+  { "id": 67, "o": "... kao Njivice", "w": "Nj" },
+  { "id": 68, "o": "... kao Njemačka", "w": "Nj" },
+  { "id": 69, "o": "... kao Njeguši", "w": "Nj" },
+
+  { "id": 70, "o": "... kao Ljubuški", "w": "Lj" },
+  { "id": 71, "o": "... kao Ljubljana", "w": "Lj" },
+  { "id": 72, "o": "... kao Ljig", "w": "Lj" },
+
+  { "id": 73, "o": "... kao Džakovo", "w": "Dž" },
+  { "id": 74, "o": "... kao Džep", "w": "Dž" },
+  { "id": 75, "o": "... kao Džakarta", "w": "Dž" },
+  { "id": 76, "o": "... kao Quebec", "w": "Q" },
+  { "id": 77, "o": "... kao Qatar", "w": "Q" },
+  { "id": 78, "o": "... kao Quito", "w": "Q" },
+
+  { "id": 79, "o": "... kao Washington", "w": "W" },
+  { "id": 80, "o": "... kao Wellington", "w": "W" },
+  { "id": 81, "o": "... kao Winnipeg", "w": "W" },
+
+  { "id": 82, "o": "... kao Xanthi", "w": "X" },
+  { "id": 83, "o": "... kao Xiamen", "w": "X" },
+  { "id": 84, "o": "... kao Xining", "w": "X" },
+
+  { "id": 85, "o": "... kao York", "w": "Y" },
+  { "id": 86, "o": "... kao Yalta", "w": "Y" },
+  { "id": 87, "o": "... kao Yokohama", "w": "Y" }
 ]

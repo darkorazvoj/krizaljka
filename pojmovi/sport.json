@@ -138,5 +138,57 @@
   { "id": 1187, "o": "HR plivač Nikola", "w": "Miljenić" },
   { "id": 1188, "o": "HR plivačica Jana", "w": "Pavlić" },
   { "id": 1189, "o": "HR borac Ante", "w": "Delija" },
-  { "id": 1190, "o": "HR boksač Alen", "w": "Babić" }
+  { "id": 1190, "o": "HR boksač Alen", "w": "Babić" },
+
+  { "id": 1, "o": "marka sportske opreme", "w": "Nike" },
+  { "id": 2, "o": "marka sportske opreme", "w": "Adidas" },
+  { "id": 3, "o": "marka sportske opreme", "w": "Puma" },
+  { "id": 4, "o": "marka sportske opreme", "w": "Reebok" },
+  { "id": 5, "o": "marka sportske opreme", "w": "Under Armour" },
+  { "id": 6, "o": "marka sportske opreme", "w": "Asics" },
+  { "id": 7, "o": "marka sportske opreme", "w": "New Balance" },
+  { "id": 8, "o": "marka sportske opreme", "w": "Fila" },
+  { "id": 9, "o": "marka sportske opreme", "w": "Umbro" },
+  { "id": 10, "o": "marka sportske opreme", "w": "Diadora" },
+
+  { "id": 11, "o": "marka sportske opreme", "w": "Kappa" },
+  { "id": 12, "o": "marka sportske opreme", "w": "Lotto" },
+
+  { "id": 14, "o": "marka sportske opreme", "w": "Wilson" },
+
+  { "id": 20, "o": "marka sportske opreme", "w": "Decathlon" },
+
+  { "id": 23, "o": "marka sportske opreme", "w": "Errea" },
+
+  { "id": 29, "o": "marka sportske opreme", "w": "Everlast" },
+  { "id": 30, "o": "marka sportske opreme", "w": "Speedo" },
+
+  { "id": 31, "o": "marka sportske opreme", "w": "Arena" },
+  { "id": 32, "o": "marka sportske opreme", "w": "Oakley" },
+
+  { "id": 35, "o": "marka sportske opreme", "w": "Atomic" },
+  { "id": 36, "o": "marka sportske opreme", "w": "Elan" },
+
+  { "id": 1, "o": "Japanska borilačka vještina", "w": "judo" },
+  { "id": 2, "o": "Japanska borilačka vještina", "w": "karate" },
+  { "id": 3, "o": "Japanska borilačka vještina", "w": "aikido" },
+  { "id": 4, "o": "Japanska borilačka vještina", "w": "kendo" },
+  { "id": 5, "o": "Korejska borilačka vještina", "w": "taekwondo" },
+
+  { "id": 6, "o": "Kineska borilačka vještina", "w": "kung fu" },
+  { "id": 7, "o": "Kineska borilačka vještina", "w": "wushu" },
+  { "id": 8, "o": "Kineska borilačka vještina", "w": "tai chi" },
+
+  { "id": 9, "o": "Tajlandska borilačka vještina", "w": "muay thai" },
+  { "id": 10, "o": "Brazilska borilačka vještina", "w": "capoeira" },
+  { "id": 11, "o": "Brazilska borilačka vještina", "w": "Brazilski jiu jitsu" },
+
+  { "id": 12, "o": "Filipinska borilačka vještina", "w": "arnis" },
+  { "id": 13, "o": "Filipinska borilačka vještina", "w": "eskrima" },
+  { "id": 14, "o": "Filipinska borilačka vještina", "w": "kali" },
+
+  { "id": 18, "o": "Ruska borilačka vještina", "w": "sambo" },
+
+  { "id": 19, "o": "Grčka borilačka vještina", "w": "pankration" },
+  { "id": 20, "o": "Francuska borilačka vještina", "w": "savate" }
 ]
