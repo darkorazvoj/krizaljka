@@ -9,7 +9,7 @@ public class KrizaljkaAnalyzer
         KrizaljkaCellType.Input, KrizaljkaCellType.InputColon, KrizaljkaCellType.InputDash
     ];
 
-    private int _lastSlotId = 1;
+    private int _lastSlotId = 0;
 
     private record SlotUsage(int SlotId, int CharIndex);
 
