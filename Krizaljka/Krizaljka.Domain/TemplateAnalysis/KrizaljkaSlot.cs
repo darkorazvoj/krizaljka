@@ -2,7 +2,7 @@
 namespace Krizaljka.Domain.TemplateAnalysis;
 
 public record KrizaljkaSlot(
-    long Id,
+    int Id,
     KrizaljkaDirection Direction,
     int Row,
     int Col,

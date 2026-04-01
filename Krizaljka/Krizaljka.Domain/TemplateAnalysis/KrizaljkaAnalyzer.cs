@@ -1,6 +1,4 @@
-﻿
-using System.Security.Cryptography;
-using Krizaljka.Domain.Template;
+﻿using Krizaljka.Domain.Template;
 
 namespace Krizaljka.Domain.TemplateAnalysis;
 
@@ -13,6 +11,8 @@ public class KrizaljkaAnalyzer
 
     private int _lastSlotId = 1;
 
+    private record SlotUsage(int SlotId, int CharIndex);
+
     public KrizaljkaTemplateAnalysis GeTemplateAnalysis(KrizaljkaTemplate template)
     {
         if (template.Rows.Length == 0)
@@ -20,6 +20,63 @@ public class KrizaljkaAnalyzer
             return new KrizaljkaTemplateAnalysis(template.Id, template, [], []);
         }
 
+        var slots = GetSlots(template);
+        var intersections = GetIntersections(slots);
+
+        return new KrizaljkaTemplateAnalysis(template.Id, template, slots, intersections);
+    }
+
+    private IReadOnlyList<KrizaljkaIntersection> GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
+    {
+        List<KrizaljkaIntersection> intersections = [];
+
+        Dictionary<(int, int), List<SlotUsage>> usages = [];
+
+        foreach (var slot in slots)
+        {
+            for (var i = 0; i < slot.Cells.Count; i++)
+            {
+                var currentCell = slot.Cells[i];
+                var key = (currentCell.Row, currentCell.Col);
+                var slotUsage = new SlotUsage(slot.Id, i);
+                if (usages.TryGetValue(key, out var cellUsages))
+                {
+                    cellUsages.Add(slotUsage);
+                }
+                else
+                {
+                    usages.Add(key, [slotUsage]);
+                }
+            }
+        }
+
+        foreach (var (cell, cellSlots) in usages)
+        {
+            if (cellSlots.Count > 2)
+            {
+                throw new Exception(
+                    $"Invalid template, it has more than 2 intersections on cell ({cell.Item1},{cell.Item2})");
+            }
+
+            // Valid intersection
+            if (cellSlots.Count == 2)
+            {
+                intersections.Add(
+                    new KrizaljkaIntersection(
+                        cellSlots[0].SlotId,
+                        cellSlots[1].SlotId,
+                        cell.Item1,
+                        cell.Item2,
+                        cellSlots[0].CharIndex,
+                        cellSlots[1].CharIndex));
+            }
+        }
+
+        return intersections.AsReadOnly();
+    }
+
+    private IReadOnlyList<KrizaljkaSlot> GetSlots(KrizaljkaTemplate template)
+    {
         List<KrizaljkaSlot> slots = [];
 
         var rows = template.Rows;
@@ -33,6 +90,10 @@ public class KrizaljkaAnalyzer
                     KrizaljkaCellType.DescRightDown)
                 {
                     var cells = GetSlotCells(rows, r, c, KrizaljkaDirection.Right);
+                    if (cells.Count == 0)
+                    {
+                        continue;
+                    }
                     slots.Add(new KrizaljkaSlot(
                         GetNewSlotId(),
                         KrizaljkaDirection.Right,
@@ -45,6 +106,10 @@ public class KrizaljkaAnalyzer
                 if (currentCell is KrizaljkaCellType.DescDown or KrizaljkaCellType.DescRightDown)
                 {
                     var cells = GetSlotCells(rows, r, c, KrizaljkaDirection.Down);
+                    if (cells.Count == 0)
+                    {
+                        continue;
+                    }
                     slots.Add(new KrizaljkaSlot(
                         GetNewSlotId(),
                         KrizaljkaDirection.Down,
@@ -56,8 +121,7 @@ public class KrizaljkaAnalyzer
             }
         }
 
-
-        return new KrizaljkaTemplateAnalysis(template.Id, template, slots, []);
+        return slots.AsReadOnly();
     }
 
     private static IReadOnlyList<KrizaljkaCell> GetSlotCells(
@@ -92,7 +156,7 @@ public class KrizaljkaAnalyzer
 
                 if (InputCells.Contains(currentCell))
                 {
-                    cells.Add(new KrizaljkaCell(slotRow, slotColumn, currentCell));
+                    cells.Add(new KrizaljkaCell(r, slotColumn, currentCell));
                 }
                 else
                 {
