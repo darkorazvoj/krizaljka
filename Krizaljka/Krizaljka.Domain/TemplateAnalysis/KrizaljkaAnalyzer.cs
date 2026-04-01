@@ -26,7 +26,7 @@ public class KrizaljkaAnalyzer
         return new KrizaljkaTemplateAnalysis(template.Id, template, slots, intersections);
     }
 
-    private IReadOnlyList<KrizaljkaIntersection> GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
+    private static IReadOnlyList<KrizaljkaIntersection> GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
     {
         List<KrizaljkaIntersection> intersections = [];
 
