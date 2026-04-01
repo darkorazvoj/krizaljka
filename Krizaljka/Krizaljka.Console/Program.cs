@@ -1,31 +1,20 @@
 ﻿
 
 using System.Text;
-using Krizaljka.Domain.Models;
 using System.Text.Json;
 using Krizaljka.Console;
+using Krizaljka.Domain.Template;
+using Krizaljka.Domain.TemplateAnalysis;
 
 Console.OutputEncoding = Encoding.UTF8;
 
-var templateIdArg = args[0];
 
-if (string.IsNullOrWhiteSpace(templateIdArg))
-{
-    Console.WriteLine("Missing template Id.");
-    return;
-}
 
-if (!long.TryParse(templateIdArg, out var templateId))
-{
-    return;
-}
-
-Console.WriteLine($"Template id: {templateId}");
 
 const string templatesDir = @"C:\git\krizaljka\templates";
 var templateNames = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
 
-KrizaljkaTemplate? template = null;
+List<KrizaljkaTemplate> templates = [];
 
 foreach (var templateName in templateNames)
 {
@@ -39,9 +28,9 @@ foreach (var templateName in templateNames)
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
 
-        if (parsedTemplate is not null && parsedTemplate.Id == templateId)
+        if (parsedTemplate is not null)
         {
-            template = parsedTemplate;
+            templates.Add(parsedTemplate);
             break;
         }
     }
@@ -51,61 +40,74 @@ foreach (var templateName in templateNames)
     }
 }
 
-if (template is null)
+Console.WriteLine("Templates:");
+foreach (var krizaljkaTemplate in templates)
 {
-    Console.WriteLine($"Template with id {templateId} not found. Better luck next time!");
-    return;
+    Console.WriteLine($"Template id: {krizaljkaTemplate.Id}");
+    Console.WriteLine($"Template Name: {krizaljkaTemplate.Name}");
+    Console.WriteLine($"Template Num of Rows: {krizaljkaTemplate.Rows.Length}");
 }
 
-Console.WriteLine($"Template id: {template.Id}");
-Console.WriteLine($"Template Name: {template.Name}");
-Console.WriteLine($"Template Num of Rows: {template.Rows.Length}");
+var workingTemplate = templates.FirstOrDefault(x => x.Id == 1);
 
-StringBuilder sb = new();
-var krizaljka = template.Rows;
-for (var x = 0; x < krizaljka.Length; x++)
+if (workingTemplate is not null)
 {
-    for (var y = 0; y < krizaljka[x].Length; y++)
+    StringBuilder sb = new();
+    var krizaljka = workingTemplate.Rows;
+    for (var r = 0; r < krizaljka.Length; r++)
     {
-        sb.Append(GetCellCharacter(krizaljka[x][y]));
-
-        string GetCellCharacter(int i)
+        for (var c = 0; c < krizaljka[r].Length; c++)
         {
-            switch (i)
+            //sb.Append(krizaljka[r][c]);
+            sb.Append(GetCellCharacter(krizaljka[r][c]));
+
+            string GetCellCharacter(int i)
             {
-                case 0:
-                    return "\u25CF";
-                case 1:
-                case 2:
-                case 3:
-                    return "\u25A0";
-                default:
-                    return "-";
+                switch (i)
+                {
+                    case 0:
+                        return "\u25CF";
+                    case 1:
+                    case 2:
+                    case 3:
+                        return "\u25A0";
+                    default:
+                        return "-";
+                }
             }
+
+            sb.Append("   ");
         }
 
-        sb.Append("   ");
+        sb
+            .AppendLine()
+            .AppendLine();
     }
 
-    sb
-        .AppendLine()
-        .AppendLine();
+    Console.WriteLine(sb.ToString());
+
+
+    KrizaljkaAnalyzer krizaljkaAnalyzer = new();
+    var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
+
 }
 
-Console.WriteLine(sb.ToString());
 
-var termsLoader = new TermsLoader();
 
-await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
+//// LOAD TERMS
 
-Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
-Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
-Console.WriteLine("Number of terms per length:");
+//var termsLoader = new TermsLoader();
 
-foreach (var kv in InMemoryDatabase.LengthTermsDb)
-{
-    Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
-}
+//await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
+
+//Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
+//Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
+//Console.WriteLine("Number of terms per length:");
+
+//foreach (var kv in InMemoryDatabase.LengthTermsDb)
+//{
+//    Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
+//}
 
 
 Console.WriteLine("THE END");

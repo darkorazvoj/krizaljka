@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Krizaljka.Console": {
-      "commandName": "Project",
-      "commandLineArgs": "1"
+      "commandName": "Project"
     }
   }
 }

@@ -1,3 +1,3 @@
-﻿namespace Krizaljka.Domain.Models;
+﻿namespace Krizaljka.Domain.Template;
 
 public record KrizaljkaTemplate(long Id, string Name, int[][] Rows);

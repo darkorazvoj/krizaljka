@@ -1,13 +1,13 @@
 ﻿
 namespace Krizaljka.Domain.Template;
 
-public enum GridCellTypes
+public enum KrizaljkaCellType
 {
     Empty = 0,
-    DescRight =1,
+    DescRight = 1,
     DescDown = 2,
-    DescRightDown=3,
+    DescRightDown = 3,
     Input = 4,
     InputColon = 5,
-    InputDash =6
+    InputDash = 6
 }
