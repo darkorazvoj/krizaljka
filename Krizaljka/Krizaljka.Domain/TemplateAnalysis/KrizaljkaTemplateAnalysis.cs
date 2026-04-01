@@ -6,4 +6,5 @@ public record KrizaljkaTemplateAnalysis(
     long Id,
     KrizaljkaTemplate Template,
     IReadOnlyList<KrizaljkaSlot> Slots,
-    IReadOnlyList<KrizaljkaIntersection> Intersections);
+    IReadOnlyList<KrizaljkaIntersection> Intersections,
+    Dictionary<(int, int), List<SlotUsage>> CellSlots);

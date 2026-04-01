@@ -1,10 +1,11 @@
 ﻿
 
-using System.Text;
-using System.Text.Json;
 using Krizaljka.Console;
+using Krizaljka.Domain.KrizaljkaSolved;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
+using System.Text;
+using System.Text.Json;
 
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -52,8 +53,19 @@ var workingTemplate = templates.FirstOrDefault(x => x.Id == 1);
 
 if (workingTemplate is not null)
 {
+    var termsLoader = new TermsLoader();
+    await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
+    Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
+    Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
+
+
     KrizaljkaAnalyzer krizaljkaAnalyzer = new();
     var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
+
+    List<AssignedTerm> assignedSlotTerms = [
+        new(26, 1, "interferencija".ToUpper()),
+        new(12, 1, "Imatikamenokovrata".ToUpper())
+    ];
 
 
     StringBuilder sb = new();
@@ -77,7 +89,10 @@ if (workingTemplate is not null)
                         //return "\u25A0";
                         return GetSlotIds(r, c);
                     default:
-                        return "-";
+                        return GetInputValue(r,c);
+
+                      
+                    //return "-";
                 }
             }
 
@@ -117,6 +132,35 @@ if (workingTemplate is not null)
 
         return sb1.ToString();
     }
+
+    string GetInputValue(int ir, int ic)
+    {
+        if (templateAnalysis.CellSlots.TryGetValue((ir, ic), out var slotUsages))
+        {
+            foreach (var slot in slotUsages)
+            {
+
+                var assignedSlot = assignedSlotTerms.FirstOrDefault(x => x.SlotId == slot.SlotId);
+                if (assignedSlot is not null)
+                {
+                    return assignedSlot.Value[slot.CharIndex].ToString();
+                }
+            }
+
+            //if (slotUsages.Count > 0)
+            //{
+            //    var slotId = slotUsages[0].SlotId;
+
+            //    var assignedSlot = assignedSlotTerms.FirstOrDefault(x => x.SlotId == slotId);
+            //    if (assignedSlot is not null)
+            //    {
+            //        return assignedSlot.Value[slotUsages[0].CharIndex].ToString();
+            //    }
+            //}
+        }
+
+        return "-";
+    }
 }
 
 
@@ -135,6 +179,20 @@ if (workingTemplate is not null)
 //{
 //    Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
 //}
+
+
+if (InMemoryDatabase.LengthTermsDb.TryGetValue(18, out var listByLength))
+{
+    Console.WriteLine();
+    foreach (var term in listByLength)
+    {
+        Console.WriteLine(string.Join(',', term.Value));
+        //Console.WriteLine(term.Value);
+    }
+}
+
+
+
 
 
 Console.WriteLine("THE END");

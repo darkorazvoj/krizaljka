@@ -9,24 +9,22 @@ public class KrizaljkaAnalyzer
         KrizaljkaCellType.Input, KrizaljkaCellType.InputColon, KrizaljkaCellType.InputDash
     ];
 
-    private int _lastSlotId = 0;
-
-    private record SlotUsage(int SlotId, int CharIndex);
+    private int _lastSlotId;
 
     public KrizaljkaTemplateAnalysis GeTemplateAnalysis(KrizaljkaTemplate template)
     {
         if (template.Rows.Length == 0)
         {
-            return new KrizaljkaTemplateAnalysis(template.Id, template, [], []);
+            return new KrizaljkaTemplateAnalysis(template.Id, template, [], [], []);
         }
 
         var slots = GetSlots(template);
-        var intersections = GetIntersections(slots);
+        var (intersections, cellSlots) = GetIntersections(slots);
 
-        return new KrizaljkaTemplateAnalysis(template.Id, template, slots, intersections);
+        return new KrizaljkaTemplateAnalysis(template.Id, template, slots, intersections, cellSlots);
     }
 
-    private static IReadOnlyList<KrizaljkaIntersection> GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
+    private static (IReadOnlyList<KrizaljkaIntersection>, Dictionary<(int, int), List<SlotUsage>>) GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
     {
         List<KrizaljkaIntersection> intersections = [];
 
@@ -72,7 +70,7 @@ public class KrizaljkaAnalyzer
             }
         }
 
-        return intersections.AsReadOnly();
+        return (intersections.AsReadOnly(), usages);
     }
 
     private IReadOnlyList<KrizaljkaSlot> GetSlots(KrizaljkaTemplate template)
