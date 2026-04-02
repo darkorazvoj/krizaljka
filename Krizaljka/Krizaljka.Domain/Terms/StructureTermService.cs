@@ -5,7 +5,7 @@ namespace Krizaljka.Domain.Terms;
 
 public class StructureTermService
 {
-    private const int DescriptionMaxLength = 36;
+    private const int DescriptionMaxLength = 40;
 
     public static ITerm Invoke(
         TermLanguage language, 
@@ -20,7 +20,7 @@ public class StructureTermService
 
         var descCleaned = description.TrimExtra();
 
-        if (descCleaned.Length > 36)
+        if (descCleaned.Length > DescriptionMaxLength)
         {
             return new InvalidTerm($"Description > {DescriptionMaxLength}, Length: {descCleaned.Length}, Description: {descCleaned}");
         }
