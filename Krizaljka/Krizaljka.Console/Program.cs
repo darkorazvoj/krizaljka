@@ -71,7 +71,7 @@ if (workingTemplate is not null)
 
     List<AssignedTerm> assignedSlotTerms = [
         new(26, 1,  CroatianWordConverter.GetJustLetters("interferencija".ToUpper())),
-        new(12, 1,  CroatianWordConverter.GetJustLetters("KraljevinaHrvatskaw".ToUpper()))
+        new(12, 1,  CroatianWordConverter.GetJustLetters("PROJEKTANTICASTANA".ToUpper())),
     ];
 
 
@@ -97,9 +97,6 @@ if (workingTemplate is not null)
                         return GetSlotIds(r, c);
                     default:
                         return GetInputValue(r,c);
-
-                      
-                    //return "-";
                 }
             }
 

@@ -306,5 +306,7 @@
   { "o": "Koje se tiče estetike", "w": "ESTETSKOKULTURNO" },
   { "o": "Koje se tiče morala", "w": "MORALNOPOLITIČKO" },
   { "o": "Koje se ne može popraviti", "w": "NENADOKNADIVO" },
-  { "o": "Koje se tiče društva i ekonomije", "w": "SOCIOEKONOMSKO" }
+  { "o": "Koje se tiče društva i ekonomije", "w": "SOCIOEKONOMSKO" },
+
+  { "o": "Osobina onoga što se ne najavljuje", "w": "NENAJAVLJIVANOST" }
 ]

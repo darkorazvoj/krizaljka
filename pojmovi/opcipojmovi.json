@@ -655,5 +655,7 @@
   { "o": "stablo (arh.)", "w": "DRVIJE" },
   { "o": "piće", "w": "NAPITAK" },
   { "o": "odjeća (arh.)", "w": "RUHO" },
-  { "o": "mjesec", "w": "LUNA" }
+  { "o": "mjesec", "w": "LUNA" },
+  { "o": "Mjesto za pristajanje trajekta", "w": "TRAJEKTNO PRISTANIŠTE" },
+  { "o": "Osoba koja izrađuje nacrte stanova", "w": "PROJEKTANTICA STANA" }
 ]
