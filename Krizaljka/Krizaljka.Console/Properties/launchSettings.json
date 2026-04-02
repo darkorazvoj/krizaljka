@@ -2,7 +2,7 @@
   "profiles": {
     "Krizaljka.Console": {
       "commandName": "Project",
-      "commandLineArgs": "d"
+      "commandLineArgs": "l"
     }
   }
 }

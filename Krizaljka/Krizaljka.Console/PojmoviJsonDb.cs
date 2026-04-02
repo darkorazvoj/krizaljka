@@ -2,4 +2,4 @@
 
 namespace Krizaljka.Console;
 
-public record PojmoviJsonDb(List<IValidTerm> Term);
+public record PojmoviJsonDb(List<IValidTerm> Terms);

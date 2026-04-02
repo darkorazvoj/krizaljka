@@ -56,11 +56,14 @@ public class StructureTermService
             .ToList()
             .AsReadOnly();
 
+        var denseValue = termTrimmed.RemoveWhiteSpaces();
+
         return new Term(
             IdGenerator.GetNextId(),
             language,
             descCleaned,
             termTrimmed,
+            denseValue,
             lettersDense,
             category,
             spaceIndexes,

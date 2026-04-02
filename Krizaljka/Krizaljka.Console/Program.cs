@@ -57,6 +57,70 @@ if (args.Length > 0 && args[0] == "d")
     return;
 }
 
+if (args.Length > 0 && args[0] == "l")
+{
+    Console.WriteLine("TERMS LOOKUP");
+
+    var pojmoviDbJson = File.ReadAllText(Path.Combine(dbPath, pojmoviDbName));
+    if (string.IsNullOrWhiteSpace(pojmoviDbJson))
+    {
+        Console.WriteLine("No or empty pojmovi DB file");
+        return;
+    }
+    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+    PojmoviJsonDb? pojmoviDb = null;
+    try
+    {
+        pojmoviDb = JsonSerializer.Deserialize<PojmoviJsonDb>(pojmoviDbJson, options);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e.Message);
+        return;
+    }
+
+    if (pojmoviDb is null)
+    {
+        Console.WriteLine("Pojmovi db not a valid object");
+        return;
+    }
+
+    while (true)
+    {
+        Console.Clear();
+        Console.Write("Length: ");
+        var lengthString = Console.ReadLine();
+
+        if (!int.TryParse(lengthString, out var length))
+        {
+            continue;
+        }
+
+        Console.Write("Search term: ");
+        var searchTerm = Console.ReadLine();
+
+        var condition= pojmoviDb.Terms
+            .Where(x => x.Length == length);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+           // condition.Where(x=> x.)
+        }
+            
+
+
+        Console.Write("E(x)it or continue");
+        var anykey = Console.ReadLine();
+        if (anykey == "x")
+        {
+            break;
+        }
+    }
+
+    return;
+}
+
 
 const string templatesDir = @"C:\git\krizaljka\templates";
 var templateNames = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();

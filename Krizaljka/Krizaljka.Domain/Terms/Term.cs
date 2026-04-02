@@ -9,6 +9,7 @@ public interface IValidTerm : ITerm
     TermLanguage Language { get; }
     string Description { get; }
     string RawValue { get; }
+    string DenseValue { get; }
     IReadOnlyList<string> Letters { get; }
     int Length { get; }
     int CategoryId { get; }
@@ -26,6 +27,7 @@ public record Term(
     TermLanguage Language,
     string Description,
     string RawValue,
+    string DenseValue,
     IReadOnlyList<string> Letters,
     int CategoryId,
     List<int> SpaceIndexes,
