@@ -637,5 +637,23 @@
   { "o": "OBJEKTIVNOST, fer", "w": "NEPRISTRANOST" },
   { "o": "OBJEKTIVNOST, nepristranost", "w": "FER" },
   { "o": "AUTENTIČNOST, istina", "w": "VJERODOSTOJNOST" },
-  { "o": "AUTENTIČNOST, vjerodostojnost", "w": "ISTINA" }
+  { "o": "AUTENTIČNOST, vjerodostojnost", "w": "ISTINA" },
+
+  { "o": "ogledalo", "w": "ZRCALO" },
+  { "o": "učenik (arh.)", "w": "DIJAK" },
+  { "o": "učitelj (arh.)", "w": "NAUČITELJ" },
+  { "o": "vojnik (arh.)", "w": "BOJOVNIK" },
+  { "o": "mač (arh.)", "w": "SJEČIVO" },
+  { "o": "šuma (arh.)", "w": "DUBRAVA" },
+  { "o": "livada", "w": "TRATINA" },
+  { "o": "planina", "w": "GORA" },
+  { "o": "zaljev", "w": "DRAGA" },
+  { "o": "put", "w": "STAZA" },
+  { "o": "grad (arh.)", "w": "TRGOVIŠTE" },
+  { "o": "kuća (arh.)", "w": "HIŽA" },
+  { "o": "vrata (arh.)", "w": "DVERI" },
+  { "o": "stablo (arh.)", "w": "DRVIJE" },
+  { "o": "piće", "w": "NAPITAK" },
+  { "o": "odjeća (arh.)", "w": "RUHO" },
+  { "o": "mjesec", "w": "LUNA" }
 ]
