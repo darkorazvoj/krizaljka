@@ -2,7 +2,7 @@
 
 namespace Krizaljka.Domain.Terms;
 
-public record RawTerm(
+public record TermJson(
     [property: JsonPropertyName("o")]
     string Description, 
     [property: JsonPropertyName("w")]

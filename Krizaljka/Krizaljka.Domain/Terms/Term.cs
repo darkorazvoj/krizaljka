@@ -6,7 +6,8 @@ public interface ITerm;
 public interface IValidTerm : ITerm
 {
     string Description { get; }
-    string Value { get; }
+    string RawValue { get; }
+    IReadOnlyList<string> Letters { get; }
     int Length { get; }
     int CategoryId { get; }
     List<int> SpaceIndexes { get; }
@@ -18,12 +19,16 @@ public interface IInvalidTerm : ITerm
     string Error { get; }
 }
 
-public record Term(string Description,
-
-    string Value,
-    int Length,
+public record Term(
+    TermLanguage Language,
+    string Description,
+    string RawValue,
+    IReadOnlyList<string> Letters,
     int CategoryId,
     List<int> SpaceIndexes,
-    List<int> DashIndexes) : IValidTerm;
+    List<int> DashIndexes) : IValidTerm
+{
+    public int Length => Letters.Count;
+}
 
 public record InvalidTerm(string Error): IInvalidTerm;

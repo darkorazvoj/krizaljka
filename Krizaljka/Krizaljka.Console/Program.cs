@@ -64,7 +64,7 @@ if (workingTemplate is not null)
 
     List<AssignedTerm> assignedSlotTerms = [
         new(26, 1, "interferencija".ToUpper()),
-        new(12, 1, "Imatikamenokovrata".ToUpper())
+        new(12, 1, "KraljevinaHrvatska".ToUpper())
     ];
 
 
@@ -154,7 +154,7 @@ if (workingTemplate is not null)
             //    var assignedSlot = assignedSlotTerms.FirstOrDefault(x => x.SlotId == slotId);
             //    if (assignedSlot is not null)
             //    {
-            //        return assignedSlot.Value[slotUsages[0].CharIndex].ToString();
+            //        return assignedSlot.RawValue[slotUsages[0].CharIndex].ToString();
             //    }
             //}
         }
@@ -177,7 +177,7 @@ if (workingTemplate is not null)
 
 //foreach (var kv in InMemoryDatabase.LengthTermsDb)
 //{
-//    Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
+//    Console.WriteLine($"{kv.Key}: {kv.RawValue.Count}");
 //}
 
 
@@ -186,8 +186,8 @@ if (InMemoryDatabase.LengthTermsDb.TryGetValue(18, out var listByLength))
     Console.WriteLine();
     foreach (var term in listByLength)
     {
-        Console.WriteLine(string.Join(',', term.Value));
-        //Console.WriteLine(term.Value);
+        Console.WriteLine(string.Join(',', term.RawValue));
+        //Console.WriteLine(term.RawValue);
     }
 }
 

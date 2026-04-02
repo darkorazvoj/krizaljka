@@ -1,4 +1,5 @@
 ﻿using Krizaljka.Domain.Extensions;
+using Krizaljka.Domain.WordsConverters;
 
 namespace Krizaljka.Domain.Terms;
 
@@ -6,7 +7,11 @@ public class StructureTermService
 {
     private const int DescriptionMaxLength = 36;
 
-    public ITerm Invoke(string description, string term, int category)
+    public static ITerm Invoke(
+        TermLanguage language, 
+        string description, 
+        string term, 
+        int category)
     {
         if (string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(term))
         {
@@ -26,29 +31,36 @@ public class StructureTermService
             return new InvalidTerm($"Term seems to be empty. Term: {termTrimmed}");
         }
 
+        var letters = CroatianWordConverter.GetLetters(termTrimmed);
+
         List<int> spaceIndexes = [];
         List<int> dashIndexes = [];
-        for (var i = 0; i < termTrimmed.Length; i++)
-        {
-            var c = termTrimmed[i];
 
-            if (c == ' ')
+        for (var i = 0; i < letters.Count; i++)
+        {
+            var c = letters[i].ToCharArray();
+
+            if (c is [' '])
             {
                 spaceIndexes.Add(i);
             }
 
-            if (c == '-')
+            if (c is ['-'])
             {
                 dashIndexes.Add(i);
             }
         }
 
-        var termCompressed = termTrimmed.RemoveWhiteSpaces();
+        var lettersDense = letters
+            .Where(s => !string.IsNullOrWhiteSpace(s) && s != "-")
+            .ToList()
+            .AsReadOnly();
 
         return new Term(
+            language,
             descCleaned,
-            termCompressed,
-            termCompressed.Length,
+            termTrimmed,
+            lettersDense,
             category,
             spaceIndexes,
             dashIndexes);

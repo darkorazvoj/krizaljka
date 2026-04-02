@@ -5,8 +5,6 @@ namespace Krizaljka.Console;
 
 public class TermsLoader
 {
-    private static readonly StructureTermService StructureTermService = new();
-
     public async Task LoadTermsAsync(string path)
     {
         var termsFiles = Directory.GetFiles(path).Select(Path.GetFullPath).ToList();
@@ -29,7 +27,7 @@ public class TermsLoader
                     continue;
                 }
                 
-                var parsedTermsFile = JsonSerializer.Deserialize<List<RawTerm>>(templateJson, options);
+                var parsedTermsFile = JsonSerializer.Deserialize<List<TermJson>>(templateJson, options);
 
                 if (parsedTermsFile is null)
                 {
@@ -40,7 +38,7 @@ public class TermsLoader
                 StructureTermsFromFile(parsedTermsFile, filesCategories[termsFile]);
 
             }
-            catch (Exception e)
+            catch
             {
                 System.Console.WriteLine($"{termsFile} is not valid JSON format.");
                 throw;
@@ -48,26 +46,26 @@ public class TermsLoader
         }
     }
 
-    private void StructureTermsFromFile(List<RawTerm> parsedTermsFile, int categoryId)
+    private void StructureTermsFromFile(List<TermJson> parsedTermsFile, int categoryId)
     {
         List<string> invalidTerms = [];
 
         foreach (var rawTerm in parsedTermsFile)
         {
-            var term = StructureTermService.Invoke(rawTerm.Description, rawTerm.Term, categoryId);
+            var term = StructureTermService.Invoke(TermLanguage.Croatian, rawTerm.Description, rawTerm.Term, categoryId);
 
             if (term is IValidTerm validTerm)
             {
-                if (InMemoryDatabase.TermsDb.TryGetValue(validTerm.Value, out var value))
+                if (InMemoryDatabase.TermsDb.TryGetValue(validTerm.RawValue, out var value))
                 {
                     value.Add(validTerm);
                 }
                 else
                 {
-                    InMemoryDatabase.TermsDb.Add(validTerm.Value, [validTerm]);
+                    InMemoryDatabase.TermsDb.Add(validTerm.RawValue, [validTerm]);
                 }
 
-                var length = validTerm.Value.Length;
+                var length = validTerm.Length;
                 if (InMemoryDatabase.LengthTermsDb.TryGetValue(length, out var list))
                 {
                     list.Add(validTerm);
@@ -114,7 +112,7 @@ public class TermsLoader
         foreach (var termsFile in termsFiles)
         {
             var categoryName = Path.GetFileNameWithoutExtension(termsFile);
-            var categoryId = 0;
+            int categoryId;
 
             if (
                 InMemoryDatabase.CategoriesDb.TryGetValue(categoryName, out var existingId))
