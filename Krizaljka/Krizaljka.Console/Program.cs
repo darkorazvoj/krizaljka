@@ -56,14 +56,14 @@ if (workingTemplate is not null)
 {
     var termsLoader = new TermsLoader();
     await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
-    Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
-    Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
-    Console.WriteLine("Number of terms per length:");
+    //Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
+    //Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
 
-    foreach (var kv in InMemoryDatabase.LengthTermsDb)
-    {
-        Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
-    }
+    //Console.WriteLine("Number of terms per length:");
+    //foreach (var kv in InMemoryDatabase.LengthTermsDb)
+    //{
+    //    Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
+    //}
 
 
     KrizaljkaAnalyzer krizaljkaAnalyzer = new();
@@ -72,6 +72,8 @@ if (workingTemplate is not null)
     List<AssignedTerm> assignedSlotTerms = [
         new(26, 1,  CroatianWordConverter.GetJustLetters("interferencija".ToUpper())),
         new(12, 1,  CroatianWordConverter.GetJustLetters("PROJEKTANTICASTANA".ToUpper())),
+        new(78, 1, CroatianWordConverter.GetJustLetters("dramatičari".ToUpper())),
+        new(53, 1, CroatianWordConverter.GetJustLetters("slastičarnice".ToUpper()))
     ];
 
 
@@ -185,14 +187,14 @@ if (workingTemplate is not null)
 //}
 
 
-if (InMemoryDatabase.LengthTermsDb.TryGetValue(18, out var listByLength))
-{
-    Console.WriteLine();
-    foreach (var term in listByLength)
-    {
-        Console.WriteLine(string.Join(',', term.RawValue));
-    }
-}
+//if (InMemoryDatabase.LengthTermsDb.TryGetValue(13, out var listByLength))
+//{
+//    Console.WriteLine();
+//    foreach (var term in listByLength)
+//    {
+//        Console.WriteLine(string.Join(',', term.RawValue));
+//    }
+//}
 
 
 
