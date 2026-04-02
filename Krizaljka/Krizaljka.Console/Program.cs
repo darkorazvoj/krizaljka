@@ -201,8 +201,8 @@ while (true)
                 [
                     new(26, 998, CroatianWordConverter.GetJustLetters("interferencija".ToUpperInvariant())),
                     new(12, 3498, CroatianWordConverter.GetJustLetters("PROJEKTANTICASTANA".ToUpperInvariant())),
-                    new(78, 1, CroatianWordConverter.GetJustLetters("dramatičari".ToUpperInvariant())),
-                    new(53, 1, CroatianWordConverter.GetJustLetters("slastičarnice".ToUpperInvariant()))
+                    new(78, 3195, CroatianWordConverter.GetJustLetters("dramatičari".ToUpperInvariant())),
+                    new(53, 3209, CroatianWordConverter.GetJustLetters("slastičarnice".ToUpperInvariant()))
                 ];
 
 
