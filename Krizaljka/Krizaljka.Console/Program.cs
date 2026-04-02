@@ -6,6 +6,7 @@ using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using System.Text;
 using System.Text.Json;
+using Krizaljka.Domain.WordsConverters;
 
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -63,8 +64,8 @@ if (workingTemplate is not null)
     var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
 
     List<AssignedTerm> assignedSlotTerms = [
-        new(26, 1, "interferencija".ToUpper()),
-        new(12, 1, "KraljevinaHrvatska".ToUpper())
+        new(26, 1,  CroatianWordConverter.GetJustLetters("interferencija".ToUpper())),
+        new(12, 1,  CroatianWordConverter.GetJustLetters("KraljevinaHrvatskaw".ToUpper()))
     ];
 
 
@@ -143,7 +144,7 @@ if (workingTemplate is not null)
                 var assignedSlot = assignedSlotTerms.FirstOrDefault(x => x.SlotId == slot.SlotId);
                 if (assignedSlot is not null)
                 {
-                    return assignedSlot.Value[slot.CharIndex].ToString();
+                    return assignedSlot.Letters[slot.CharIndex];
                 }
             }
 

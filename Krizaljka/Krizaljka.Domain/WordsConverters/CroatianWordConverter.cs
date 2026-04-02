@@ -27,4 +27,12 @@ public static class CroatianWordConverter
         }
         return letters.AsReadOnly();
     }
+
+    public static IReadOnlyList<string> GetJustLetters(string value)
+    {
+        var letters = GetLetters(value);
+        return letters.Where(s => !string.IsNullOrWhiteSpace(s) && s != "-")
+            .ToList()
+            .AsReadOnly();
+    }
 }
