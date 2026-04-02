@@ -57,6 +57,7 @@ public class StructureTermService
             .AsReadOnly();
 
         return new Term(
+            IdGenerator.GetNextId(),
             language,
             descCleaned,
             termTrimmed,

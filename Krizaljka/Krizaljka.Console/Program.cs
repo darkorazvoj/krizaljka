@@ -6,11 +6,56 @@ using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using System.Text;
 using System.Text.Json;
+using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.WordsConverters;
 
 Console.OutputEncoding = Encoding.UTF8;
 
 
+const string pojmoviPath = @"C:\git\krizaljka\pojmovi";
+const string dbPath = @"C:\git\krizaljka\pojmovi\db";
+const string pojmoviDbName = "pojmovi.json";
+const string categoriesDbName = "kategorije.json";
+
+if (args.Length > 0 && args[0] == "d")
+{
+    var termsLoader = new TermsLoader();
+    await termsLoader.LoadTermsAsync(pojmoviPath);
+
+    if (!Directory.Exists(dbPath))
+    {
+        Directory.CreateDirectory(dbPath);
+    }
+
+    List<CategoryJsonDbItem> categories = [];
+    foreach (var kv in InMemoryDatabase.CategoriesDb)
+    {
+        categories.Add(new CategoryJsonDbItem(kv.Key, kv.Value));
+    }
+
+    var categoryDb = new CategoryJsonDb(categories);
+
+    // Formatting options (Optional: Makes the JSON pretty/readable)
+    var options = new JsonSerializerOptions { WriteIndented = true };
+
+    var categoriesDbJson = JsonSerializer.Serialize(categoryDb, options);
+    File.WriteAllText( Path.Combine(dbPath, categoriesDbName), categoriesDbJson);
+
+    List<IValidTerm> validTerms = [];
+    foreach (var termsDbValue in InMemoryDatabase.TermsDb.Values)
+    {
+        foreach (var validTerm in termsDbValue)
+        {
+            validTerms.Add(validTerm);
+        }
+    }
+
+    var pojmoviDbJson = JsonSerializer.Serialize(new PojmoviJsonDb(validTerms), options);
+    File.WriteAllText(Path.Combine(dbPath, pojmoviDbName), pojmoviDbJson);
+
+    Console.WriteLine("Database Rebuilt!");
+    return;
+}
 
 
 const string templatesDir = @"C:\git\krizaljka\templates";
@@ -54,8 +99,8 @@ var workingTemplate = templates.FirstOrDefault(x => x.Id == 1);
 
 if (workingTemplate is not null)
 {
-    var termsLoader = new TermsLoader();
-    await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
+    //var termsLoader = new TermsLoader();
+    //await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
     //Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
     //Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
 
@@ -68,6 +113,7 @@ if (workingTemplate is not null)
 
     KrizaljkaAnalyzer krizaljkaAnalyzer = new();
     var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
+
 
     List<AssignedTerm> assignedSlotTerms = [
         new(26, 1,  CroatianWordConverter.GetJustLetters("interferencija".ToUpper())),

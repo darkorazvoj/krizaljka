@@ -1,0 +1,132 @@
+{
+  "Categories": [
+    {
+      "Name": "arhitektura",
+      "Id": 1
+    },
+    {
+      "Name": "automobili",
+      "Id": 2
+    },
+    {
+      "Name": "biologija",
+      "Id": 3
+    },
+    {
+      "Name": "dijalekt",
+      "Id": 4
+    },
+    {
+      "Name": "ekonomija",
+      "Id": 5
+    },
+    {
+      "Name": "enigmatskispecijaliteti",
+      "Id": 6
+    },
+    {
+      "Name": "filozofija",
+      "Id": 7
+    },
+    {
+      "Name": "fizika",
+      "Id": 8
+    },
+    {
+      "Name": "fotografija",
+      "Id": 9
+    },
+    {
+      "Name": "gastronomija",
+      "Id": 10
+    },
+    {
+      "Name": "glagoli",
+      "Id": 11
+    },
+    {
+      "Name": "gramatika",
+      "Id": 12
+    },
+    {
+      "Name": "imena",
+      "Id": 13
+    },
+    {
+      "Name": "it",
+      "Id": 14
+    },
+    {
+      "Name": "kemija",
+      "Id": 15
+    },
+    {
+      "Name": "kiparstvo",
+      "Id": 16
+    },
+    {
+      "Name": "kratice",
+      "Id": 17
+    },
+    {
+      "Name": "kultura",
+      "Id": 18
+    },
+    {
+      "Name": "matematika",
+      "Id": 19
+    },
+    {
+      "Name": "medicina",
+      "Id": 20
+    },
+    {
+      "Name": "mitologija",
+      "Id": 21
+    },
+    {
+      "Name": "moda",
+      "Id": 22
+    },
+    {
+      "Name": "opcipojmovi",
+      "Id": 23
+    },
+    {
+      "Name": "politika",
+      "Id": 24
+    },
+    {
+      "Name": "poslovice",
+      "Id": 25
+    },
+    {
+      "Name": "povijest",
+      "Id": 26
+    },
+    {
+      "Name": "prenesnoznacenje",
+      "Id": 27
+    },
+    {
+      "Name": "pridjevi",
+      "Id": 28
+    },
+    {
+      "Name": "sport",
+      "Id": 29
+    },
+    {
+      "Name": "stranerijeci",
+      "Id": 30
+    },
+    {
+      "Name": "umjetnost",
+      "Id": 31
+    },
+    {
+      "Name": "zemljopis",
+      "Id": 32
+    }
+  ]
+}

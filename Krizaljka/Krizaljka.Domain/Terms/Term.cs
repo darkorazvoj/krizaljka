@@ -5,6 +5,8 @@ public interface ITerm;
 
 public interface IValidTerm : ITerm
 {
+    long Id { get; }
+    TermLanguage Language { get; }
     string Description { get; }
     string RawValue { get; }
     IReadOnlyList<string> Letters { get; }
@@ -20,6 +22,7 @@ public interface IInvalidTerm : ITerm
 }
 
 public record Term(
+    long Id,
     TermLanguage Language,
     string Description,
     string RawValue,
