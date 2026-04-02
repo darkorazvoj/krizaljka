@@ -58,6 +58,12 @@ if (workingTemplate is not null)
     await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
     Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
     Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
+    Console.WriteLine("Number of terms per length:");
+
+    foreach (var kv in InMemoryDatabase.LengthTermsDb)
+    {
+        Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
+    }
 
 
     KrizaljkaAnalyzer krizaljkaAnalyzer = new();
@@ -188,7 +194,6 @@ if (InMemoryDatabase.LengthTermsDb.TryGetValue(18, out var listByLength))
     foreach (var term in listByLength)
     {
         Console.WriteLine(string.Join(',', term.RawValue));
-        //Console.WriteLine(term.RawValue);
     }
 }
 
