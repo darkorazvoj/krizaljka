@@ -1,4 +1,5 @@
-﻿using Krizaljka.Domain.TemplateAnalysis;
+﻿using Krizaljka.Domain.Caches;
+using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.Domain.Solver;
@@ -10,6 +11,18 @@ public sealed class KrizaljkaSolver
         IReadOnlyList<Term> terms,
         KrizaljkaSolveState state)
     {
+        if (CachedTerms.TermsByLength.Count == 0)
+        {
+            CachedTerms.TermsByLength = terms
+                .GroupBy(x => x.Length)
+                .ToDictionary(
+                    x => x.Key,
+                    x => (IReadOnlyList<Term>)x.OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
+                        .ToList());
+        }
+
+        return false;
+
         var slots = analysis.Slots;
         var slotsById = slots.ToDictionary(x => x.Id);
         var candidatesBySlotId = GetCandidatesBySlotId(analysis.Slots, terms);
@@ -136,52 +149,6 @@ public sealed class KrizaljkaSolver
 
         return slot;
     }
-
-    //private static KrizaljkaSlot? GetNextSlot(
-    //    IReadOnlyList<KrizaljkaSlot> slots,
-    //    IReadOnlyDictionary<int, IReadOnlyList<Term>> candidatesBySlotId,
-    //    KrizaljkaSolveState state)
-    //{
-    //    KrizaljkaSlot? bestSlot = null;
-    //    var bestCount = int.MaxValue;
-
-    //    foreach (var slot in slots)
-    //    {
-    //        if (state.IsAssigned(slot.Id))
-    //        {
-    //            continue;
-    //        }
-
-    //        if (!candidatesBySlotId.TryGetValue(slot.Id, out var candidates))
-    //        {
-    //         //   return slot;
-    //         continue;
-    //        }
-
-    //        var fittingCount = 0;
-
-    //        foreach (var term in candidates)
-    //        {
-    //            if (Fits(slot, term, state))
-    //            {
-    //                fittingCount++;
-    //            }
-    //        }
-
-    //        if (fittingCount < bestCount)
-    //        {
-    //            bestCount = fittingCount;
-    //            bestSlot = slot;
-
-    //            //if (bestCount == 0)
-    //            //{
-    //            //    return bestSlot;
-    //            //}
-    //        }
-    //    }
-
-    //    return bestSlot;
-    //}
 
     private static IReadOnlyList<SlotFittingCount> GetSlotFittingCounts(
         IReadOnlyList<KrizaljkaSlot> slots,
