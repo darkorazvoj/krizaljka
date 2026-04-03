@@ -21,12 +21,9 @@ public sealed class KrizaljkaSolver
                         .ToList());
         }
 
-        return false;
-
-        var slots = analysis.Slots;
-        var slotsById = slots.ToDictionary(x => x.Id);
-        var candidatesBySlotId = GetCandidatesBySlotId(analysis.Slots, terms);
-        return Solve(analysis.Slots, slotsById, candidatesBySlotId, state);
+        
+        var slotsById = analysis.Slots.ToDictionary(x => x.Id);
+        return Solve(analysis.Slots, slotsById, state);
     }
 
     public static bool TryPlaceAssignedTerm(
@@ -72,36 +69,19 @@ public sealed class KrizaljkaSolver
     private static bool Solve(
         IReadOnlyList<KrizaljkaSlot> slots,
         IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
-        IReadOnlyDictionary<int, IReadOnlyList<Term>> candidatesBySlotId,
         KrizaljkaSolveState state)
     {
-        var slotFittingCounts = GetSlotFittingCounts(slots, candidatesBySlotId, state);
-
-        if (slotFittingCounts.Any(x => x.FittingCount == 0))
+        if (!TryGetBestNextSlot(slots, state, out var nextSlot))
         {
             return false;
         }
-
-        //var unfittableSlots = slotFittingCounts.Where(x => x.FittingCount == 0).ToList();
-        //if (unfittableSlots.Count > 0)
-        //{
-        //    //foreach (var unfittableSlot in unfittableSlots)
-        //    //{
-        //    //    Console.WriteLine($"Slot {unfittableSlot.SlotId} (len {unfittableSlot.SlotLength}) fitting: {unfittableSlot.FittingCount}");
-        //    //}
-        //    return false;
-        //}
-
-
-        //var nextSlot = GetNextSlot(slots, candidatesBySlotId, state);
-        var nextSlot = GetNextSlot(slotsById, slotFittingCounts);
 
         if (nextSlot is null)
         {
             return true;
         }
 
-        if (!candidatesBySlotId.TryGetValue(nextSlot.Id, out var candidates))
+        if (!CachedTerms.TermsByLength.TryGetValue(nextSlot.Length, out var candidates))
         {
             return false;
         }
@@ -115,7 +95,7 @@ public sealed class KrizaljkaSolver
 
             var placement = Place(nextSlot, term, state);
 
-            if (Solve(slots, slotsById, candidatesBySlotId, state))
+            if (Solve(slots, slotsById, state))
             {
                 return true;
             }
@@ -126,36 +106,14 @@ public sealed class KrizaljkaSolver
         return false;
     }
 
-    private static KrizaljkaSlot? GetNextSlot(
-        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
-        IReadOnlyList<SlotFittingCount> slotFittingCounts)
+    private static bool TryGetBestNextSlot(
+        IReadOnlyList<KrizaljkaSlot> slots, 
+        KrizaljkaSolveState state, 
+        out KrizaljkaSlot? bestSlot)
     {
-        SlotFittingCount? best = null;
-
-        foreach (var slotFittingCount in slotFittingCounts)
-        {
-            if (best is null || slotFittingCount.FittingCount < best.FittingCount)
-            {
-                best = slotFittingCount;
-            }
-        }
-
-        if (best is null)
-        {
-            return null;
-        }
-
-        slotsById.TryGetValue(best.SlotId, out var slot);
-
-        return slot;
-    }
-
-    private static IReadOnlyList<SlotFittingCount> GetSlotFittingCounts(
-        IReadOnlyList<KrizaljkaSlot> slots,
-        IReadOnlyDictionary<int, IReadOnlyList<Term>> candidatesBySlotId,
-        KrizaljkaSolveState state)
-    {
-        List<SlotFittingCount> result = [];
+        bestSlot = null;
+        var bestCount = int.MaxValue;
+        var hasUnassignedSlots = false;
 
         foreach (var slot in slots)
         {
@@ -164,10 +122,11 @@ public sealed class KrizaljkaSolver
                 continue;
             }
 
-            if (!candidatesBySlotId.TryGetValue(slot.Id, out var candidates))
+            hasUnassignedSlots = true;
+
+            if (!CachedTerms.TermsByLength.TryGetValue(slot.Length, out var candidates))
             {
-                result.Add(new SlotFittingCount(slot.Id, slot.Length, 0));
-                continue;
+                return false;
             }
 
             var fittingCount = 0;
@@ -178,39 +137,39 @@ public sealed class KrizaljkaSolver
                 {
                     fittingCount++;
                 }
+
+                if (fittingCount == 0)
+                {
+                    return false;
+                }
+
+                if (fittingCount < bestCount)
+                {
+                    bestCount = fittingCount;
+                    bestSlot = slot;
+
+                    if (bestCount == 1)
+                    {
+                        return true;
+                    }
+                }
             }
-
-            result.Add(new SlotFittingCount(slot.Id, slot.Length, fittingCount));
         }
 
-        return result.AsReadOnly();
-    }
-
-    private static IReadOnlyDictionary<int, IReadOnlyList<Term>> GetCandidatesBySlotId(
-        IReadOnlyList<KrizaljkaSlot> slots,
-        IReadOnlyList<Term> terms)
-    {
-        Dictionary<int, IReadOnlyList<Term>> candidatesBySlotId = [];
-
-        foreach (var slot in slots)
+        if (!hasUnassignedSlots)
         {
-            var candidates = terms
-                .Where(x => x.Length == slot.Length)
-                .ToList()
-                .AsReadOnly();
-
-            candidatesBySlotId.Add(slot.Id, candidates);
+            bestSlot = null;
+            return true;
         }
 
-        return candidatesBySlotId;
+        return bestSlot is not null;
     }
-
+    
     private static bool Fits(
         KrizaljkaSlot slot,
         Term term,
         KrizaljkaSolveState state)
     {
-       // Console.WriteLine($"FITS: slotId: {slot.Id}, term: {term.RawValue}");
         if (state.IsAssigned(slot.Id))
         {
             return false;
