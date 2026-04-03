@@ -1,7 +1,7 @@
 ﻿
 namespace Krizaljka.Domain.Solver;
 
-public sealed class KrizaljkaSolvedState
+public sealed class KrizaljkaSolveState
 {
     public Dictionary<int, AssignedTerm> AssignedTermsBySlotId { get; } = [];
     public HashSet<long> UsedTermsIds { get; } = [];

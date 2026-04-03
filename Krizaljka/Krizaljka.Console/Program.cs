@@ -180,7 +180,7 @@ while (true)
 
                 KrizaljkaAnalyzer krizaljkaAnalyzer = new();
                 var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
-                KrizaljkaSolvedState krizaljkaState = new();
+                KrizaljkaSolveState krizaljkaState = new();
 
 
                 if(!KrizaljkaSolver.TryPlaceAssignedTerm(
