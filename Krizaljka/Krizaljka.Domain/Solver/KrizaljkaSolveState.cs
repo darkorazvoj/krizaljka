@@ -1,11 +1,25 @@
 ﻿
+using System.Text.Json.Serialization;
+
 namespace Krizaljka.Domain.Solver;
 
 public sealed class KrizaljkaSolveState
 {
-    public Dictionary<int, AssignedTerm> AssignedTermsBySlotId { get; } = [];
-    public HashSet<long> UsedTermsIds { get; } = [];
-    public Dictionary<(int Row, int Col), string> LettersByCell { get; } = [];
+    public Dictionary<int, AssignedTerm> AssignedTermsBySlotId { get; init; } = [];
+    public HashSet<long> UsedTermsIds { get; init; } = [];
+
+    [JsonIgnore]
+    public Dictionary<(int Row, int Col), string> LettersByCell { get; private set; } = [];
+
+    [JsonPropertyName("LettersByCell")] // The JSON uses this
+    public Dictionary<string, string> LettersByCellSerializable
+    {
+        get => LettersByCell.ToDictionary(k => $"{k.Key.Row}_{k.Key.Col}", v => v.Value);
+        set => LettersByCell = value.ToDictionary(
+            k => (int.Parse(k.Key.Split('_')[0]), int.Parse(k.Key.Split('_')[1])), 
+            v => v.Value
+        );
+    }
 
     public bool IsAssigned(int slotId) => AssignedTermsBySlotId.ContainsKey(slotId);
 }
