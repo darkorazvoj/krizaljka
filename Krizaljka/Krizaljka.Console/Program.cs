@@ -2,7 +2,6 @@
 
 using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
-using Krizaljka.Domain.KrizaljkaSolved;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
@@ -11,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Krizaljka.Domain.Solver;
 
 Console.OutputEncoding = Encoding.UTF8;
 
