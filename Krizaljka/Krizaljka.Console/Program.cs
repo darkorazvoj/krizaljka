@@ -183,70 +183,80 @@ while (true)
                 KrizaljkaSolveState krizaljkaState = new();
 
 
-                if(!KrizaljkaSolver.TryPlaceAssignedTerm(
-                    templateAnalysis,
-                    termsDb.Terms,
-                    26,
-                    998,
-                    krizaljkaState,
-                     out var error1))
+                if (where == "k" || where == "ks")
                 {
-                    Console.WriteLine($"1 - {error1}");
-                    Console.ReadKey();
-                    continue;
-                }
 
-
-                if (!KrizaljkaSolver.TryPlaceAssignedTerm(
-                       templateAnalysis,
-                       termsDb.Terms,
-                       12,
-                       3498,
-                       krizaljkaState,
-                       out var error2))
-                {
-                    Console.WriteLine($"2 - {error2}");
-                    Console.ReadKey();
-                    continue;
-                }
-
-                if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                    if (!KrizaljkaSolver.TryPlaceAssignedTerm(
                         templateAnalysis,
                         termsDb.Terms,
-                        78,
-                        3195,
+                        11,
+                        4,
                         krizaljkaState,
-                        out var error3))
-                {
-                    Console.WriteLine($"3 - {error3}");
-                    Console.ReadKey();
-                    continue;
-                }
+                         out var error1))
+                    {
+                        Console.WriteLine($"1 - {error1}");
+                        Console.ReadKey();
+                        
+                    }
 
-                
-                if (!KrizaljkaSolver.TryPlaceAssignedTerm(
-                        templateAnalysis,
-                        termsDb.Terms,
-                        53,
-                        3209,
-                        krizaljkaState,
-                        out var error4))
-                {
-                    Console.WriteLine($"4 - {error4}");
-                    Console.ReadKey();
-                    continue;
-                }
 
-                var solved = KrizaljkaSolver.TrySolve(templateAnalysis, termsDb.Terms, krizaljkaState);
+                    if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                           templateAnalysis,
+                           termsDb.Terms,
+                           57,
+                           3197,
+                           krizaljkaState,
+                           out var error2))
+                    {
+                        Console.WriteLine($"2 - {error2}");
+                        Console.ReadKey();
+                        
+                    }
 
-                if (!solved)
-                {
-                    Console.WriteLine("No solution found");
-                    Console.ReadKey();
-                }
-                else
-                {
-                    Console.WriteLine("SOLVED!!!!");   
+                    if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                            templateAnalysis,
+                            termsDb.Terms,
+                            29,
+                            746,
+                            krizaljkaState,
+                            out var error3))
+                    {
+                        Console.WriteLine($"3 - {error3}");
+                        Console.ReadKey();
+                        
+                    }
+
+
+                    //if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                    //        templateAnalysis,
+                    //        termsDb.Terms,
+                    //        37,
+                    //        4814,
+                    //        krizaljkaState,
+                    //        out var error4))
+                    //{
+                    //    Console.WriteLine($"4 - {error4}");
+                    //    Console.ReadKey();
+                        
+                    //}
+
+
+                    if (where == "ks")
+                    {
+                        Console.WriteLine("Solving...");
+                        var solved = KrizaljkaSolver.TrySolve(templateAnalysis, termsDb.Terms, krizaljkaState);
+
+                        if (!solved)
+                        {
+                            Console.WriteLine("No solution found");
+                            Console.ReadKey();
+                            continue;
+                        }
+                        else
+                        {
+                            Console.WriteLine("SOLVED!!!!");
+                        }
+                    }
                 }
 
                 var assignedSlotTerms = krizaljkaState.AssignedTermsBySlotId.Values.ToList();

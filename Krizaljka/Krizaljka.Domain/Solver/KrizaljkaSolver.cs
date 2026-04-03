@@ -64,10 +64,10 @@ public sealed class KrizaljkaSolver
         var unfittableSlots = slotFittingCounts.Where(x => x.FittingCount == 0).ToList();
         if (unfittableSlots.Count > 0)
         {
-            foreach (var unfittableSlot in unfittableSlots)
-            {
-                Console.WriteLine($"Slot {unfittableSlot.SlotId} (len {unfittableSlot.SlotLength}) fitting: {unfittableSlot.FittingCount}");
-            }
+            //foreach (var unfittableSlot in unfittableSlots)
+            //{
+            //    Console.WriteLine($"Slot {unfittableSlot.SlotId} (len {unfittableSlot.SlotLength}) fitting: {unfittableSlot.FittingCount}");
+            //}
             return false;
         }
 
@@ -268,7 +268,7 @@ public sealed class KrizaljkaSolver
                 newCells.Add(key);
             }
         }
-        Console.WriteLine($"Place slotId: {slot.Id} {term.RawValue}");
+      //  Console.WriteLine($"Place slotId: {slot.Id} {term.RawValue}");
         return new PlacementResult(slot.Id, term.Id, newCells.AsReadOnly());
     }
 
@@ -276,7 +276,7 @@ public sealed class KrizaljkaSolver
         PlacementResult placement,
         KrizaljkaSolveState state)
     {
-        Console.WriteLine($"UNDO slotId: {placement.SlotId}");
+      //  Console.WriteLine($"UNDO slotId: {placement.SlotId}");
         state.AssignedTermsBySlotId.Remove(placement.SlotId);
         state.UsedTermsIds.Remove(placement.TermId);
 
