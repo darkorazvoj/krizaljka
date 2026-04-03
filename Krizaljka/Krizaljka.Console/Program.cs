@@ -19,10 +19,25 @@ const string dbPath = @"C:\git\krizaljka\pojmovi\db";
 const string pojmoviDbName = "pojmovi.json";
 const string categoriesDbName = "kategorije.json";
 
+KrizaljkaSolveState krizaljkaState = new();
+
+var sbMainMenu = new StringBuilder();
+var mainMenu = sbMainMenu.AppendLine("Where?")
+    .AppendLine("d -> Create database")
+    .AppendLine("l -> lookup words")
+    .AppendLine("lk -> load krizaljka template")
+    .AppendLine("k -> Show current krizaljka")
+    .AppendLine("kp -> Assign pojam to krizaljka")
+    .AppendLine("ks -> Run krizaljka solver")
+    .ToString();
+
+
 while (true)
 {
     Console.Clear();
-    Console.WriteLine("Where (d, l, x)?");
+    
+
+    Console.WriteLine(mainMenu);
     var where = Console.ReadLine();
 
     if (where == "x")
@@ -85,16 +100,26 @@ while (true)
             {
                 Console.Clear();
                 Console.WriteLine("TERMS LOOKUP");
-                Console.Write("Length: ");
+                Console.Write("Length (x for exit): ");
                 var lengthString = Console.ReadLine();
+
+                if (lengthString == "x")
+                {
+                    break;
+                }
 
                 if (!int.TryParse(lengthString, out var length))
                 {
                     continue;
                 }
 
-                Console.Write("Search term: ");
+                Console.Write("Search term (x for exit): ");
                 var searchTerm = Console.ReadLine();
+
+                if (searchTerm == "x")
+                {
+                    break;
+                }
 
                 var denseSearchTerm =
                     string.IsNullOrWhiteSpace(searchTerm)
@@ -110,13 +135,24 @@ while (true)
                 }
 
                 var result = query.ToList();
+                var termsLoopCts = new CancellationTokenSource();
+                Console.WriteLine("Pojmovi (x for cancellation):");
 
-                Console.WriteLine("Pojmovi:");
-                foreach (var validTerm in result)
+                var termsLoopTask = Task.Run(() => { ListLookupTerms(result, termsLoopCts.Token); });
+
+                void ListLookupTerms(List<Term>? filteredTerms, CancellationToken listingFilteredTermsCt)
                 {
-                    Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}");
+                    foreach (var validTerm in filteredTerms ?? [])
+                    {
+                        if (listingFilteredTermsCt.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                        Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}");
+                    }
                 }
 
+                await termsLoopTask;
 
                 Console.Write("E(x)it or continue: ");
                 var anykey = Console.ReadLine();
@@ -127,7 +163,16 @@ while (true)
             }
 
             break;
-        default:
+
+        case "lk":
+
+
+            break;
+        case "k":
+
+            break;
+
+            default:
             const string templatesDir = @"C:\git\krizaljka\templates";
             var templateNames = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
 
@@ -166,7 +211,7 @@ while (true)
                 Console.WriteLine($"Template Num of Rows: {krizaljkaTemplate.Rows.Length}");
             }
 
-            var workingTemplate = templates.FirstOrDefault(x => x.Id == 1);
+            var workingTemplate = templates.FirstOrDefault(x => x.Id == 2);
 
             if (workingTemplate is not null)
             {
@@ -180,51 +225,54 @@ while (true)
 
                 KrizaljkaAnalyzer krizaljkaAnalyzer = new();
                 var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
-                KrizaljkaSolveState krizaljkaState = new();
+//                KrizaljkaSolveState krizaljkaState = new();
 
 
                 if (where == "k" || where == "ks")
                 {
 
-                    if (!KrizaljkaSolver.TryPlaceAssignedTerm(
-                        templateAnalysis,
-                        termsDb.Terms,
-                        11,
-                        4,
-                        krizaljkaState,
-                         out var error1))
-                    {
-                        Console.WriteLine($"1 - {error1}");
-                        Console.ReadKey();
-                        
-                    }
 
 
-                    if (!KrizaljkaSolver.TryPlaceAssignedTerm(
-                           templateAnalysis,
-                           termsDb.Terms,
-                           57,
-                           3197,
-                           krizaljkaState,
-                           out var error2))
-                    {
-                        Console.WriteLine($"2 - {error2}");
-                        Console.ReadKey();
-                        
-                    }
 
-                    if (!KrizaljkaSolver.TryPlaceAssignedTerm(
-                            templateAnalysis,
-                            termsDb.Terms,
-                            29,
-                            746,
-                            krizaljkaState,
-                            out var error3))
-                    {
-                        Console.WriteLine($"3 - {error3}");
-                        Console.ReadKey();
+                    //if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                    //    templateAnalysis,
+                    //    termsDb.Terms,
+                    //    11,
+                    //    4,
+                    //    krizaljkaState,
+                    //     out var error1))
+                    //{
+                    //    Console.WriteLine($"1 - {error1}");
+                    //    Console.ReadKey();
                         
-                    }
+                    //}
+
+
+                    //if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                    //       templateAnalysis,
+                    //       termsDb.Terms,
+                    //       57,
+                    //       3197,
+                    //       krizaljkaState,
+                    //       out var error2))
+                    //{
+                    //    Console.WriteLine($"2 - {error2}");
+                    //    Console.ReadKey();
+                        
+                    //}
+
+                    //if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                    //        templateAnalysis,
+                    //        termsDb.Terms,
+                    //        29,
+                    //        746,
+                    //        krizaljkaState,
+                    //        out var error3))
+                    //{
+                    //    Console.WriteLine($"3 - {error3}");
+                    //    Console.ReadKey();
+                        
+                    //}
 
 
                     //if (!KrizaljkaSolver.TryPlaceAssignedTerm(
@@ -362,3 +410,5 @@ while (true)
 }
 
 Console.WriteLine("THE END");
+
+
