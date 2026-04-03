@@ -20,7 +20,8 @@ const string pojmoviDbName = "pojmovi.json";
 const string categoriesDbName = "kategorije.json";
 const string templatesDir = @"C:\git\krizaljka\templates";
 
-KrizaljkaSolveState krizaljkaState = new();
+KrizaljkaTemplate? currentKrizaljkaTemplate = null;
+KrizaljkaSolveState? currentKrizaljkaState = new();
 
 var sbMainMenu = new StringBuilder();
 var mainMenu = sbMainMenu.AppendLine("Where?")
@@ -207,15 +208,79 @@ while (true)
                 {
                     break;
                 }
+
+                if(!int.TryParse(krizaljkaTemplateIdString, out var krizaljkaTemplateId))
+                {
+                    break;
+                }
+
+                var templateNamesForLoadOne = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
+                foreach (var templateName in templateNamesForLoadOne)
+                {
+                    try
+                    {
+                        var templateJson = await File.ReadAllTextAsync(templateName);
+                        if (string.IsNullOrWhiteSpace(templateJson))
+                        {
+                            continue;
+                        }
+
+                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
+
+                        if (parsedTemplate?.Id == krizaljkaTemplateId)
+                        {
+                            currentKrizaljkaTemplate = parsedTemplate;
+
+                            var templateStateFileName = GetTemplateStateFileName(templateName);
+                            if (File.Exists(templateStateFileName))
+                            {
+                                try
+                                {
+                                    var currentKrizaljkaStateJson = await File.ReadAllTextAsync(templateStateFileName);
+                                    currentKrizaljkaState =
+                                        JsonSerializer.Deserialize<KrizaljkaSolveState>(currentKrizaljkaStateJson);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
+                                }
+                            }
+
+                            currentKrizaljkaState ??= new KrizaljkaSolveState();
+                            Console.WriteLine("Template loaded...");
+                            Console.ReadKey();
+
+                            break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Template loading FAILED!");
+                        Console.ReadKey();
+                    }
+                }
+
+                break;
             }
 
             break;
         case "k":
+            if (currentKrizaljkaTemplate is null)
+            {
+                Console.WriteLine("No template loaded...");
+                Console.ReadKey();
+                continue;
+            }
 
+            currentKrizaljkaState ??= new KrizaljkaSolveState();
+            PrintKrizaljka(currentKrizaljkaTemplate, GetKrizaljkaTemplateAnalysis(currentKrizaljkaTemplate), currentKrizaljkaState.AssignedTermsBySlotId.Values.ToList());
+            Console.ReadKey();
             break;
 
             default:
-            //const string templatesDir = @"C:\git\krizaljka\templates";
             var templateNames = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
 
             List<KrizaljkaTemplate> templates = [];
@@ -265,9 +330,8 @@ while (true)
                 }
 
 
-                KrizaljkaAnalyzer krizaljkaAnalyzer = new();
-                var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
-//                KrizaljkaSolveState krizaljkaState = new();
+                var templateAnalysis = GetKrizaljkaTemplateAnalysis(workingTemplate);
+                //                KrizaljkaSolveState krizaljkaState = new();
 
 
                 if (where == "k" || where == "ks")
@@ -333,8 +397,10 @@ while (true)
 
                     if (where == "ks")
                     {
+                        currentKrizaljkaState ??= new KrizaljkaSolveState();
+
                         Console.WriteLine("Solving...");
-                        var solved = KrizaljkaSolver.TrySolve(templateAnalysis, termsDb.Terms, krizaljkaState);
+                        var solved = KrizaljkaSolver.TrySolve(templateAnalysis, termsDb.Terms, currentKrizaljkaState);
 
                         if (!solved)
                         {
@@ -348,98 +414,10 @@ while (true)
                         }
                     }
                 }
+                currentKrizaljkaState ??= new KrizaljkaSolveState();
+                var assignedSlotTerms = currentKrizaljkaState.AssignedTermsBySlotId.Values.ToList();
 
-                var assignedSlotTerms = krizaljkaState.AssignedTermsBySlotId.Values.ToList();
-
-                StringBuilder sb = new();
-                var krizaljka = workingTemplate.Rows;
-                for (var r = 0; r < krizaljka.Length; r++)
-                {
-                    for (var c = 0; c < krizaljka[r].Length; c++)
-                    {
-                        //sb.Append(krizaljka[r][c]);
-                        sb.Append($"{GetCellCharacter(krizaljka[r][c]),-7}");
-
-                        string GetCellCharacter(int i)
-                        {
-                            switch (i)
-                            {
-                                case 0:
-                                    return "\u25CF";
-                                case 1:
-                                case 2:
-                                case 3:
-                                    //return "\u25A0";
-                                    return GetSlotIds(r, c);
-                                default:
-                                    return GetInputValue(r, c);
-                            }
-                        }
-
-                        sb.Append("    ");
-                    }
-
-                    sb
-                        .AppendLine()
-                        .AppendLine();
-                }
-
-                Console.WriteLine(sb.ToString());
-
-                string GetSlotIds(int rr, int cc)
-                {
-                    var slotIdsWithDirection = templateAnalysis.Slots
-                        .Where(x => x.Row == rr && x.Col == cc)
-                        .Select(x => new { x.Id, x.Direction })
-                        .ToList();
-
-                    StringBuilder sb1 = new();
-
-
-                    foreach (var idDirection in slotIdsWithDirection)
-                    {
-                        sb1.Append(idDirection.Id)
-                            .Append("")
-                            .Append(idDirection.Direction == KrizaljkaDirection.Right ? ">" : "V")
-                            .Append("/");
-                    }
-
-                    if (sb1.Length > 0)
-                    {
-                        sb1.Remove(sb1.Length - 1, 1);
-                    }
-
-                    return sb1.ToString();
-                }
-
-                string GetInputValue(int ir, int ic)
-                {
-                    if (templateAnalysis.CellSlots.TryGetValue((ir, ic), out var slotUsages))
-                    {
-                        foreach (var slot in slotUsages)
-                        {
-
-                            var assignedSlot = assignedSlotTerms.FirstOrDefault(x => x.SlotId == slot.SlotId);
-                            if (assignedSlot is not null)
-                            {
-                                return assignedSlot.Letters[slot.CharIndex].ToUpperInvariant();
-                            }
-                        }
-
-                        //if (slotUsages.Count > 0)
-                        //{
-                        //    var slotId = slotUsages[0].SlotId;
-
-                        //    var assignedSlot = assignedSlotTerms.FirstOrDefault(x => x.SlotId == slotId);
-                        //    if (assignedSlot is not null)
-                        //    {
-                        //        return assignedSlot.RawValue[slotUsages[0].CharIndex].ToString();
-                        //    }
-                        //}
-                    }
-
-                    return "-";
-                }
+                PrintKrizaljka(workingTemplate, templateAnalysis, assignedSlotTerms);
             }
 
 
@@ -452,5 +430,97 @@ while (true)
 }
 
 Console.WriteLine("THE END");
+
+static string GetTemplateStateFileName(string templateName) => $"{templateName}_state";
+
+void PrintKrizaljka(
+    KrizaljkaTemplate templateForPrint, 
+    KrizaljkaTemplateAnalysis krizaljkaTemplateAnalysis,
+    List<AssignedTerm> assignedTerms)
+{
+    Console.WriteLine($"Krizaljka template: {templateForPrint.Id}");
+
+    StringBuilder sb = new();
+    var krizaljka = templateForPrint.Rows;
+    for (var r = 0; r < krizaljka.Length; r++)
+    {
+        for (var c = 0; c < krizaljka[r].Length; c++)
+        {
+            //sb.Append(krizaljka[r][c]);
+            sb.Append($"{GetCellCharacter(krizaljka[r][c]),-7}");
+
+            string GetCellCharacter(int i)
+            {
+                switch (i)
+                {
+                    case 0:
+                        return "\u25CF";
+                    case 1:
+                    case 2:
+                    case 3:
+                        //return "\u25A0";
+                        return GetSlotIds(r, c);
+                    default:
+                        return GetInputValue(r, c);
+                }
+            }
+
+            sb.Append("    ");
+        }
+
+        sb
+            .AppendLine()
+            .AppendLine();
+    }
+
+    Console.WriteLine(sb.ToString());
+
+    string GetSlotIds(int rr, int cc)
+    {
+        var slotIdsWithDirection = krizaljkaTemplateAnalysis.Slots
+            .Where(x => x.Row == rr && x.Col == cc)
+            .Select(x => new { x.Id, x.Direction })
+            .ToList();
+
+        StringBuilder sb1 = new();
+
+
+        foreach (var idDirection in slotIdsWithDirection)
+        {
+            sb1.Append(idDirection.Id)
+                .Append("")
+                .Append(idDirection.Direction == KrizaljkaDirection.Right ? ">" : "V")
+                .Append("/");
+        }
+
+        if (sb1.Length > 0)
+        {
+            sb1.Remove(sb1.Length - 1, 1);
+        }
+
+        return sb1.ToString();
+    }
+
+    string GetInputValue(int ir, int ic)
+    {
+        if (krizaljkaTemplateAnalysis.CellSlots.TryGetValue((ir, ic), out var slotUsages))
+        {
+            foreach (var slot in slotUsages)
+            {
+
+                var assignedSlot = assignedTerms.FirstOrDefault(x => x.SlotId == slot.SlotId);
+                if (assignedSlot is not null)
+                {
+                    return assignedSlot.Letters[slot.CharIndex].ToUpperInvariant();
+                }
+            }
+        }
+
+        return "-";
+    }
+}
+
+KrizaljkaTemplateAnalysis GetKrizaljkaTemplateAnalysis(KrizaljkaTemplate templateToAnalyse) =>
+    new KrizaljkaAnalyzer().GeTemplateAnalysis(templateToAnalyse);
 
 
