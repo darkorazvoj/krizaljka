@@ -18,6 +18,7 @@ const string pojmoviPath = @"C:\git\krizaljka\pojmovi";
 const string dbPath = @"C:\git\krizaljka\pojmovi\db";
 const string pojmoviDbName = "pojmovi.json";
 const string categoriesDbName = "kategorije.json";
+const string templatesDir = @"C:\git\krizaljka\templates";
 
 KrizaljkaSolveState krizaljkaState = new();
 
@@ -25,6 +26,7 @@ var sbMainMenu = new StringBuilder();
 var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("d -> Create database")
     .AppendLine("l -> lookup words")
+    .AppendLine("kts => show krizaljka templates list")
     .AppendLine("lk -> load krizaljka template")
     .AppendLine("k -> Show current krizaljka")
     .AppendLine("kp -> Assign pojam to krizaljka")
@@ -164,8 +166,48 @@ while (true)
 
             break;
 
-        case "lk":
+        case "kts":
+            var templateNamesForShow = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
+            Console.WriteLine("Template IDs:");
+            foreach (var templateName in templateNamesForShow)
+            {
+                try
+                {
+                    var templateJson = await File.ReadAllTextAsync(templateName);
+                    if (string.IsNullOrWhiteSpace(templateJson))
+                    {
+                        continue;
+                    }
 
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
+
+                    
+                    if (parsedTemplate?.Id is not null)
+                    {
+                        Console.WriteLine(parsedTemplate.Id);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+            Console.ReadKey();
+            break;
+
+        case "lk":
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Krizaljka template id (x for exit):");
+                var krizaljkaTemplateIdString = Console.ReadLine();
+                if (krizaljkaTemplateIdString == "x")
+                {
+                    break;
+                }
+            }
 
             break;
         case "k":
@@ -173,7 +215,7 @@ while (true)
             break;
 
             default:
-            const string templatesDir = @"C:\git\krizaljka\templates";
+            //const string templatesDir = @"C:\git\krizaljka\templates";
             var templateNames = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
 
             List<KrizaljkaTemplate> templates = [];
