@@ -1,5 +1,6 @@
 ﻿
 
+using System.Diagnostics;
 using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.Template;
@@ -388,7 +389,14 @@ while (true)
                 continue;
             }
 
+            var timer = Stopwatch.StartNew();
             var solved = KrizaljkaSolver.TrySolve(currentKrizaljkaTemplateAnalysis, termsDb.Terms, currentKrizaljkaState);
+
+            timer.Stop();
+            var ts = timer.Elapsed;
+            var elapsed = $"{ts.Minutes:00}:{ts.Seconds:00}";
+
+            Console.WriteLine($"Total Time: {elapsed}");
 
             if (!solved)
             {
