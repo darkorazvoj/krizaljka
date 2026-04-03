@@ -86,8 +86,13 @@ public sealed class KrizaljkaSolver
             return false;
         }
 
-        foreach (var term in candidates)
+        foreach (var term in GetMatchingTerms(nextSlot, candidates, state))
         {
+            if (state.UsedTermsIds.Contains(term.Id))
+            {
+                continue;
+            }
+
             if (!Fits(nextSlot, term, state))
             {
                 continue;
@@ -131,27 +136,29 @@ public sealed class KrizaljkaSolver
 
             var fittingCount = 0;
 
-            foreach (var term in candidates)
+            foreach (var term in GetMatchingTerms(slot, candidates, state))
             {
-                if (Fits(slot, term, state))
+                if (state.UsedTermsIds.Contains(term.Id))
                 {
-                    fittingCount++;
+                    continue;
                 }
 
-                if (fittingCount == 0)
-                {
-                    return false;
-                }
+                fittingCount++;
+            }
 
-                if (fittingCount < bestCount)
-                {
-                    bestCount = fittingCount;
-                    bestSlot = slot;
+            if (fittingCount == 0)
+            {
+                return false;
+            }
 
-                    if (bestCount == 1)
-                    {
-                        return true;
-                    }
+            if (fittingCount < bestCount)
+            {
+                bestCount = fittingCount;
+                bestSlot = slot;
+
+                if (bestCount == 1)
+                {
+                    return true;
                 }
             }
         }
@@ -243,6 +250,36 @@ public sealed class KrizaljkaSolver
         {
             state.LettersByCell.Remove(cell);
         }
+    }
+
+    private static IEnumerable<Term> GetMatchingTerms(
+        KrizaljkaSlot slot,
+        IReadOnlyList<Term> terms,
+        KrizaljkaSolveState state)
+    {
+        foreach (var term in terms)
+        {
+            var matches = true;
+
+            for (var i = 0; i < slot.Cells.Count; i++)
+            {
+                var cell = slot.Cells[i];
+                var key = (cell.Row, cell.Col);
+
+                if (state.LettersByCell.TryGetValue(key, out var existingLetter) &&
+                    term.Letters[i] != existingLetter)
+                {
+                    matches = false;
+                    break;
+                }
+            }
+
+            if (matches)
+            {
+                yield return term;
+            }
+        }
+
     }
 
 }
