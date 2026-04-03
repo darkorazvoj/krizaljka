@@ -5,13 +5,53 @@ namespace Krizaljka.Domain.Solver;
 
 public sealed class KrizaljkaSolver
 {
-    public bool TrySolve(
+    public static bool TrySolve(
         KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         KrizaljkaSolvedState state)
     {
         var candidatesBySlotId = GetCandidatesBySlotId(analysis.Slots, terms);
         return Solve(analysis.Slots, candidatesBySlotId, state);
+    }
+
+    public static bool TryPlaceAssignedTerm(
+        KrizaljkaTemplateAnalysis analysis,
+        IReadOnlyList<Term> terms,
+        int slotId,
+        long termId,
+        KrizaljkaSolvedState state, 
+        out string? error)
+    {
+        error = null;
+
+        if (state.IsAssigned(slotId))
+        {
+            error = "SlotAssigned";
+            return false;
+        }
+
+        var slot = analysis.Slots.FirstOrDefault(x => x.Id == slotId);
+        if (slot is null)
+        {
+            error = "SlotNotFound";
+            return false;
+        }
+
+        var term = terms.FirstOrDefault(x => x.Id == termId);
+        if (term is null)
+        {
+            error = "TermNotFound";
+            return false;
+        }
+
+        if (!Fits(slot, term, state))
+        {
+            error = "TermDoesNotFit";
+            return false;
+        }
+
+        Place(slot, term, state);
+        return true;
     }
 
     private static bool Solve(
@@ -84,6 +124,7 @@ public sealed class KrizaljkaSolver
         Term term,
         KrizaljkaSolvedState state)
     {
+       // Console.WriteLine($"FITS: slotId: {slot.Id}, term: {term.RawValue}");
         if (state.IsAssigned(slot.Id))
         {
             return false;
@@ -107,7 +148,7 @@ public sealed class KrizaljkaSolver
             var key = (slotCell.Row, slotCell.Col);
 
             if (state.LettersByCell.TryGetValue(key, out var existingLetter) &&
-                existingLetter != termLetter)
+                !existingLetter.Equals(termLetter, StringComparison.CurrentCultureIgnoreCase))
             {
                 return false;
             }
@@ -121,6 +162,7 @@ public sealed class KrizaljkaSolver
         Term term,
         KrizaljkaSolvedState state)
     {
+       
         List<(int Row, int Cell)> newCells = [];
 
         state.AssignedTermsBySlotId.Add(
@@ -140,7 +182,7 @@ public sealed class KrizaljkaSolver
                 newCells.Add(key);
             }
         }
-
+        Console.WriteLine($"Place slotId: {slot.Id} {term.RawValue}");
         return new PlacementResult(slot.Id, term.Id, newCells.AsReadOnly());
     }
 
@@ -148,6 +190,7 @@ public sealed class KrizaljkaSolver
         PlacementResult placement,
         KrizaljkaSolvedState state)
     {
+        Console.WriteLine($"UNDO slotId: {placement.SlotId}");
         state.AssignedTermsBySlotId.Remove(placement.SlotId);
         state.UsedTermsIds.Remove(placement.TermId);
 
@@ -156,4 +199,5 @@ public sealed class KrizaljkaSolver
             state.LettersByCell.Remove(cell);
         }
     }
+
 }

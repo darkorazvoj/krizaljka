@@ -5,7 +5,6 @@ using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
-using Krizaljka.Domain.WordsConverters;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -23,7 +22,7 @@ const string categoriesDbName = "kategorije.json";
 while (true)
 {
     Console.Clear();
-    Console.WriteLine("Where (d, l, k, x)?");
+    Console.WriteLine("Where (d, l, x)?");
     var where = Console.ReadLine();
 
     if (where == "x")
@@ -75,29 +74,10 @@ while (true)
             break;
 
         case "l":
-            var pojmoviDbJson = File.ReadAllText(Path.Combine(dbPath, pojmoviDbName));
-            if (string.IsNullOrWhiteSpace(pojmoviDbJson))
-            {
-                Console.WriteLine("No or empty pojmovi DB file");
-                return;
-            }
-
-            var options2 = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            PojmoviJsonDb? pojmoviDb;
-            try
-            {
-                pojmoviDb = JsonSerializer.Deserialize<PojmoviJsonDb>(pojmoviDbJson, options2);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return;
-            }
-
+            var pojmoviDb = TermsManager.LoadTerms();
             if (pojmoviDb is null)
             {
-                Console.WriteLine("Pojmovi db not a valid object");
+                Console.WriteLine("Pojmovi db is null");
                 return;
             }
 
@@ -190,30 +170,86 @@ while (true)
 
             if (workingTemplate is not null)
             {
-                //var termsLoader = new TermsLoader();
-                //await termsLoader.LoadTermsAsync(@"C:\git\krizaljka\pojmovi");
-                //Console.WriteLine($"Number of categories: {InMemoryDatabase.CategoriesDb.Count}");
-                //Console.WriteLine($"Number of loaded terms: {InMemoryDatabase.TermsDb.Count}");
-
-                //Console.WriteLine("Number of terms per length:");
-                //foreach (var kv in InMemoryDatabase.LengthTermsDb)
-                //{
-                //    Console.WriteLine($"{kv.Key}: {kv.Value.Count}");
-                //}
+                var termsDb = TermsManager.LoadTerms();
+                if (termsDb is null)
+                {
+                    Console.WriteLine("Pojmovi db is null");
+                    return;
+                }
 
 
                 KrizaljkaAnalyzer krizaljkaAnalyzer = new();
                 var templateAnalysis = krizaljkaAnalyzer.GeTemplateAnalysis(workingTemplate);
+                KrizaljkaSolvedState krizaljkaState = new();
 
 
-                List<AssignedTerm> assignedSlotTerms =
-                [
-                    new(26, 998, CroatianWordConverter.GetJustLetters("interferencija".ToUpperInvariant())),
-                    new(12, 3498, CroatianWordConverter.GetJustLetters("PROJEKTANTICASTANA".ToUpperInvariant())),
-                    new(78, 3195, CroatianWordConverter.GetJustLetters("dramatičari".ToUpperInvariant())),
-                    new(53, 3209, CroatianWordConverter.GetJustLetters("slastičarnice".ToUpperInvariant()))
-                ];
+                if(!KrizaljkaSolver.TryPlaceAssignedTerm(
+                    templateAnalysis,
+                    termsDb.Terms,
+                    26,
+                    998,
+                    krizaljkaState,
+                     out var error1))
+                {
+                    Console.WriteLine($"1 - {error1}");
+                    Console.ReadKey();
+                    continue;
+                }
 
+
+                if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                       templateAnalysis,
+                       termsDb.Terms,
+                       12,
+                       3498,
+                       krizaljkaState,
+                       out var error2))
+                {
+                    Console.WriteLine($"2 - {error2}");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                        templateAnalysis,
+                        termsDb.Terms,
+                        78,
+                        3195,
+                        krizaljkaState,
+                        out var error3))
+                {
+                    Console.WriteLine($"3 - {error3}");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                
+                if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+                        templateAnalysis,
+                        termsDb.Terms,
+                        53,
+                        3209,
+                        krizaljkaState,
+                        out var error4))
+                {
+                    Console.WriteLine($"4 - {error4}");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                var solved = KrizaljkaSolver.TrySolve(templateAnalysis, termsDb.Terms, krizaljkaState);
+
+                if (!solved)
+                {
+                    Console.WriteLine("No solution found");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("SOLVED!!!!");   
+                }
+
+                var assignedSlotTerms = krizaljkaState.AssignedTermsBySlotId.Values.ToList();
 
                 StringBuilder sb = new();
                 var krizaljka = workingTemplate.Rows;
@@ -286,7 +322,7 @@ while (true)
                             var assignedSlot = assignedSlotTerms.FirstOrDefault(x => x.SlotId == slot.SlotId);
                             if (assignedSlot is not null)
                             {
-                                return assignedSlot.Letters[slot.CharIndex];
+                                return assignedSlot.Letters[slot.CharIndex].ToUpperInvariant();
                             }
                         }
 
@@ -305,6 +341,9 @@ while (true)
                     return "-";
                 }
             }
+
+
+
 
             Console.WriteLine("Continue...");
             Console.ReadKey();
