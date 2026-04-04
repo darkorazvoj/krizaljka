@@ -347,7 +347,7 @@ while (true)
             }
 
 
-            if (!KrizaljkaSolver.TryPlaceAssignedTerm(
+            if (!KrizaljkaCreator.TryPlaceAssignedTerm(
                 currentKrizaljkaTemplateAnalysis ?? GetKrizaljkaTemplateAnalysis(currentKrizaljkaTemplate),
                 termsDb.Terms,
                 slotIdInput,
@@ -391,7 +391,7 @@ while (true)
 
             var timer = Stopwatch.StartNew();
             Console.WriteLine($"Started: {DateTime.Now}");
-            var solved = KrizaljkaSolver.TrySolve(currentKrizaljkaTemplateAnalysis, termsDb.Terms, currentKrizaljkaState);
+            var createResult = KrizaljkaCreator.TrySolve(currentKrizaljkaTemplateAnalysis, termsDb.Terms, currentKrizaljkaState);
 
             timer.Stop();
             var ts = timer.Elapsed;
@@ -399,7 +399,7 @@ while (true)
 
             Console.WriteLine($"Total Time: {elapsed}");
 
-            if (!solved)
+            if (!createResult.IsCreated)
             {
                 Console.WriteLine("No solution found");
                 Console.ReadKey();

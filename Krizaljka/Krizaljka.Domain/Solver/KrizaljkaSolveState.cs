@@ -22,4 +22,19 @@ public sealed class KrizaljkaSolveState
     }
 
     public bool IsAssigned(int slotId) => AssignedTermsBySlotId.ContainsKey(slotId);
+
+    public KrizaljkaSolveState DeepClone()
+    {
+        return new KrizaljkaSolveState
+        {
+            // Dictionaries and HashSets have constructors that take an existing 
+            // collection to create a shallow copy of the contents.
+            AssignedTermsBySlotId = new Dictionary<int, AssignedTerm>(this.AssignedTermsBySlotId),
+            UsedTermsIds = [..UsedTermsIds],
+        
+            // Since we are creating a new dictionary and filling it with 
+            // the same value references, the state is protected.
+            LettersByCell = new Dictionary<(int Row, int Col), string>(this.LettersByCell)
+        };
+    }
 }

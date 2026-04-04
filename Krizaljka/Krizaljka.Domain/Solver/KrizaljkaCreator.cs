@@ -4,19 +4,22 @@ using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.Domain.Solver;
 
-public sealed class KrizaljkaSolver
+public sealed class KrizaljkaCreator
 {
-    public static bool TrySolve(
+    public static KrizaljkaCreateResult TrySolve(
         KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         KrizaljkaSolveState state)
     {
+        var newState = state.DeepClone();
         EnsureTermsByLengthCache(terms);
 
         var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(analysis.Intersections);
         
         var slotsById = analysis.Slots.ToDictionary(x => x.Id);
-        return Solve(analysis.Slots, slotsById, neighborSlotsIdsBySlotId, state);
+        var solved = Solve(analysis.Slots, slotsById, neighborSlotsIdsBySlotId, newState);
+
+        return new KrizaljkaCreateResult(solved, newState);
     }
 
     private static void EnsureTermsByLengthCache(IReadOnlyList<Term> terms)
