@@ -201,6 +201,11 @@ while (true)
             break;
 
         case "lk":
+            currentKrizaljkaTemplate = null;
+            currentTemplateName = null;
+            currentKrizaljkaTemplateAnalysis = null;
+            currentKrizaljkaState = null;
+
             while (true)
             {
                 Console.Clear();
