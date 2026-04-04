@@ -11,6 +11,16 @@ public sealed class KrizaljkaSolver
         IReadOnlyList<Term> terms,
         KrizaljkaSolveState state)
     {
+        EnsureTermsByLengthCache(terms);
+
+        var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(analysis.Intersections);
+        
+        var slotsById = analysis.Slots.ToDictionary(x => x.Id);
+        return Solve(analysis.Slots, slotsById, neighborSlotsIdsBySlotId, state);
+    }
+
+    private static void EnsureTermsByLengthCache(IReadOnlyList<Term> terms)
+    {
         if (CachedTerms.TermsByLength.Count == 0)
         {
             CachedTerms.TermsByLength = terms
@@ -20,11 +30,6 @@ public sealed class KrizaljkaSolver
                     x => (IReadOnlyList<Term>)x.OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
                         .ToList());
         }
-
-        var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(analysis.Intersections);
-        
-        var slotsById = analysis.Slots.ToDictionary(x => x.Id);
-        return Solve(analysis.Slots, slotsById, neighborSlotsIdsBySlotId, state);
     }
 
     public static bool TryPlaceAssignedTerm(
@@ -340,7 +345,7 @@ public sealed class KrizaljkaSolver
                 return false;
             }
 
-            if(!CachedTerms.TermsByLength.TryGetValue(neighborSlot.Length, out var candidates))
+            if (!CachedTerms.TermsByLength.TryGetValue(neighborSlot.Length, out var candidates))
             {
                 return false;
             }
