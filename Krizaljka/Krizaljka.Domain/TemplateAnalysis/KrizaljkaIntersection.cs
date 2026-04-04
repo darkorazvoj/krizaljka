@@ -1,8 +1,8 @@
 ﻿namespace Krizaljka.Domain.TemplateAnalysis;
 
 public record KrizaljkaIntersection(
-    long FirstSlotId,
-    long SecondSlotId,
+    int FirstSlotId,
+    int SecondSlotId,
     int Row,
     int Col,
     int FirstSlotCharIndex,

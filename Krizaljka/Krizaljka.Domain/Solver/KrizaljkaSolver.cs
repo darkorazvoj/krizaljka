@@ -21,9 +21,10 @@ public sealed class KrizaljkaSolver
                         .ToList());
         }
 
+        var neighborSlotsIdsBySlotId = GetNeighborSlotIDBySlotId(analysis.Intersections);
         
-        var slotsById = analysis.Slots.ToDictionary(x => x.Id);
-        return Solve(analysis.Slots, slotsById, state);
+        //var slotsById = analysis.Slots.ToDictionary(x => x.Id);
+        return Solve(analysis.Slots, neighborSlotsIdsBySlotId, state);
     }
 
     public static bool TryPlaceAssignedTerm(
@@ -68,12 +69,11 @@ public sealed class KrizaljkaSolver
 
     private static bool Solve(
         IReadOnlyList<KrizaljkaSlot> slots,
-        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
+        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotsIdsBySlotId,
         KrizaljkaSolveState state)
     {
         if (!TryGetBestNextSlot(slots, state, out var nextSlot))
         {
-           // Console.WriteLine($"trygetbestnextslot false");
             return false;
         }
 
@@ -101,7 +101,13 @@ public sealed class KrizaljkaSolver
 
             var placement = Place(nextSlot, term, state);
 
-            if (Solve(slots, slotsById, state))
+            if (!PassesForwardCheck(nextSlot, slots, neighborSlotsIdsBySlotId, state))
+            {
+                Undo(placement, state);
+                continue;
+            }
+
+            if (Solve(slots, neighborSlotsIdsBySlotId, state))
             {
                 return true;
             }
@@ -281,6 +287,89 @@ public sealed class KrizaljkaSolver
             }
         }
 
+    }
+
+    private static IReadOnlyDictionary<int, IReadOnlyList<int>> GetNeighborSlotIDBySlotId(
+        IReadOnlyList<KrizaljkaIntersection> intersections)
+    {
+        Dictionary<int, HashSet<int>> map = [];
+
+        foreach (var intersection in intersections)
+        {
+            if (!map.TryGetValue(intersection.FirstSlotId, out var first))
+            {
+                first = [];
+                map.Add(intersection.FirstSlotId, first);
+            }
+
+            first.Add(intersection.SecondSlotId);
+
+            if (!map.TryGetValue(intersection.SecondSlotId, out var second))
+            {
+                second = [];
+                map.Add(intersection.SecondSlotId, second);
+            }
+
+            second.Add(intersection.FirstSlotId);
+        }
+
+        return map.ToDictionary(x => x.Key, x => (IReadOnlyList<int>)x.Value.ToList().AsReadOnly());
+    }
+
+    private static bool PassesForwardCheck(
+        KrizaljkaSlot placedSlot,
+        IReadOnlyList<KrizaljkaSlot> slots,
+        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotIdsBySlotId,
+        KrizaljkaSolveState state)
+    {
+        if (!neighborSlotIdsBySlotId.TryGetValue(placedSlot.Id, out var neighborSlotsIds))
+        {
+            return true;
+        }
+
+        foreach (var neighborSlotId in neighborSlotsIds)
+        {
+            if (state.IsAssigned(neighborSlotId))
+            {
+                continue;
+            }
+
+            var neighborSlot = slots.FirstOrDefault(x => x.Id == neighborSlotId);
+            if (neighborSlot is null)
+            {
+                return false;
+            }
+
+            if(!CachedTerms.TermsByLength.TryGetValue(neighborSlot.Length, out var candidates))
+            {
+                return false;
+            }
+
+            var hasAnythingFitting = false;
+
+            foreach (var term in GetMatchingTerms(neighborSlot, candidates, state))
+            {
+                if (state.UsedTermsIds.Contains(term.Id))
+                {
+                    continue;
+                }
+
+                if (!Fits(neighborSlot, term, state))
+                {
+                    continue;
+                }
+
+                hasAnythingFitting = true;
+                break;
+            }
+
+            if (!hasAnythingFitting)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

@@ -390,6 +390,7 @@ while (true)
             }
 
             var timer = Stopwatch.StartNew();
+            Console.WriteLine($"Started: {DateTime.Now}");
             var solved = KrizaljkaSolver.TrySolve(currentKrizaljkaTemplateAnalysis, termsDb.Terms, currentKrizaljkaState);
 
             timer.Stop();
