@@ -23,6 +23,7 @@ public sealed class KrizaljkaSolveState
 
     public bool IsAssigned(int slotId) => AssignedTermsBySlotId.ContainsKey(slotId);
 
+
     public KrizaljkaSolveState DeepClone()
     {
         return new KrizaljkaSolveState

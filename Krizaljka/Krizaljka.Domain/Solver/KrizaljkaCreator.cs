@@ -6,7 +6,9 @@ namespace Krizaljka.Domain.Solver;
 
 public sealed class KrizaljkaCreator
 {
-    public static KrizaljkaCreateResult TrySolve(
+    private readonly CreatorCache _cache = new();
+
+    public KrizaljkaCreateResult TrySolve(
         KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         KrizaljkaSolveState state)
@@ -22,11 +24,11 @@ public sealed class KrizaljkaCreator
         return new KrizaljkaCreateResult(solved, newState);
     }
 
-    private static void EnsureTermsCaches(IReadOnlyList<Term> terms)
+    private void EnsureTermsCaches(IReadOnlyList<Term> terms)
     {
-        if (CachedTerms.TermsByLength.Count == 0)
+        if (GlobalCaches.TermsByLength.Count == 0)
         {
-            CachedTerms.TermsByLength = terms
+            GlobalCaches.TermsByLength = terms
                 .GroupBy(x => x.Length)
                 .ToDictionary(
                     x => x.Key,
@@ -34,7 +36,7 @@ public sealed class KrizaljkaCreator
                         .ToList());
         }
 
-        if (CachedTerms.TermsByLengthPositionLetter.Count == 0)
+        if (_cache.TermsByLengthPositionLetter.Count == 0)
         {
             var result = new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
 
@@ -58,7 +60,7 @@ public sealed class KrizaljkaCreator
                 result.Add(lengthGroup.Key, positionMap);
             }
 
-            CachedTerms.TermsByLengthPositionLetter = result;
+            _cache.TermsByLengthPositionLetter = result;
         }
     }
 
@@ -102,7 +104,7 @@ public sealed class KrizaljkaCreator
         return true;
     }
 
-    private static bool Solve(
+    private  bool Solve(
         IReadOnlyList<KrizaljkaSlot> slots,
         IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
         IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotsIdsBySlotId,
@@ -150,7 +152,7 @@ public sealed class KrizaljkaCreator
         return false;
     }
 
-    private static bool TryGetBestNextSlot(
+    private  bool TryGetBestNextSlot(
         IReadOnlyList<KrizaljkaSlot> slots, 
         KrizaljkaSolveState state, 
         out KrizaljkaSlot? bestSlot)
@@ -285,16 +287,16 @@ public sealed class KrizaljkaCreator
         }
     }
     
-    private static IReadOnlyList<Term> GetIndexedMatchingTerms(
+    private  IReadOnlyList<Term> GetIndexedMatchingTerms(
         KrizaljkaSlot slot,
         KrizaljkaSolveState state)
     {
-        if (!CachedTerms.TermsByLength.TryGetValue(slot.Length, out var allTerms))
+        if (!GlobalCaches.TermsByLength.TryGetValue(slot.Length, out var allTerms))
         {
             return [];
         }
 
-        if (!CachedTerms.TermsByLengthPositionLetter.TryGetValue(slot.Length, out var byPosition))
+        if (!_cache.TermsByLengthPositionLetter.TryGetValue(slot.Length, out var byPosition))
         {
             return allTerms;
         }
@@ -388,7 +390,7 @@ public sealed class KrizaljkaCreator
         return map.ToDictionary(x => x.Key, x => (IReadOnlyList<int>)x.Value.ToList().AsReadOnly());
     }
 
-    private static bool PassesForwardCheck(
+    private  bool PassesForwardCheck(
         KrizaljkaSlot placedSlot,
         IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
         IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotIdsBySlotId,
