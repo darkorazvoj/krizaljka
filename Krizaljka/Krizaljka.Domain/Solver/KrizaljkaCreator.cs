@@ -1,4 +1,5 @@
 ﻿using Krizaljka.Domain.Caches;
+using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
 
@@ -7,12 +8,14 @@ namespace Krizaljka.Domain.Solver;
 public sealed class KrizaljkaCreator
 {
     private readonly CreatorCache _cache = new();
+    private int _solveIterations;
 
     public KrizaljkaCreateResult TrySolve(
         KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         KrizaljkaSolveState state)
     {
+        _solveIterations = 0;
         var newState = state.DeepClone();
         EnsureTermsCaches(terms);
 
@@ -21,14 +24,49 @@ public sealed class KrizaljkaCreator
         var slotsById = analysis.Slots.ToDictionary(x => x.Id);
         var solved = Solve(analysis.Slots, slotsById, neighborSlotsIdsBySlotId, newState);
 
-        return new KrizaljkaCreateResult(solved, newState);
+        return new KrizaljkaCreateResult(solved, newState, _solveIterations);
     }
+
+    public bool TryPlaceAssignedTermManually(
+        KrizaljkaTemplateAnalysis analysis,
+        IReadOnlyList<Term> terms,
+        int slotId,
+        long termId,
+        KrizaljkaSolveState state,
+        out string? error)
+    {
+        var slotsById = analysis.Slots.ToDictionary(x => x.Id);
+        var neighborSlotIdsBySlotId = GetNeighborSlotsIdsForSlotId(analysis.Intersections, slotId);
+        
+        return TryPlaceAssignedTerm(
+            analysis,
+            terms,
+            slotId,
+            termId,
+            state,
+            slotsById,
+            neighborSlotIdsBySlotId,
+            out error);
+    }
+
+    private IReadOnlyList<Term> GetNormalizedTerms(IReadOnlyList<Term> terms) =>
+        terms
+            .Select(t => t with
+            {
+                Letters = t.Letters.Select(x => x.NormalizeLetters()).ToArray()
+            })
+            .ToList()
+            .AsReadOnly();
 
     private void EnsureTermsCaches(IReadOnlyList<Term> terms)
     {
+        IReadOnlyList<Term>? normalizedTerms = null;
+
         if (GlobalCaches.TermsByLength.Count == 0)
         {
-            GlobalCaches.TermsByLength = terms
+            normalizedTerms ??= GetNormalizedTerms(terms);
+
+            GlobalCaches.TermsByLength = normalizedTerms
                 .GroupBy(x => x.Length)
                 .ToDictionary(
                     x => x.Key,
@@ -38,9 +76,11 @@ public sealed class KrizaljkaCreator
 
         if (_cache.TermsByLengthPositionLetter.Count == 0)
         {
+            normalizedTerms ??= GetNormalizedTerms(terms);
+
             var result = new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
 
-            foreach (var lengthGroup in terms.GroupBy(x => x.Length))
+            foreach (var lengthGroup in normalizedTerms.GroupBy(x => x.Length))
             {
                 var positionMap = new Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>();
 
@@ -64,12 +104,14 @@ public sealed class KrizaljkaCreator
         }
     }
 
-    public static bool TryPlaceAssignedTerm(
+    private bool TryPlaceAssignedTerm(
         KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         int slotId,
         long termId,
         KrizaljkaSolveState state, 
+        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
+        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotIdsBySlotId,
         out string? error)
     {
         error = null;
@@ -100,7 +142,11 @@ public sealed class KrizaljkaCreator
             return false;
         }
 
-        Place(slot, term, state);
+        Place(slot,
+            term,
+            slotsById,
+            neighborSlotIdsBySlotId,
+            state);
         return true;
     }
 
@@ -110,6 +156,7 @@ public sealed class KrizaljkaCreator
         IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotsIdsBySlotId,
         KrizaljkaSolveState state)
     {
+        _solveIterations++;
         if (!TryGetBestNextSlot(slots, state, out var nextSlot))
         {
             return false;
@@ -132,7 +179,7 @@ public sealed class KrizaljkaCreator
                 continue;
             }
             
-            var placement = Place(nextSlot, term, state);
+            var placement = Place(nextSlot, term, slotsById, neighborSlotsIdsBySlotId, state);
 
             if (!PassesForwardCheck(nextSlot, slotsById, neighborSlotsIdsBySlotId, state))
             {
@@ -244,19 +291,130 @@ public sealed class KrizaljkaCreator
         return true;
     }
 
-    private static PlacementResult Place(
+    //private static PlacementResult Place(
+    //    KrizaljkaSlot slot,
+    //    Term term,
+    //    KrizaljkaSolveState state)
+    //{
+       
+    //    List<(int Row, int Cell)> newCells = [];
+
+    //    state.AssignedTermsBySlotId.Add(
+    //        slot.Id,
+    //        new AssignedTerm(slot.Id, term.Id, term.Letters));
+
+    //    state.UsedTermsIds.Add(term.Id);
+
+    //    for (var i = 0; i < slot.Cells.Count; i++)
+    //    {
+    //        var slotCell = slot.Cells[i];
+    //        var key = (slotCell.Row, slotCell.Col);
+
+    //        if (!state.LettersByCell.ContainsKey(key))
+    //        {
+    //            state.LettersByCell.Add(key, term.Letters[i]);
+    //            newCells.Add(key);
+    //        }
+    //    }
+    //    return new PlacementResult(slot.Id, term.Id, newCells.AsReadOnly());
+    //}
+
+    private PlacementResult Place(
         KrizaljkaSlot slot,
         Term term,
+        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
+        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotsIdsBySlotId,
         KrizaljkaSolveState state)
     {
-       
-        List<(int Row, int Cell)> newCells = [];
+        List<(int Row, int Col)> newCells = [];
+        List<(int SlotId, long TermId)> assignedSlots = [];
 
+        AssignSlot(slot, term, state, newCells, assignedSlots);
+
+        Queue<int> queue = new();
+        queue.Enqueue(slot.Id);
+
+        HashSet<int> queuedOrProcesses = [slot.Id];
+
+        while (queue.Count > 0)
+        {
+            var currentSlotId = queue.Dequeue();
+
+            if (!neighborSlotsIdsBySlotId.TryGetValue(currentSlotId, out var neighborSlotsIds))
+            {
+                continue;
+            }
+
+            foreach (var neighborSlotId in neighborSlotsIds)
+            {
+                if (!queuedOrProcesses.Add(neighborSlotId))
+                {
+                    continue;
+                }
+
+                if (state.IsAssigned(neighborSlotId))
+                {
+                    continue;
+                }
+
+                if (!slotsById.TryGetValue(neighborSlotId, out var neighborSlot))
+                {
+                    continue;
+                }
+
+                if (!IsFullyFilled(neighborSlot, state))
+                {
+                    continue;
+                }
+
+                var matchingTerms = GetIndexedMatchingTerms(neighborSlot, state)
+                    .Where(x => !state.UsedTermsIds.Contains(x.Id))
+                    .ToList();
+
+                if (matchingTerms.Count != 1)
+                {
+                    continue;
+                }
+
+                AssignSlot(neighborSlot, matchingTerms[0], state, newCells, assignedSlots);
+                queue.Enqueue(neighborSlotId);
+            }
+        }
+
+        return new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
+    }
+
+    private static bool IsFullyFilled(
+        KrizaljkaSlot slot,
+        KrizaljkaSolveState state)
+    {
+        for (var i = 0; i < slot.Cells.Count; i++)
+        {
+            var cell = slot.Cells[i];
+            var key = (cell.Row, cell.Col);
+
+            if (!state.LettersByCell.ContainsKey(key))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static void AssignSlot(
+        KrizaljkaSlot slot,
+        Term term,
+        KrizaljkaSolveState state,
+        List<(int Row, int Col)> newCells,
+        List<(int SlotId, long TermId)> assignedSlots)
+    {
         state.AssignedTermsBySlotId.Add(
             slot.Id,
             new AssignedTerm(slot.Id, term.Id, term.Letters));
 
         state.UsedTermsIds.Add(term.Id);
+        assignedSlots.Add((slot.Id, term.Id));
 
         for (var i = 0; i < slot.Cells.Count; i++)
         {
@@ -269,24 +427,24 @@ public sealed class KrizaljkaCreator
                 newCells.Add(key);
             }
         }
-      //  Console.WriteLine($"Place slotId: {slot.Id} {term.RawValue}");
-        return new PlacementResult(slot.Id, term.Id, newCells.AsReadOnly());
     }
 
     private static void Undo(
         PlacementResult placement,
         KrizaljkaSolveState state)
     {
-      //  Console.WriteLine($"UNDO slotId: {placement.SlotId}");
-        state.AssignedTermsBySlotId.Remove(placement.SlotId);
-        state.UsedTermsIds.Remove(placement.TermId);
+        foreach (var (slotId, termId) in placement.AssignedSlots)
+        {
+            state.AssignedTermsBySlotId.Remove(slotId);
+            state.UsedTermsIds.Remove(termId);
+        }
 
         foreach (var cell in placement.NewCells)
         {
             state.LettersByCell.Remove(cell);
         }
     }
-    
+
     private  IReadOnlyList<Term> GetIndexedMatchingTerms(
         KrizaljkaSlot slot,
         KrizaljkaSolveState state)
@@ -388,6 +546,30 @@ public sealed class KrizaljkaCreator
         }
 
         return map.ToDictionary(x => x.Key, x => (IReadOnlyList<int>)x.Value.ToList().AsReadOnly());
+    }
+
+    private static IReadOnlyDictionary<int, IReadOnlyList<int>> GetNeighborSlotsIdsForSlotId(
+        IReadOnlyList<KrizaljkaIntersection> intersections,
+        int slotId)
+    {
+        HashSet<int> neighbors = [];
+
+        foreach (var intersection in intersections)
+        {
+            if (intersection.FirstSlotId == slotId)
+            {
+                neighbors.Add(intersection.SecondSlotId);
+            }
+            else if (intersection.SecondSlotId == slotId)
+            {
+                neighbors.Add(intersection.FirstSlotId);
+            }
+        }
+
+        return new Dictionary<int, IReadOnlyList<int>>
+        {
+            { slotId, neighbors.ToList().AsReadOnly() }
+        };
     }
 
     private  bool PassesForwardCheck(

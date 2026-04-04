@@ -352,7 +352,7 @@ while (true)
             }
 
 
-            if (!KrizaljkaCreator.TryPlaceAssignedTerm(
+            if (!new KrizaljkaCreator().TryPlaceAssignedTermManually(
                 currentKrizaljkaTemplateAnalysis ?? GetKrizaljkaTemplateAnalysis(currentKrizaljkaTemplate),
                 termsDb.Terms,
                 slotIdInput,
@@ -403,6 +403,7 @@ while (true)
             var elapsed = $"{ts.Minutes:00}:{ts.Seconds:00}";
 
             Console.WriteLine($"Total Time: {elapsed}");
+            Console.WriteLine($"iterations: {createResult.SolveIterations}");
 
             if (!createResult.IsCreated)
             {
