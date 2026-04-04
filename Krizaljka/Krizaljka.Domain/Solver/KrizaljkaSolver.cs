@@ -73,6 +73,7 @@ public sealed class KrizaljkaSolver
     {
         if (!TryGetBestNextSlot(slots, state, out var nextSlot))
         {
+           // Console.WriteLine($"trygetbestnextslot false");
             return false;
         }
 
