@@ -156,11 +156,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         foreach (var term in GetOrderedTerms(nextSlot))
         {
-            if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-            {
-                continue;
-            }
-
             var placement = Place(nextSlot, term);
             var dirtyChanges = MarkDirtyForPlacement(placement);
             var removal = InvalidateCandidatesForPlacement(placement);
