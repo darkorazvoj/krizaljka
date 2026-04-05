@@ -1,0 +1,291 @@
+[
+  {
+    "o": "Čakavska upitna zamjenica",
+    "w": "ča"
+  },
+  {
+    "o": "Kojoj osobi pripada",
+    "w": "čiji"
+  },
+  {
+    "o": "Bilo čiji, ijedan",
+    "w": "ičiji"
+  },
+  {
+    "o": "Bilo kakav, ikoji",
+    "w": "ikakav"
+  },
+  {
+    "o": "Bilo koji od njih",
+    "w": "ikoji"
+  },
+  {
+    "o": "Bilo što",
+    "w": "išta"
+  },
+  {
+    "o": "Bilo tko",
+    "w": "itko"
+  },
+  {
+    "o": "Osobna zamjenica prvog lica",
+    "w": "ja"
+  },
+  {
+    "o": "Kajkavska upitna zamjenica",
+    "w": "kaj"
+  },
+  {
+    "o": "Na koji način (kajkavski)",
+    "w": "kak"
+  },
+  {
+    "o": "Koje vrste ili osobine",
+    "w": "kakav"
+  },
+  {
+    "o": "Instrumental zamjenice kakav",
+    "w": "kakvim"
+  },
+  {
+    "o": "Genitiv zamjenice tko",
+    "w": "koga"
+  },
+  {
+    "o": "Sve i svašta, razne stvari",
+    "w": "koješta"
+  },
+  {
+    "o": "Bilo tko, poneko",
+    "w": "kojetko"
+  },
+  {
+    "o": "Kojem (dijalektalno)",
+    "w": "kuj"
+  },
+  {
+    "o": "Osobna zamjenica, 1. lice množine",
+    "w": "mi"
+  },
+  {
+    "o": "Puno različitih stvari",
+    "w": "mnogošto"
+  },
+  {
+    "o": "Pripada meni",
+    "w": "moj"
+  },
+
+  {
+    "o": "Pripada nama",
+    "w": "naš"
+  },
+  {
+    "o": "Pripada nepoznatoj osobi",
+    "w": "nečiji"
+  },
+  {
+    "o": "Neutvrđen broj ili osoba",
+    "w": "neki"
+  },
+  {
+    "o": "Poneki, netko od njih",
+    "w": "nekoji"
+  },
+  {
+    "o": "Neodređena stvar",
+    "w": "nešto"
+  },
+  {
+    "o": "Nepoznata osoba",
+    "w": "netko"
+  },
+  {
+    "o": "Pripada nikome",
+    "w": "ničiji"
+  },
+  {
+    "o": "Nijedne vrste",
+    "w": "nikakav"
+  },
+  {
+    "o": "Nijedna stvar",
+    "w": "ništa"
+  },
+  {
+    "o": "Nijedna osoba",
+    "w": "nitko"
+  },
+  {
+    "o": "Pripada njemu",
+    "w": "njegov"
+  },
+  {
+    "o": "Pripada njoj",
+    "w": "njen"
+  },
+  {
+    "o": "Pripada njoj",
+    "w": "njezin"
+  },
+  {
+    "o": "Pripada njima",
+    "w": "njihov"
+  },
+  {
+    "o": "Osobna zamjenica, 3. lice jednine (m)",
+    "w": "on"
+  },
+  {
+    "o": "Osobna zamjenica, 3. lice jednine (ž)",
+    "w": "ona"
+  },
+  {
+    "o": "Poput onoga",
+    "w": "onakav"
+  },
+  {
+    "o": "Ženski rod množine; udaljene",
+    "w": "one"
+  },
+  {
+    "o": "Muški rod množine; udaljeni",
+    "w": "oni"
+  },
+  {
+    "o": "Ženska pokazna zamjenica",
+    "w": "ova"
+  },
+  {
+    "o": "Muška pokazna zamjenica",
+    "w": "ovaj"
+  },
+  {
+    "o": "Ženski rod množine; te ovdje",
+    "w": "ove"
+  },
+  {
+    "o": "Muški rod množine; ti ovdje",
+    "w": "ovi"
+  },
+  {
+    "o": "Rijedak, pokoji",
+    "w": "pogdjekoji"
+  },
+  {
+    "o": "Mala količina nečega",
+    "w": "ponešto"
+  },
+  {
+    "o": "Povratna zamjenica (akuzativ)",
+    "w": "se"
+  },
+  {
+    "o": "Povratna zamjenica (puni oblik)",
+    "w": "sebe"
+  },
+  {
+    "o": "Instrumental povratne zamjenice",
+    "w": "sobom"
+  },
+  {
+    "o": "Redni broj u dativu; iza stote",
+    "w": "stoprvoj"
+  },
+  {
+    "o": "Svi redom",
+    "w": "svaki"
+  },
+  {
+    "o": "Svaki od njih",
+    "w": "svakoji"
+  },
+  {
+    "o": "Sve moguće stvari",
+    "w": "svašta"
+  },
+  {
+    "o": "Sve osobe",
+    "w": "svatko"
+  },
+  {
+    "o": "Sveukupne stvari",
+    "w": "sve"
+  },
+  {
+    "o": "Sve osobe (množina)",
+    "w": "svi"
+  },
+  {
+    "o": "Dativ/Lokativ od svi",
+    "w": "svima"
+  },
+  {
+    "o": "Pripada subjektu",
+    "w": "svoj"
+  },
+  {
+    "o": "Upitna zamjenica za stvari",
+    "w": "što"
+  },
+  {
+    "o": "Bilo što, išta",
+    "w": "štogod"
+  },
+    {
+    "o": "Pokazna zamjenica (ž); ona tamo",
+    "w": "ta"
+  },
+  {
+    "o": "Pokazna zamjenica (m); onaj tamo",
+    "w": "taj"
+  },
+  {
+    "o": "Sličan tome",
+    "w": "takav"
+  },
+  {
+    "o": "Osobna zamjenica, 2. lice jednine",
+    "w": "ti"
+  },
+  {
+    "o": "Upitna zamjenica za osobe",
+    "w": "tko"
+  },
+  {
+    "o": "Bilo tko, itko",
+    "w": "tkogod"
+  },
+  {
+    "o": "To tamo, pokazna zamjenica",
+    "w": "to"
+  },
+  {
+    "o": "Dativ zamjenice to",
+    "w": "tome"
+  },
+  {
+    "o": "Pripada tebi (m)",
+    "w": "tvoj"
+  },
+  {
+    "o": "Pripada tebi (ž)",
+    "w": "tvoja"
+  },
+  {
+    "o": "Pripada tebi (s)",
+    "w": "tvoje"
+  },
+  {
+    "o": "Pripada tebi (mn.)",
+    "w": "tvoji"
+  },
+  {
+    "o": "Pripada vama",
+    "w": "vaš"
+  },
+  {
+    "o": "Osobna zamjenica, 2. lice množine",
+    "w": "vi"
+  }
+]
