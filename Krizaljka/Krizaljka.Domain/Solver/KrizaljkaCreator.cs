@@ -15,10 +15,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _wordsPlacedDuringIterations = 0;
         EnsureTermsCaches(terms);
 
-        var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(theKrizaljka.Intersections);
-        
-        var slotsById = theKrizaljka.Slots.ToDictionary(x => x.Id);
-        var solved = Solve(theKrizaljka.Slots, slotsById, neighborSlotsIdsBySlotId, theKrizaljka.State);
+        var solved = Solve(theKrizaljka.Slots, theKrizaljka.State);
 
         return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
     }
@@ -28,16 +25,11 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         int slotId,
         long termId,
         out string? error)
-    {
-        var slotsById = theKrizaljka.Slots.ToDictionary(x => x.Id);
-        var neighborSlotIdsBySlotId = GetNeighborSlotsIdsForSlotId(theKrizaljka.Intersections, slotId);
-        
+    {   
         return TryPlaceAssignedTerm(
             terms,
             slotId,
             termId,
-            slotsById,
-            neighborSlotIdsBySlotId,
             out error);
     }
 
@@ -100,8 +92,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         IReadOnlyList<Term> terms,
         int slotId,
         long termId,
-        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
-        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotIdsBySlotId,
         out string? error)
     {
         error = null;
@@ -132,19 +122,11 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return false;
         }
 
-        Place(slot,
-            term,
-            slotsById,
-            neighborSlotIdsBySlotId,
-            theKrizaljka.State);
+        Place(slot, term, theKrizaljka.State);
         return true;
     }
 
-    private  bool Solve(
-        IReadOnlyList<KrizaljkaSlot> slots,
-        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
-        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotsIdsBySlotId,
-        KrizaljkaSolveState state)
+    private bool Solve(IReadOnlyList<KrizaljkaSlot> slots, KrizaljkaSolveState state)
     {
         if (!TryGetBestNextSlot(slots, state, out var nextSlot))
         {
@@ -168,15 +150,15 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
             
-            var placement = Place(nextSlot, term, slotsById, neighborSlotsIdsBySlotId, state);
+            var placement = Place(nextSlot, term, state);
 
-            if (!PassesForwardCheck(nextSlot, slotsById, neighborSlotsIdsBySlotId, state))
+            if (!PassesForwardCheck(nextSlot, state))
             {
                 Undo(placement, state);
                 continue;
             }
 
-            if (Solve(slots, slotsById, neighborSlotsIdsBySlotId, state))
+            if (Solve(slots, state))
             {
                 return true;
             }
@@ -283,8 +265,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private PlacementResult Place(
         KrizaljkaSlot slot,
         Term term,
-        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
-        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotsIdsBySlotId,
         KrizaljkaSolveState state)
     {
         List<(int Row, int Col)> newCells = [];
@@ -301,7 +281,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         {
             var currentSlotId = queue.Dequeue();
 
-            if (!neighborSlotsIdsBySlotId.TryGetValue(currentSlotId, out var neighborSlotsIds))
+            if (!theKrizaljka.NeighborSlotsIdsBySlotId.TryGetValue(currentSlotId, out var neighborSlotsIds))
             {
                 continue;
             }
@@ -318,7 +298,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                if (!slotsById.TryGetValue(neighborSlotId, out var neighborSlot))
+                if (!theKrizaljka.SlotsById.TryGetValue(neighborSlotId, out var neighborSlot))
                 {
                     continue;
                 }
@@ -482,65 +462,9 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return result;
     }
-
-    private static IReadOnlyDictionary<int, IReadOnlyList<int>> GetNeighborSlotIdBySlotId(
-        IReadOnlyList<KrizaljkaIntersection> intersections)
+    private  bool PassesForwardCheck(KrizaljkaSlot placedSlot, KrizaljkaSolveState state)
     {
-        Dictionary<int, HashSet<int>> map = [];
-
-        foreach (var intersection in intersections)
-        {
-            if (!map.TryGetValue(intersection.FirstSlotId, out var first))
-            {
-                first = [];
-                map.Add(intersection.FirstSlotId, first);
-            }
-
-            first.Add(intersection.SecondSlotId);
-
-            if (!map.TryGetValue(intersection.SecondSlotId, out var second))
-            {
-                second = [];
-                map.Add(intersection.SecondSlotId, second);
-            }
-
-            second.Add(intersection.FirstSlotId);
-        }
-
-        return map.ToDictionary(x => x.Key, x => (IReadOnlyList<int>)x.Value.ToList().AsReadOnly());
-    }
-
-    private static IReadOnlyDictionary<int, IReadOnlyList<int>> GetNeighborSlotsIdsForSlotId(
-        IReadOnlyList<KrizaljkaIntersection> intersections,
-        int slotId)
-    {
-        HashSet<int> neighbors = [];
-
-        foreach (var intersection in intersections)
-        {
-            if (intersection.FirstSlotId == slotId)
-            {
-                neighbors.Add(intersection.SecondSlotId);
-            }
-            else if (intersection.SecondSlotId == slotId)
-            {
-                neighbors.Add(intersection.FirstSlotId);
-            }
-        }
-
-        return new Dictionary<int, IReadOnlyList<int>>
-        {
-            { slotId, neighbors.ToList().AsReadOnly() }
-        };
-    }
-
-    private  bool PassesForwardCheck(
-        KrizaljkaSlot placedSlot,
-        IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
-        IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotIdsBySlotId,
-        KrizaljkaSolveState state)
-    {
-        if (!neighborSlotIdsBySlotId.TryGetValue(placedSlot.Id, out var neighborSlotsIds))
+        if (!theKrizaljka.NeighborSlotsIdsBySlotId.TryGetValue(placedSlot.Id, out var neighborSlotsIds))
         {
             return true;
         }
@@ -552,7 +476,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            if (!slotsById.TryGetValue(neighborSlotId, out var neighborSlot))
+            if (!theKrizaljka.SlotsById.TryGetValue(neighborSlotId, out var neighborSlot))
             {
                 return false;
             }

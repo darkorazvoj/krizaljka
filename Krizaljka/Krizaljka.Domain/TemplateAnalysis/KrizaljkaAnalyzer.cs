@@ -1,4 +1,5 @@
 ﻿using Krizaljka.Domain.Template;
+using System.Collections.Immutable;
 
 namespace Krizaljka.Domain.TemplateAnalysis;
 
@@ -15,13 +16,20 @@ public class KrizaljkaAnalyzer
     {
         if (template.Rows.Length == 0)
         {
-            return new KrizaljkaTemplateAnalysis(template, [], [], []);
+            return new KrizaljkaTemplateAnalysis(
+                template,
+                [],
+                [],
+                ImmutableDictionary<int, IReadOnlyList<int>>.Empty,
+                []);
         }
 
         var slots = GetSlots(template);
         var (intersections, cellSlots) = GetIntersections(slots);
 
-        return new KrizaljkaTemplateAnalysis(template, slots, intersections, cellSlots);
+        var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(intersections);
+
+        return new KrizaljkaTemplateAnalysis(template, slots, intersections, neighborSlotsIdsBySlotId, cellSlots);
     }
 
     private static (IReadOnlyList<KrizaljkaIntersection>, Dictionary<(int, int), List<SlotUsage>>) GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
@@ -165,6 +173,33 @@ public class KrizaljkaAnalyzer
 
 
         return cells.AsReadOnly();
+    }
+
+    private static IReadOnlyDictionary<int, IReadOnlyList<int>> GetNeighborSlotIdBySlotId(
+        IReadOnlyList<KrizaljkaIntersection> intersections)
+    {
+        Dictionary<int, HashSet<int>> map = [];
+
+        foreach (var intersection in intersections)
+        {
+            if (!map.TryGetValue(intersection.FirstSlotId, out var first))
+            {
+                first = [];
+                map.Add(intersection.FirstSlotId, first);
+            }
+
+            first.Add(intersection.SecondSlotId);
+
+            if (!map.TryGetValue(intersection.SecondSlotId, out var second))
+            {
+                second = [];
+                map.Add(intersection.SecondSlotId, second);
+            }
+
+            second.Add(intersection.FirstSlotId);
+        }
+
+        return map.ToDictionary(x => x.Key, x => (IReadOnlyList<int>)x.Value.ToList().AsReadOnly());
     }
 
     private int GetNewSlotId()
