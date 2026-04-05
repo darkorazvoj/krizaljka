@@ -29,16 +29,4 @@ public sealed class KrizaljkaSolveState
     }
 
     public bool IsAssigned(int slotId) => AssignedTermsBySlotId.ContainsKey(slotId);
-
-
-    public bool ClearSlot(int slotId)
-    {
-        if (!AssignedTermsBySlotId.Remove(slotId, out var term))
-        {
-            return false;
-        }
-
-        UsedTermsIds.Remove(term.TermId);
-        return true;
-    }
 }

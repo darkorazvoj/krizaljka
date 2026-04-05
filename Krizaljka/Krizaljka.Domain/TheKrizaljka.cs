@@ -42,4 +42,50 @@ public sealed class TheKrizaljka
         krizaljka.Init();
         return krizaljka;
     }
+
+    public bool ClearSlot(int slotId)
+    {
+        if (!State.AssignedTermsBySlotId.Remove(slotId, out var assignedTerm))
+        {
+            return false;
+        }
+
+        State.UsedTermsIds.Remove(assignedTerm.TermId);
+
+        var slot = Slots.FirstOrDefault(x => x.Id == slotId);
+        if (slot is null)
+        {
+            return false;
+        }
+
+        foreach (var cell in slot.Cells)
+        {
+            var key = (cell.Row, cell.Col);
+            var shouldKeepLetter = false;
+
+            if (CellSlots.TryGetValue(key, out var cellSlotIds))
+            {
+                foreach (var usage in cellSlotIds)
+                {
+                    if (usage.SlotId == slotId)
+                    {
+                        continue;
+                    }
+
+                    if (State.AssignedTermsBySlotId.ContainsKey(usage.SlotId))
+                    {
+                        shouldKeepLetter = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!shouldKeepLetter)
+            {
+                State.LettersByCell.Remove(key);
+            }
+        }
+
+        return true;
+    }
 }

@@ -422,7 +422,7 @@ while (true)
                 continue;
             }
 
-            if (theKrizaljka.State.ClearSlot(slotToDelete))
+            if (theKrizaljka.ClearSlot(slotToDelete))
             {
                 try
                 {
