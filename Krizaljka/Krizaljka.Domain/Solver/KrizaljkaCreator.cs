@@ -646,70 +646,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return candidates;
     }
 
-    private void RestoreDirty(HashSet<int> prev)
-    {
-        _dirtySlots.Clear();
-        foreach (var id in prev)
-        {
-            _dirtySlots.Add(id);
-        }
-    }
-
     private List<Term> GetOrderedTerms(KrizaljkaSlot slot) => GetCandidates(slot);
-  
-    private HashSet<int> InvalidateCandidatesForSlotAndNeighbors(int slotId)
-    {
-        HashSet<int> invalidated = [];
-
-        if (_cache.CandidatesBySlotId.Remove(slotId))
-        {
-            invalidated.Add(slotId);
-        }
-
-        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(slotId, out var intersections))
-        {
-            return invalidated;
-        }
-
-        foreach (var intersection in intersections)
-        {
-            var neighborSlotId = intersection.FirstSlotId == slotId
-                ? intersection.SecondSlotId
-                : intersection.FirstSlotId;
-
-            if (_cache.CandidatesBySlotId.Remove(neighborSlotId))
-            {
-                invalidated.Add(neighborSlotId);
-            }
-        }
-
-        return invalidated;
-    }
-
-    private void RestoreInvalidatedCandidates(HashSet<int> invalidatedSlotIds)
-    {
-        foreach (var slotId in invalidatedSlotIds)
-        {
-            if (!theKrizaljka.SlotsById.TryGetValue(slotId, out var slot))
-            {
-                continue;
-            }
-
-            var matchingTerms = GetIndexedMatchingTerms(slot);
-            var candidates = new List<Term>(matchingTerms.Count);
-
-            foreach (var term in matchingTerms)
-            {
-                if (!theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-                {
-                    candidates.Add(term);
-                }
-            }
-
-            _cache.CandidatesBySlotId[slotId] = candidates;
-        }
-    }
-
+ 
     private CandidateRemoval InvalidateCandidatesForPlacement(PlacementResult placement)
     {
         CandidateRemoval removal = new();
