@@ -5,45 +5,37 @@ using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.Domain.Solver;
 
-public sealed class KrizaljkaCreator
-{
+public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
+{   
     private readonly CreatorCache _cache = new();
     private int _wordsPlacedDuringIterations;
 
-    public KrizaljkaCreateResult TrySolve(
-        KrizaljkaTemplateAnalysis analysis,
-        IReadOnlyList<Term> terms,
-        KrizaljkaSolveState state)
+    public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms)
     {
         _wordsPlacedDuringIterations = 0;
-        var newState = state.DeepClone();
         EnsureTermsCaches(terms);
 
-        var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(analysis.Intersections);
+        var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(theKrizaljka.Intersections);
         
-        var slotsById = analysis.Slots.ToDictionary(x => x.Id);
-        var solved = Solve(analysis.Slots, slotsById, neighborSlotsIdsBySlotId, newState);
+        var slotsById = theKrizaljka.Slots.ToDictionary(x => x.Id);
+        var solved = Solve(theKrizaljka.Slots, slotsById, neighborSlotsIdsBySlotId, theKrizaljka.State);
 
-        return new KrizaljkaCreateResult(solved, newState, _wordsPlacedDuringIterations);
+        return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
     }
 
     public bool TryPlaceAssignedTermManually(
-        KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         int slotId,
         long termId,
-        KrizaljkaSolveState state,
         out string? error)
     {
-        var slotsById = analysis.Slots.ToDictionary(x => x.Id);
-        var neighborSlotIdsBySlotId = GetNeighborSlotsIdsForSlotId(analysis.Intersections, slotId);
+        var slotsById = theKrizaljka.Slots.ToDictionary(x => x.Id);
+        var neighborSlotIdsBySlotId = GetNeighborSlotsIdsForSlotId(theKrizaljka.Intersections, slotId);
         
         return TryPlaceAssignedTerm(
-            analysis,
             terms,
             slotId,
             termId,
-            state,
             slotsById,
             neighborSlotIdsBySlotId,
             out error);
@@ -105,24 +97,22 @@ public sealed class KrizaljkaCreator
     }
 
     private bool TryPlaceAssignedTerm(
-        KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         int slotId,
         long termId,
-        KrizaljkaSolveState state, 
         IReadOnlyDictionary<int, KrizaljkaSlot> slotsById,
         IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotIdsBySlotId,
         out string? error)
     {
         error = null;
 
-        if (state.IsAssigned(slotId))
+        if (theKrizaljka.State.IsAssigned(slotId))
         {
             error = "SlotAssigned";
             return false;
         }
 
-        var slot = analysis.Slots.FirstOrDefault(x => x.Id == slotId);
+        var slot = theKrizaljka.Slots.FirstOrDefault(x => x.Id == slotId);
         if (slot is null)
         {
             error = "SlotNotFound";
@@ -136,7 +126,7 @@ public sealed class KrizaljkaCreator
             return false;
         }
 
-        if (!Fits(slot, term, state))
+        if (!Fits(slot, term, theKrizaljka.State))
         {
             error = "TermDoesNotFit";
             return false;
@@ -146,7 +136,7 @@ public sealed class KrizaljkaCreator
             term,
             slotsById,
             neighborSlotIdsBySlotId,
-            state);
+            theKrizaljka.State);
         return true;
     }
 
@@ -289,34 +279,6 @@ public sealed class KrizaljkaCreator
 
         return true;
     }
-
-    //private static PlacementResult Place(
-    //    KrizaljkaSlot slot,
-    //    Term term,
-    //    KrizaljkaSolveState state)
-    //{
-       
-    //    List<(int Row, int Cell)> newCells = [];
-
-    //    state.AssignedTermsBySlotId.Add(
-    //        slot.Id,
-    //        new AssignedTerm(slot.Id, term.Id, term.Letters));
-
-    //    state.UsedTermsIds.Add(term.Id);
-
-    //    for (var i = 0; i < slot.Cells.Count; i++)
-    //    {
-    //        var slotCell = slot.Cells[i];
-    //        var key = (slotCell.Row, slotCell.Col);
-
-    //        if (!state.LettersByCell.ContainsKey(key))
-    //        {
-    //            state.LettersByCell.Add(key, term.Letters[i]);
-    //            newCells.Add(key);
-    //        }
-    //    }
-    //    return new PlacementResult(slot.Id, term.Id, newCells.AsReadOnly());
-    //}
 
     private PlacementResult Place(
         KrizaljkaSlot slot,

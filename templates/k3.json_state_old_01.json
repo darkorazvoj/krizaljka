@@ -1,38 +1,6 @@
 {
   "AssignedTermsBySlotId": {
-    "13": {
-      "SlotId": 13,
-      "TermId": 532,
-      "Letters": [
-        "u",
-        "v",
-        "o",
-        "z"
-      ]
-    },
-    "4": {
-      "SlotId": 4,
-      "TermId": 1455,
-      "Letters": [
-        "Z",
-        "v",
-        "o",
-        "n",
-        "k",
-        "o"
-      ]
-    },
-    "26": {
-      "SlotId": 26,
-      "TermId": 2249,
-      "Letters": [
-        "O",
-        "s",
-        "m",
-        "a",
-        "n"
-      ]
-    }
+   
   },
   "UsedTermsIds": [
     532,

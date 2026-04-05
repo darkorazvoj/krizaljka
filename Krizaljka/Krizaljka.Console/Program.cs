@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Krizaljka.Domain;
 using Krizaljka.Domain.Solver;
 
 Console.OutputEncoding = Encoding.UTF8;
@@ -21,10 +22,9 @@ const string pojmoviDbName = "pojmovi.json";
 const string categoriesDbName = "kategorije.json";
 const string templatesDir = @"C:\git\krizaljka\templates";
 
-KrizaljkaTemplate? currentKrizaljkaTemplate = null;
+TheKrizaljka? theKrizaljka = null;
+
 string? currentTemplateName = null;
-KrizaljkaTemplateAnalysis? currentKrizaljkaTemplateAnalysis = null;
-KrizaljkaSolveState? currentKrizaljkaState = null;
 var termsDb = TermsManager.LoadTerms();
 
 var options1 = new JsonSerializerOptions
@@ -34,11 +34,11 @@ var sbMainMenu = new StringBuilder();
 var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("d -> Create database")
     .AppendLine("l -> lookup words")
-    .AppendLine("kts => show krizaljka templates list")
+    .AppendLine("kts -> show krizaljka templates list")
     .AppendLine("lk -> load krizaljka template")
     .AppendLine("k -> Show current krizaljka")
     .AppendLine("kp -> Assign pojam to krizaljka")
-    .Append("kd -> Delete pojam from krizaljka")
+    .AppendLine("kd -> Delete pojam from krizaljka")
     .AppendLine("kcr -> Run krizaljka creator")
     .ToString();
 
@@ -202,10 +202,11 @@ while (true)
             break;
 
         case "lk":
-            currentKrizaljkaTemplate = null;
+            //currentKrizaljkaTemplate = null;
             currentTemplateName = null;
-            currentKrizaljkaTemplateAnalysis = null;
-            currentKrizaljkaState = null;
+            //currentKrizaljkaTemplateAnalysis = null;
+            //currentKrizaljkaState = null;
+            theKrizaljka = null;
 
             while (true)
             {
@@ -238,17 +239,15 @@ while (true)
 
                         if (parsedTemplate?.Id == krizaljkaTemplateId)
                         {
-                            currentKrizaljkaTemplate = parsedTemplate;
-                            currentKrizaljkaTemplateAnalysis = GetKrizaljkaTemplateAnalysis(currentKrizaljkaTemplate);
-
                             currentTemplateName = templateName;
                             var templateStateFileName = GetTemplateStateFileName(currentTemplateName);
+                            KrizaljkaSolveState? existingState = null;
                             if (File.Exists(templateStateFileName))
                             {
                                 try
                                 {
                                     var currentKrizaljkaStateJson = await File.ReadAllTextAsync(templateStateFileName);
-                                    currentKrizaljkaState =
+                                    existingState =
                                         JsonSerializer.Deserialize<KrizaljkaSolveState>(currentKrizaljkaStateJson, options1);
                                 }
                                 catch (Exception e)
@@ -257,9 +256,11 @@ while (true)
                                 }
                             }
 
-                            currentKrizaljkaState ??= new KrizaljkaSolveState();
+                            existingState ??= new KrizaljkaSolveState();
+
+                            theKrizaljka = TheKrizaljka.Create(parsedTemplate, existingState);
                             Console.WriteLine("Template loaded...");
-                            PrintCurrentTemplate();
+                            PrintKrizaljka();
                             Console.ReadKey();
 
                             break;
@@ -287,7 +288,7 @@ while (true)
                 continue;
             }
 
-            if (currentKrizaljkaTemplate is null)
+            if (theKrizaljka is null)
             {
                 Console.WriteLine("Krizaljka template not loaded.");
                 Console.ReadKey();
@@ -353,12 +354,10 @@ while (true)
             }
 
 
-            if (!new KrizaljkaCreator().TryPlaceAssignedTermManually(
-                currentKrizaljkaTemplateAnalysis ?? GetKrizaljkaTemplateAnalysis(currentKrizaljkaTemplate),
+            if (!new KrizaljkaCreator(theKrizaljka).TryPlaceAssignedTermManually(
                 termsDb.Terms,
                 slotIdInput,
                 termIdInput,
-                currentKrizaljkaState ??= new KrizaljkaSolveState(),
                  out var errorAssigningTermToSlot))
             {
                 Console.WriteLine(errorAssigningTermToSlot);
@@ -368,7 +367,7 @@ while (true)
             {
                 try
                 {
-                    var currentStateToWriteJson = JsonSerializer.Serialize(currentKrizaljkaState, options1);
+                    var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options1);
                     File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName?? "no_name")), currentStateToWriteJson);
                 }
                 catch (Exception e)
@@ -376,7 +375,7 @@ while (true)
                     Console.WriteLine(e);
                 }
 
-                PrintCurrentTemplate();
+                PrintKrizaljka();
                 Console.WriteLine("Term assigned to slot");
                 Console.ReadKey();
             }
@@ -384,17 +383,9 @@ while (true)
             break;
 
         case "kd":
-            if (currentKrizaljkaTemplate is null)
+            if (theKrizaljka is null)
             {
                 Console.WriteLine("Krizaljka template not loaded.");
-                Console.ReadKey();
-                continue;
-            }
-
-            if (currentKrizaljkaState is null || 
-                currentKrizaljkaState.AssignedTermsBySlotId.Count == 0)
-            {
-                Console.WriteLine("Krizaljka is empty.");
                 Console.ReadKey();
                 continue;
             }
@@ -403,7 +394,7 @@ while (true)
             var exitDp = false;
             while (true)
             {
-                PrintCurrentTemplate();
+                PrintKrizaljka();
 
                 Console.Write("Slot ID to delete (x for exit): ");
                 var slotIdToDeleteString = Console.ReadLine();
@@ -431,11 +422,11 @@ while (true)
                 continue;
             }
 
-            if (currentKrizaljkaState.AssignedTermsBySlotId.Remove(slotToDelete))
+            if (theKrizaljka.State.ClearSlot(slotToDelete))
             {
                 try
                 {
-                    var currentStateToWriteJson = JsonSerializer.Serialize(currentKrizaljkaState, options1);
+                    var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options1);
                     File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName?? "no_name")), currentStateToWriteJson);
                 }
                 catch (Exception e)
@@ -444,7 +435,7 @@ while (true)
                     continue;
                 }
                 Console.Clear();
-                PrintCurrentTemplate();
+                PrintKrizaljka();
                 Console.WriteLine("DELETED");
                 Console.ReadKey();
 
@@ -452,16 +443,13 @@ while (true)
             }
 
             Console.WriteLine("Delete FAILED");
-            PrintCurrentTemplate();
+            PrintKrizaljka();
             Console.ReadKey();
 
             break;
         case "kcr":
 
-            if (currentKrizaljkaTemplate is null ||
-                currentKrizaljkaTemplateAnalysis is null ||
-                currentKrizaljkaState is null ||
-                termsDb is null)
+            if (theKrizaljka is null || termsDb is null)
             {
                 Console.WriteLine("Krizaljka template or other objects not loaded.");
                 Console.ReadKey();
@@ -470,7 +458,7 @@ while (true)
 
             var timer = Stopwatch.StartNew();
             Console.WriteLine($"Started: {DateTime.Now}");
-            var createResult = new KrizaljkaCreator().TrySolve(currentKrizaljkaTemplateAnalysis, termsDb.Terms, currentKrizaljkaState);
+            var createResult = new KrizaljkaCreator(theKrizaljka).TrySolve(termsDb.Terms);
 
             timer.Stop();
             var ts = timer.Elapsed;
@@ -487,19 +475,11 @@ while (true)
             }
 
             Console.WriteLine("SOLVED!!!!");
-            PrintKrizaljka(currentKrizaljkaTemplate, currentKrizaljkaTemplateAnalysis, createResult.State.AssignedTermsBySlotId.Values.ToList());
+            PrintKrizaljka();
 
             break;
         case "k":
-            if (currentKrizaljkaTemplate is null)
-            {
-                Console.WriteLine("No template loaded...");
-                Console.ReadKey();
-                continue;
-            }
-
-            currentKrizaljkaState ??= new KrizaljkaSolveState();
-            PrintKrizaljka(currentKrizaljkaTemplate, GetKrizaljkaTemplateAnalysis(currentKrizaljkaTemplate), currentKrizaljkaState.AssignedTermsBySlotId.Values.ToList());
+            PrintKrizaljka();
             Console.ReadKey();
             break;
 
@@ -511,38 +491,26 @@ Console.WriteLine("THE END");
 
 static string GetTemplateStateFileName(string templateName) => $"{templateName}_state.json";
 
-void PrintCurrentTemplate()
+
+void PrintKrizaljka()
 {
-    if (currentKrizaljkaTemplateAnalysis is null)
+    if (theKrizaljka is null)
     {
-        Console.WriteLine("Missing analysis for this print");
+        Console.WriteLine("No krizaljka loaded...");
         Console.ReadKey();
         return;
     }
 
-    var assignedSlotTerms = currentKrizaljkaState.AssignedTermsBySlotId.Values.ToList();
-
-    PrintKrizaljka(
-        currentKrizaljkaTemplate,
-        currentKrizaljkaTemplateAnalysis,
-        assignedSlotTerms);
-}
-
-void PrintKrizaljka(
-    KrizaljkaTemplate templateForPrint, 
-    KrizaljkaTemplateAnalysis krizaljkaTemplateAnalysis,
-    List<AssignedTerm> assignedTerms)
-{
-    Console.WriteLine($"Krizaljka template: {templateForPrint.Id}");
+    Console.WriteLine($"Krizaljka template: {theKrizaljka.Template.Id}");
 
     StringBuilder sb = new();
-    var krizaljka = templateForPrint.Rows;
-    for (var r = 0; r < krizaljka.Length; r++)
+    var krizaljkaRows = theKrizaljka.Template.Rows;
+    for (var r = 0; r < krizaljkaRows.Length; r++)
     {
-        for (var c = 0; c < krizaljka[r].Length; c++)
+        for (var c = 0; c < krizaljkaRows[r].Length; c++)
         {
             //sb.Append(krizaljka[r][c]);
-            sb.Append($"{GetCellCharacter(krizaljka[r][c]),-7}");
+            sb.Append($"{GetCellCharacter(krizaljkaRows[r][c]),-7}");
 
             string GetCellCharacter(int i)
             {
@@ -572,7 +540,7 @@ void PrintKrizaljka(
 
     string GetSlotIds(int rr, int cc)
     {
-        var slotIdsWithDirection = krizaljkaTemplateAnalysis.Slots
+        var slotIdsWithDirection = theKrizaljka.Slots
             .Where(x => x.Row == rr && x.Col == cc)
             .Select(x => new { x.Id, x.Direction })
             .ToList();
@@ -598,12 +566,12 @@ void PrintKrizaljka(
 
     string GetInputValue(int ir, int ic)
     {
-        if (krizaljkaTemplateAnalysis.CellSlots.TryGetValue((ir, ic), out var slotUsages))
+        if (theKrizaljka.CellSlots.TryGetValue((ir, ic), out var slotUsages))
         {
             foreach (var slot in slotUsages)
             {
 
-                var assignedSlot = assignedTerms.FirstOrDefault(x => x.SlotId == slot.SlotId);
+                var assignedSlot = theKrizaljka.AssignedTerms.FirstOrDefault(x => x.SlotId == slot.SlotId);
                 if (assignedSlot is not null)
                 {
                     return assignedSlot.Letters[slot.CharIndex].ToUpperInvariant();
@@ -614,8 +582,3 @@ void PrintKrizaljka(
         return "-";
     }
 }
-
-KrizaljkaTemplateAnalysis GetKrizaljkaTemplateAnalysis(KrizaljkaTemplate templateToAnalyse) =>
-    new KrizaljkaAnalyzer().GeTemplateAnalysis(templateToAnalyse);
-
-

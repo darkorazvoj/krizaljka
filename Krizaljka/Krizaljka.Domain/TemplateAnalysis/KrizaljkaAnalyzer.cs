@@ -15,13 +15,13 @@ public class KrizaljkaAnalyzer
     {
         if (template.Rows.Length == 0)
         {
-            return new KrizaljkaTemplateAnalysis(template.Id, template, [], [], []);
+            return new KrizaljkaTemplateAnalysis(template, [], [], []);
         }
 
         var slots = GetSlots(template);
         var (intersections, cellSlots) = GetIntersections(slots);
 
-        return new KrizaljkaTemplateAnalysis(template.Id, template, slots, intersections, cellSlots);
+        return new KrizaljkaTemplateAnalysis(template, slots, intersections, cellSlots);
     }
 
     private static (IReadOnlyList<KrizaljkaIntersection>, Dictionary<(int, int), List<SlotUsage>>) GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
