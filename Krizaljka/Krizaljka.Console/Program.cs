@@ -58,6 +58,11 @@ while (true)
 
     switch (where)
     {
+        case "hrl":
+            HrRijeciLoader.Load();
+            Console.ReadKey();
+            break;
+
         case "d":
             var termsLoader = new TermsLoader();
             await termsLoader.LoadTermsAsync(pojmoviPath);

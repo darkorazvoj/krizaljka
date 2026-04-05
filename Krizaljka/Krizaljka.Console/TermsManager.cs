@@ -25,6 +25,7 @@ public static class TermsManager
         }
         catch (Exception e)
         {
+            System.Console.WriteLine(e.Message);
             return null;
         }
 
