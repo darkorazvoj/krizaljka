@@ -6,7 +6,7 @@ using Krizaljka.Domain.Terms;
 namespace Krizaljka.Domain.Solver;
 
 public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
-{   
+{
     private CreatorCache _cache = new();
     private readonly HashSet<int> _dirtySlots = [];
     private int _wordsPlacedDuringIterations;
@@ -32,7 +32,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         int slotId,
         long termId,
         out string? error)
-    {   
+    {
         return TryPlaceAssignedTerm(
             terms,
             slotId,
@@ -69,7 +69,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         {
             normalizedTerms ??= GetNormalizedTerms(terms);
 
-            var result = new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
+            var result =
+                new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
 
             foreach (var lengthGroup in normalizedTerms.GroupBy(x => x.Length))
             {
@@ -156,7 +157,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             {
                 continue;
             }
-            
+
             var prevDirty = new HashSet<int>(_dirtySlots);
             var placement = Place(nextSlot, term);
 
@@ -292,7 +293,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return count;
     }
-    
+
     private bool Fits(KrizaljkaSlot slot, Term term)
     {
         if (theKrizaljka.State.IsAssigned(slot.Id))
@@ -314,7 +315,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         {
             var termLetter = term.Letters[i];
 
-            if (theKrizaljka.State.LettersByCell.TryGetValue( slot.CellKeys[i], out var existingLetter) &&
+            if (theKrizaljka.State.LettersByCell.TryGetValue(slot.CellKeys[i], out var existingLetter) &&
                 !existingLetter.Equals(termLetter, StringComparison.CurrentCultureIgnoreCase))
             {
                 return false;
@@ -499,7 +500,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return new string(chars);
     }
 
-    private  IReadOnlyList<Term> GetIndexedMatchingTermsCore(KrizaljkaSlot slot)
+    private IReadOnlyList<Term> GetIndexedMatchingTermsCore(KrizaljkaSlot slot)
     {
         if (!GlobalCaches.TermsByLength.TryGetValue(slot.Length, out var allTerms))
         {
@@ -566,6 +567,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return result;
     }
+
     private bool PassesForwardCheck(KrizaljkaSlot placedSlot)
     {
         if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(placedSlot.Id, out var intersections))
@@ -629,7 +631,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 count++;
             }
         }
-        
+
         _cache.FittingCountCache[key] = count;
 
         return count;
@@ -646,7 +648,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
     private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
     {
-        var scoredTerms = new List<(Term Term, int Score)>();
+        List<Term> result = [];
 
         foreach (var term in GetIndexedMatchingTerms(slot))
         {
@@ -655,70 +657,9 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            if (!Fits(slot, term))
-            {
-                continue;
-            }
-
-            var prevDirty = new HashSet<int>(_dirtySlots);
-            var placement = Place(slot, term);
-
-            var score = GetPlacementScore(slot);
-            Undo(placement);
-
-            _dirtySlots.Clear();
-            foreach (var id in prevDirty)
-            {
-                _dirtySlots.Add(id);
-            }
-
-            if (score == int.MaxValue)
-            {
-                continue;
-            }
-
-            scoredTerms.Add((term, score));
+            result.Add(term);
         }
 
-        return scoredTerms
-            .OrderBy(x => x.Score)
-            .Select(x => x.Term)
-            .ToList();
+        return result;
     }
-
-    private int GetPlacementScore(KrizaljkaSlot placedSlot)
-    {
-        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(placedSlot.Id, out var intersections))
-        {
-            return 0;
-        }
-
-        var total = 0;
-
-        foreach (var intersection in intersections)
-        {
-            var neighborSlotId = intersection.FirstSlotId == placedSlot.Id
-                ? intersection.SecondSlotId
-                : intersection.FirstSlotId;
-
-            if (theKrizaljka.State.IsAssigned(neighborSlotId))
-            {
-                continue;
-            }
-
-            var neighborSlot = theKrizaljka.SlotsById[neighborSlotId];
-
-            var count = GetFittingCount(neighborSlot);
-
-            if (count == 0)
-            {
-                return int.MaxValue;
-            }
-
-            total += count;
-        }
-
-        return total;
-    }
-
 }
