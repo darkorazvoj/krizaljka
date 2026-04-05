@@ -411,207 +411,203 @@
     "o": "Besmisleno; smiješno",
     "w": "apsurdno"
   },
-
   {
-    "o": "",
+    "o": "Uređujući; pripremajući; slažući",
     "w": "aranžirajući"
   },
   {
-    "o": "",
+    "o": "Složivši; pripremivši; uredivši",
     "w": "aranžiravši"
   },
   {
-    "o": "",
+    "o": "Presuđujući; posredujući u sporu",
     "w": "arbitrirajući"
   },
   {
-    "o": "",
+    "o": "Donijevši presudu; presudivši",
     "w": "arbitriravši"
   },
   {
-    "o": "",
+    "o": "Dokazano; potkrijepljeno; logično",
     "w": "argumentirano"
   },
   {
-    "o": "",
+    "o": "Iznijevši dokaze; obrazloživši",
     "w": "argumentiravši"
   },
   {
-    "o": "",
-    "w": "argumenjućirajući"
+    "o": "Obrazlažući; dokazujući",
+    "w": "argumentirajući"
   },
   {
-    "o": "",
+    "o": "Spremivši u pismohranu; pohranivši",
     "w": "arhiviravši"
   },
   {
-    "o": "",
-    "w": "arjućikulirajući"
-  },
-  {
-    "o": "",
-    "w": "armirajući"
-  },
-  {
-    "o": "",
-    "w": "armiravši"
-  },
-  {
-    "o": "",
-    "w": "arogantno"
-  },
-  {
-    "o": "",
-    "w": "aromajućizirajući"
-  },
-  {
-    "o": "",
-    "w": "aromatiziravši"
-  },
-  {
-    "o": "",
+    "o": "Jasno izgovarajući",
     "w": "artikulirajući"
   },
   {
-    "o": "",
+    "o": "Ojačavajući konstrukciju; pojačavajući",
+    "w": "armirajući"
+  },
+  {
+    "o": "Ojačavši čelikom; učvrstivši",
+    "w": "armiravši"
+  },
+  {
+    "o": "Oholo; drsko; nadmeno; prepotentno",
+    "w": "arogantno"
+  },
+  {
+    "o": "Dodajući miris; začinjajući",
+    "w": "aromatizirajući"
+  },
+  {
+    "o": "Namirisavši; začinivši mirodijama",
+    "w": "aromatiziravši"
+  },
+  {
+    "o": "Jasno izgovarajući; razgovijetno",
+    "w": "artikulirajući"
+  },
+  {
+    "o": "Razgovijetno izrekavši; izrazivši",
     "w": "artikuliravši"
   },
   {
-    "o": "",
+    "o": "Sastavivši dijelove; montiravši",
     "w": "asembliravši"
   },
   {
-    "o": "",
+    "o": "Presvlačeći cestu; gradeći put",
     "w": "asfaltirajući"
   },
   {
-    "o": "",
+    "o": "Dovršivši cestu; popločivši",
     "w": "asfaltiravši"
   },
   {
-    "o": "",
-    "w": "asfaljućirajući"
+    "o": "Gradeći cestu; taracajući",
+    "w": "asfaltirajući"
   },
   {
-    "o": "",
+    "o": "Uklapajući se; stapajući se; upijajući",
     "w": "asimilirajući"
   },
   {
-    "o": "",
+    "o": "Prilagodivši se okolini; stopivši se",
     "w": "asimiliravši"
   },
   {
-    "o": "",
-    "w": "asisjućirajući"
-  },
-  {
-    "o": "",
+    "o": "Pomažući drugome; služeći",
     "w": "asistirajući"
   },
   {
-    "o": "",
+    "o": "Pružajući pomoć; bivajući pri ruci",
+    "w": "asistirajući"
+  },
+  {
+    "o": "Pomogavši u radu; bivši prisutan",
     "w": "asistiravši"
   },
   {
-    "o": "",
+    "o": "Povezujući misli; podsjećajući",
     "w": "asocirajući"
   },
   {
-    "o": "",
+    "o": "Povezavši pojmove; podsjetivši",
     "w": "asociravši"
   },
   {
-    "o": "",
+    "o": "Težeći nečemu; usisavajući",
     "w": "aspirirajući"
   },
   {
-    "o": "",
+    "o": "Iskazavši težnju; usisavši",
     "w": "aspiriravši"
   },
   {
-    "o": "",
+    "o": "Oslabivši; ublaživši; razrijedivši",
     "w": "atenuiravši"
   },
   {
-    "o": "",
+    "o": "Spuštajući se na tlo; slijećući",
     "w": "aterirajući"
   },
   {
-    "o": "",
+    "o": "Sletjevši na zemlju; spustivši se",
     "w": "ateriravši"
   },
   {
-    "o": "",
+    "o": "Razbijajući na sitne dijelove",
     "w": "atomizirajući"
   },
   {
-    "o": "",
+    "o": "Raspršivši; rastavivši na čestice",
     "w": "atomiziravši"
   },
   {
-    "o": "",
+    "o": "Pridajući svojstva; dodjeljujući",
     "w": "atribuirajući"
   },
   {
-    "o": "",
+    "o": "Pridavši osobinu; dodijelivši",
     "w": "atribuiravši"
   },
   {
-    "o": "",
+    "o": "Izvorno; pravo; vjerodostojno",
     "w": "autentično"
   },
   {
-    "o": "",
-    "w": "automajućizirajući"
+    "o": "Uvodeći samostalan rad",
+    "w": "automatizirajući"
   },
   {
-    "o": "",
+    "o": "Strojno vođeno; samostalno",
     "w": "automatizirano"
   },
   {
-    "o": "",
+    "o": "Učinivši samostalnim; mehaniziravši",
     "w": "automatiziravši"
   },
   {
-    "o": "",
+    "o": "Strojno; samoradno; bez volje",
     "w": "automatsko"
   },
   {
-    "o": "",
+    "o": "Mjerodavno; nadmoćno; odlučno",
     "w": "autoritativno"
   },
   {
-    "o": "",
+    "o": "Dajući dopuštenje; potvrđujući",
     "w": "autorizirajući"
   },
   {
-    "o": "",
+    "o": "Odobrivši objavu; ovlastivši",
     "w": "autoriziravši"
   },
   {
-    "o": "",
+    "o": "Putovši besplatno; stopiravši",
     "w": "autostopiravši"
   },
   {
-    "o": "",
+    "o": "Jamčivši za mjenicu; potpisavši",
     "w": "avaliravši"
   },
   {
-    "o": "",
-    "w": "azijajućizirajući"
-  },
-  {
-    "o": "",
+    "o": "Čineći istočnjačkim; prilagođavajući",
     "w": "azijatizirajući"
   },
   {
-    "o": "",
+    "o": "Učinivši istočnjačkim; prilagodivši",
     "w": "azijatiziravši"
   },
   {
-    "o": "",
+    "o": "Na vrijeme; hitro; odmah; točno",
     "w": "ažurno"
-  },
+  }
+,
   {
     "o": "",
     "w": "bacakajući"
