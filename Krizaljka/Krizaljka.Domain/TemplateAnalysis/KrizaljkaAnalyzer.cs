@@ -20,6 +20,7 @@ public class KrizaljkaAnalyzer
                 template,
                 [],
                 [],
+                ImmutableDictionary<int, IReadOnlyList<KrizaljkaIntersection>>.Empty,
                 ImmutableDictionary<int, IReadOnlyList<int>>.Empty,
                 []);
         }
@@ -28,8 +29,9 @@ public class KrizaljkaAnalyzer
         var (intersections, cellSlots) = GetIntersections(slots);
 
         var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(intersections);
+        var intersectionsBySlotId = GetIntersectionsBySlotId(intersections);
 
-        return new KrizaljkaTemplateAnalysis(template, slots, intersections, neighborSlotsIdsBySlotId, cellSlots);
+        return new KrizaljkaTemplateAnalysis(template, slots, intersections, intersectionsBySlotId, neighborSlotsIdsBySlotId, cellSlots);
     }
 
     private static (IReadOnlyList<KrizaljkaIntersection>, Dictionary<(int, int), List<SlotUsage>>) GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
@@ -84,7 +86,6 @@ public class KrizaljkaAnalyzer
     private IReadOnlyList<KrizaljkaSlot> GetSlots(KrizaljkaTemplate template)
     {
         List<KrizaljkaSlot> slots = [];
-        List<(int Row, int Col)> cellKeys = [];
 
         var rows = template.Rows;
         for (var r = 0; r < rows.Length; r++)
@@ -211,6 +212,35 @@ public class KrizaljkaAnalyzer
         }
 
         return map.ToDictionary(x => x.Key, x => (IReadOnlyList<int>)x.Value.ToList().AsReadOnly());
+    }
+
+    private static IReadOnlyDictionary<int, IReadOnlyList<KrizaljkaIntersection>> GetIntersectionsBySlotId(
+        IReadOnlyList<KrizaljkaIntersection> intersections)
+    {
+        var map = new Dictionary<int, List<KrizaljkaIntersection>>();
+
+        foreach (var intersection in intersections)
+        {
+            if (!map.TryGetValue(intersection.FirstSlotId, out var firstList))
+            {
+                firstList = [];
+                map.Add(intersection.FirstSlotId, firstList);
+            }
+
+            firstList.Add(intersection);
+
+            if (!map.TryGetValue(intersection.SecondSlotId, out var secondList))
+            {
+                secondList = [];
+                map.Add(intersection.SecondSlotId, secondList);
+            }
+
+            secondList.Add(intersection);
+        }
+
+        return map.ToDictionary(
+            x => x.Key,
+            x => (IReadOnlyList<KrizaljkaIntersection>)x.Value.AsReadOnly());
     }
 
     private int GetNewSlotId()

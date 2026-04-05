@@ -13,6 +13,8 @@ public sealed class TheKrizaljka
     public IReadOnlyDictionary<int, KrizaljkaSlot> SlotsById { get; private set; } =
         ImmutableDictionary<int, KrizaljkaSlot>.Empty;
     public IReadOnlyList<KrizaljkaIntersection> Intersections { get; private set; } = [];
+    public IReadOnlyDictionary<int, IReadOnlyList<KrizaljkaIntersection>> IntersectionsBySlotId { get; private set; } = 
+        ImmutableDictionary<int, IReadOnlyList<KrizaljkaIntersection>>.Empty;
 
     public IReadOnlyDictionary<int, IReadOnlyList<int>> NeighborSlotsIdsBySlotId { get; private set; } =
         ImmutableDictionary<int, IReadOnlyList<int>>.Empty;
@@ -40,6 +42,7 @@ public sealed class TheKrizaljka
         Slots = analysis.Slots;
         SlotsById = Slots.ToDictionary(x => x.Id);
         Intersections = analysis.Intersections;
+        IntersectionsBySlotId = analysis.IntersectionsBySlotId;
         NeighborSlotsIdsBySlotId = analysis.NeighborSlotsIdsBySlotId;
         CellSlots = analysis.CellSlots.AsReadOnly();
     }
