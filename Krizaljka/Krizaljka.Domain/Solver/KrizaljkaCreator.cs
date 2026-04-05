@@ -161,20 +161,16 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            if (!Fits(nextSlot, term))
-            {
-                continue;
-            }
-
             var prevDirty = new HashSet<int>(_dirtySlots);
+
             var placement = Place(nextSlot, term);
-            var invalidatedCandidates = InvalidateCandidatesForPlacement(placement);
+            var removal = InvalidateCandidatesForPlacement(placement);
 
             if (!PassesForwardCheck(nextSlot))
             {
                 Undo(placement);
                 RestoreDirty(prevDirty);
-                RestoreInvalidatedCandidates(invalidatedCandidates);
+                RestoreInvalidatedCandidates(removal);
                 continue;
             }
 
@@ -185,7 +181,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
             Undo(placement);
             RestoreDirty(prevDirty);
-            RestoreInvalidatedCandidates(invalidatedCandidates);
+            RestoreInvalidatedCandidates(removal);
         }
 
         return false;
@@ -629,30 +625,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return true;
     }
 
-    //private int GetFittingCount(KrizaljkaSlot slot)
-    //{
-    //    var pattern = GetSlotPattern(slot);
-    //    var key = (slot.Id, pattern);
-
-    //    if (_cache.FittingCountCache.TryGetValue(key, out var cached))
-    //    {
-    //        return cached;
-    //    }
-
-    //    var count = 0;
-    //    foreach (var term in GetIndexedMatchingTerms(slot))
-    //    {
-    //        if (!theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-    //        {
-    //            count++;
-    //        }
-    //    }
-
-    //    _cache.FittingCountCache[key] = count;
-
-    //    return count;
-    //}
-
     private int GetFittingCount(KrizaljkaSlot slot) => GetCandidates(slot).Count;
 
     private List<Term> GetCandidates(KrizaljkaSlot slot)
@@ -662,9 +634,16 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return candidates;
         }
 
-        candidates = GetIndexedMatchingTerms(slot)
-            .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
-            .ToList();
+        var matchingTerms = GetIndexedMatchingTerms(slot);
+        candidates = new List<Term>(matchingTerms.Count);
+
+        foreach (var term in matchingTerms)
+        {
+            if (!theKrizaljka.State.UsedTermsIds.Contains(term.Id))
+            {
+                candidates.Add(term);
+            }
+        }
 
         _cache.CandidatesBySlotId[slot.Id] = candidates;
         return candidates;
@@ -680,23 +659,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     }
 
     private List<Term> GetOrderedTerms(KrizaljkaSlot slot) => GetCandidates(slot);
-    //private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
-    //{
-    //    List<Term> result = [];
-
-    //    foreach (var term in GetIndexedMatchingTerms(slot))
-    //    {
-    //        if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-    //        {
-    //            continue;
-    //        }
-
-    //        result.Add(term);
-    //    }
-
-    //    return result;
-    //}
-
+  
     private HashSet<int> InvalidateCandidatesForSlotAndNeighbors(int slotId)
     {
         HashSet<int> invalidated = [];
@@ -726,18 +689,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return invalidated;
     }
 
-    private HashSet<int> InvalidateCandidatesForPlacement(PlacementResult placement)
-    {
-        HashSet<int> invalidated = [];
-
-        foreach (var (assignedSlotId, _) in placement.AssignedSlots)
-        {
-            invalidated.UnionWith(InvalidateCandidatesForSlotAndNeighbors(assignedSlotId));
-        }
-
-        return invalidated;
-    }
-
     private void RestoreInvalidatedCandidates(HashSet<int> invalidatedSlotIds)
     {
         foreach (var slotId in invalidatedSlotIds)
@@ -747,9 +698,63 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            _cache.CandidatesBySlotId[slotId] = GetIndexedMatchingTerms(slot)
-                .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
-                .ToList();
+            var matchingTerms = GetIndexedMatchingTerms(slot);
+            var candidates = new List<Term>(matchingTerms.Count);
+
+            foreach (var term in matchingTerms)
+            {
+                if (!theKrizaljka.State.UsedTermsIds.Contains(term.Id))
+                {
+                    candidates.Add(term);
+                }
+            }
+
+            _cache.CandidatesBySlotId[slotId] = candidates;
+        }
+    }
+
+    private CandidateRemoval InvalidateCandidatesForPlacement(PlacementResult placement)
+    {
+        CandidateRemoval removal = new();
+
+        foreach (var (slotId, _) in placement.AssignedSlots)
+        {
+            InvalidateSlotAndNeighbors(slotId, removal);
+        }
+
+        return removal;
+    }
+
+    private void InvalidateSlotAndNeighbors(int slotId, CandidateRemoval removal)
+    {
+        if (_cache.CandidatesBySlotId.Remove(slotId, out var own))
+        {
+            removal.Removed[slotId] = own;
+        }
+
+        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(slotId, out var intersections))
+        {
+            return;
+        }
+
+        foreach (var i in intersections)
+        {
+            var neighborId = i.FirstSlotId == slotId
+                ? i.SecondSlotId
+                : i.FirstSlotId;
+
+            if (_cache.CandidatesBySlotId.Remove(neighborId, out var neighbor))
+            {
+                removal.Removed[neighborId] = neighbor;
+            }
+        }
+    }
+
+    private void RestoreInvalidatedCandidates(CandidateRemoval removal)
+    {
+        foreach (var pair in removal.Removed)
+        {
+            _cache.CandidatesBySlotId[pair.Key] = pair.Value;
         }
     }
 }
