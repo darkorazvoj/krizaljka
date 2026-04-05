@@ -403,7 +403,7 @@ while (true)
             var elapsed = $"{ts.Minutes:00}:{ts.Seconds:00}";
 
             Console.WriteLine($"Total Time: {elapsed}");
-            Console.WriteLine($"iterations: {createResult.SolveIterations}");
+            Console.WriteLine($"Word tried: {createResult.WordsTried}");
 
             if (!createResult.IsCreated)
             {
@@ -413,6 +413,7 @@ while (true)
             }
 
             Console.WriteLine("SOLVED!!!!");
+            PrintKrizaljka(currentKrizaljkaTemplate, currentKrizaljkaTemplateAnalysis, createResult.State.AssignedTermsBySlotId.Values.ToList());
 
             break;
         case "k":

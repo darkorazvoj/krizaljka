@@ -8,14 +8,14 @@ namespace Krizaljka.Domain.Solver;
 public sealed class KrizaljkaCreator
 {
     private readonly CreatorCache _cache = new();
-    private int _solveIterations;
+    private int _wordsPlacedDuringIterations;
 
     public KrizaljkaCreateResult TrySolve(
         KrizaljkaTemplateAnalysis analysis,
         IReadOnlyList<Term> terms,
         KrizaljkaSolveState state)
     {
-        _solveIterations = 0;
+        _wordsPlacedDuringIterations = 0;
         var newState = state.DeepClone();
         EnsureTermsCaches(terms);
 
@@ -24,7 +24,7 @@ public sealed class KrizaljkaCreator
         var slotsById = analysis.Slots.ToDictionary(x => x.Id);
         var solved = Solve(analysis.Slots, slotsById, neighborSlotsIdsBySlotId, newState);
 
-        return new KrizaljkaCreateResult(solved, newState, _solveIterations);
+        return new KrizaljkaCreateResult(solved, newState, _wordsPlacedDuringIterations);
     }
 
     public bool TryPlaceAssignedTermManually(
@@ -156,7 +156,6 @@ public sealed class KrizaljkaCreator
         IReadOnlyDictionary<int, IReadOnlyList<int>> neighborSlotsIdsBySlotId,
         KrizaljkaSolveState state)
     {
-        _solveIterations++;
         if (!TryGetBestNextSlot(slots, state, out var nextSlot))
         {
             return false;
@@ -402,13 +401,14 @@ public sealed class KrizaljkaCreator
         return true;
     }
 
-    private static void AssignSlot(
+    private  void AssignSlot(
         KrizaljkaSlot slot,
         Term term,
         KrizaljkaSolveState state,
         List<(int Row, int Col)> newCells,
         List<(int SlotId, long TermId)> assignedSlots)
     {
+        _wordsPlacedDuringIterations++;
         state.AssignedTermsBySlotId.Add(
             slot.Id,
             new AssignedTerm(slot.Id, term.Id, term.Letters));
