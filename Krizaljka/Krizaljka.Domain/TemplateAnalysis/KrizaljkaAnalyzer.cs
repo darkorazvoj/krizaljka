@@ -84,10 +84,11 @@ public class KrizaljkaAnalyzer
     private IReadOnlyList<KrizaljkaSlot> GetSlots(KrizaljkaTemplate template)
     {
         List<KrizaljkaSlot> slots = [];
+        List<(int Row, int Col)> cellKeys = [];
 
         var rows = template.Rows;
         for (var r = 0; r < rows.Length; r++)
-        {   
+        {
             for (var c = 0; c < rows[r].Length; c++)
             {
                 var currentCell = (KrizaljkaCellType)rows[r][c];
@@ -100,13 +101,18 @@ public class KrizaljkaAnalyzer
                     {
                         continue;
                     }
+
                     slots.Add(new KrizaljkaSlot(
                         GetNewSlotId(),
                         KrizaljkaDirection.Right,
                         r,
                         c,
                         cells.Count,
-                        cells));
+                        cells,
+                        cells
+                            .Select(x => (x.Row, x.Col))
+                            .ToList()
+                            .AsReadOnly()));
                 }
 
                 if (currentCell is KrizaljkaCellType.DescDown or KrizaljkaCellType.DescRightDown)
@@ -116,13 +122,18 @@ public class KrizaljkaAnalyzer
                     {
                         continue;
                     }
+
                     slots.Add(new KrizaljkaSlot(
                         GetNewSlotId(),
                         KrizaljkaDirection.Down,
                         r,
                         c,
                         cells.Count,
-                        cells));
+                        cells,
+                        cells
+                            .Select(x => (x.Row, x.Col))
+                            .ToList()
+                            .AsReadOnly()));
                 }
             }
         }

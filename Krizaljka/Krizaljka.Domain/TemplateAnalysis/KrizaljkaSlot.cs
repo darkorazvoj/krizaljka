@@ -7,4 +7,5 @@ public record KrizaljkaSlot(
     int Row,
     int Col,
     int Length,
-    IReadOnlyList<KrizaljkaCell> Cells);
+    IReadOnlyList<KrizaljkaCell> Cells,
+    IReadOnlyList<(int Row, int Col)> CellKeys);

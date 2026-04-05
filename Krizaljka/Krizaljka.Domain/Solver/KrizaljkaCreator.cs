@@ -390,10 +390,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     {
         for (var i = 0; i < slot.Cells.Count; i++)
         {
-            var cell = slot.Cells[i];
-            var key = (cell.Row, cell.Col);
-
-            if (!theKrizaljka.State.LettersByCell.ContainsKey(key))
+            if (!theKrizaljka.State.LettersByCell.ContainsKey(slot.CellKeys[i]))
             {
                 return false;
             }
@@ -466,10 +463,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         for (var i = 0; i < slot.Cells.Count; i++)
         {
-            var cell = slot.Cells[i];
-            var key = (cell.Row, cell.Col);
 
-            if (state.LettersByCell.TryGetValue(key, out var letter) &&
+            if (state.LettersByCell.TryGetValue(slot.CellKeys[i], out var letter) &&
                 !string.IsNullOrWhiteSpace(letter))
             {
                 chars[i] = letter[0];
@@ -499,10 +494,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         for (var i = 0; i < slot.Cells.Count; i++)
         {
-            var cell = slot.Cells[i];
-            var key = (cell.Row, cell.Col);
-
-            if (!theKrizaljka.State.LettersByCell.TryGetValue(key, out var existingLetter))
+            if (!theKrizaljka.State.LettersByCell.TryGetValue(slot.CellKeys[i], out var existingLetter))
             {
                 continue;
             }
@@ -537,10 +529,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
             for (var i = 0; i < slot.Cells.Count; i++)
             {
-                var cell = slot.Cells[i];
-                var key = (cell.Row, cell.Col);
-
-                if (theKrizaljka.State.LettersByCell.TryGetValue(key, out var existingLetter) &&
+                if (theKrizaljka.State.LettersByCell.TryGetValue(slot.CellKeys[i], out var existingLetter) &&
                     term.Letters[i] != existingLetter)
                 {
                     matches = false;
