@@ -180,52 +180,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return false;
     }
 
-    //private bool Solve(IReadOnlyList<KrizaljkaSlot> slots)
-    //{
-    //    if (!TryGetBestNextSlot(slots, out var nextSlot))
-    //    {
-    //        return false;
-    //    }
-
-    //    if (nextSlot is null)
-    //    {
-    //        return true;
-    //    }
-
-    //    foreach (var term in GetOrderedTerms(nextSlot))
-    //    {
-    //        if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-    //        {
-    //            continue;
-    //        }
-
-    //        if (!Fits(nextSlot, term))
-    //        {
-    //            continue;
-    //        }
-
-    //        var prevDirty = new HashSet<int>(_dirtySlots);
-    //        var placement = Place(nextSlot, term);
-
-    //        if (!PassesForwardCheck(nextSlot))
-    //        {
-    //            Undo(placement);
-    //            RestoreDirty(prevDirty);
-    //            continue;
-    //        }
-
-    //        if (Solve(slots))
-    //        {
-    //            return true;
-    //        }
-
-    //        Undo(placement);
-    //        RestoreDirty(prevDirty);
-    //    }
-
-    //    return false;
-    //}
-
     private bool TryGetBestNextSlot(
     IReadOnlyList<KrizaljkaSlot> slots,
     out KrizaljkaSlot? bestSlot)
@@ -321,100 +275,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
     return true;
 }
-
-    //private bool TryGetBestNextSlot(
-    //    IReadOnlyList<KrizaljkaSlot> slots,
-    //    out KrizaljkaSlot? bestSlot)
-    //{
-    //    bestSlot = null;
-    //    var bestCount = int.MaxValue;
-    //    var bestUnassignedNeighborCount = -1;
-
-    //    var checkedSlotIds = new HashSet<int>();
-
-    //    if (_dirtySlots.Count > 0)
-    //    {
-    //        foreach (var slotId in _dirtySlots)
-    //        {
-    //            if (!theKrizaljka.SlotsById.TryGetValue(slotId, out var slot))
-    //            {
-    //                continue;
-    //            }
-
-    //            checkedSlotIds.Add(slot.Id);
-
-    //            if (theKrizaljka.State.IsAssigned(slot.Id))
-    //            {
-    //                continue;
-    //            }
-
-    //            var fittingCount = GetFittingCount(slot);
-
-    //            if (fittingCount == 0)
-    //            {
-    //                return false;
-    //            }
-
-    //            var unassignedNeighborCount = GetUnassignedNeighborCount(slot);
-
-    //            if (fittingCount < bestCount ||
-    //                (fittingCount == bestCount && unassignedNeighborCount > bestUnassignedNeighborCount))
-    //            {
-    //                bestCount = fittingCount;
-    //                bestUnassignedNeighborCount = unassignedNeighborCount;
-    //                bestSlot = slot;
-
-    //                if (bestCount == 1)
-    //                {
-    //                    return true;
-    //                }
-    //            }
-    //        }
-
-    //        if (bestSlot is not null)
-    //        {
-    //            return true;
-    //        }
-    //    }
-
-    //    foreach (var slot in slots)
-    //    {
-    //        if (!checkedSlotIds.Add(slot.Id))
-    //        {
-    //            continue;
-    //        }
-
-    //        if (theKrizaljka.State.IsAssigned(slot.Id))
-    //        {
-    //            continue;
-    //        }
-
-    //        var fittingCount = GetFittingCount(slot);
-
-    //        if (fittingCount == 0)
-    //        {
-    //            return false;
-    //        }
-
-    //        var unassignedNeighborCount = GetUnassignedNeighborCount(slot);
-
-    //        if (fittingCount < bestCount ||
-    //            (fittingCount == bestCount && unassignedNeighborCount > bestUnassignedNeighborCount))
-    //        {
-    //            bestCount = fittingCount;
-    //            bestUnassignedNeighborCount = unassignedNeighborCount;
-
-    //            bestSlot = slot;
-
-    //            if (bestCount == 1)
-    //            {
-    //                return true;
-    //            }
-    //        }
-    //    }
-
-    //    return true;
-    //}
 
     private int GetUnassignedNeighborCount(KrizaljkaSlot slot)
     {
@@ -530,89 +390,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
     }
-
-    //private PlacementResult Place(KrizaljkaSlot slot, Term term)
-    //{
-    //    List<(int Row, int Col)> newCells = [];
-    //    List<(int SlotId, long TermId)> assignedSlots = [];
-
-    //    AssignSlot(slot, term, newCells, assignedSlots);
-
-    //    Queue<int> queue = new();
-    //    queue.Enqueue(slot.Id);
-
-    //    HashSet<int> queuedOrProcessed = [slot.Id];
-
-    //    while (queue.Count > 0)
-    //    {
-    //        var currentSlotId = queue.Dequeue();
-
-    //        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(currentSlotId, out var intersections))
-    //        {
-    //            continue;
-    //        }
-
-    //        foreach (var intersection in intersections)
-    //        {
-    //            var neighborSlotId = intersection.FirstSlotId == currentSlotId
-    //                ? intersection.SecondSlotId
-    //                : intersection.FirstSlotId;
-
-    //            if (!queuedOrProcessed.Add(neighborSlotId))
-    //            {
-    //                continue;
-    //            }
-
-    //            if (theKrizaljka.State.IsAssigned(neighborSlotId))
-    //            {
-    //                continue;
-    //            }
-
-    //            if (!theKrizaljka.SlotsById.TryGetValue(neighborSlotId, out var neighborSlot))
-    //            {
-    //                continue;
-    //            }
-
-    //            if (!IsFullyFilled(neighborSlot))
-    //            {
-    //                continue;
-    //            }
-
-    //            var matchingTerms = GetIndexedMatchingTerms(neighborSlot)
-    //                .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
-    //                .ToList();
-
-    //            if (matchingTerms.Count != 1)
-    //            {
-    //                continue;
-    //            }
-
-    //            AssignSlot(neighborSlot, matchingTerms[0], newCells, assignedSlots);
-    //            queue.Enqueue(neighborSlotId);
-    //        }
-    //    }
-
-    //    foreach (var (assignedSlotId, _) in assignedSlots)
-    //    {
-    //        _dirtySlots.Add(assignedSlotId);
-
-    //        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(assignedSlotId, out var intersections))
-    //        {
-    //            continue;
-    //        }
-
-    //        foreach (var intersection in intersections)
-    //        {
-    //            var neighborSlotId = intersection.FirstSlotId == assignedSlotId
-    //                ? intersection.SecondSlotId
-    //                : intersection.FirstSlotId;
-
-    //            _dirtySlots.Add(neighborSlotId);
-    //        }
-    //    }
-
-    //    return new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
-    //}
 
     private bool IsFullyFilled(KrizaljkaSlot slot)
     {
@@ -843,16 +620,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return count;
     }
 
-    //private void RestoreDirty(HashSet<int> prev)
-    //{
-    //    _dirtySlots.Clear();
-    //    foreach (var id in prev)
-    //    {
-    //        _dirtySlots.Add(id);
-    //    }
-    //}
-
-    private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
+   private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
     {
         List<Term> result = [];
 
