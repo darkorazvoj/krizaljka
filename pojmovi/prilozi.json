@@ -243,10 +243,10 @@
     "o": "Nakon raščlambe; proučivši",
     "w": "analiziravši"
   },
- {
-  "o": "Zadnje; po završetku crijeva",
-  "w": "analno"
-},
+  {
+    "o": "Zadnje; po završetku crijeva",
+    "w": "analno"
+  },
   {
     "o": "Slično; sukladno",
     "w": "analogno"
@@ -606,240 +606,233 @@
   {
     "o": "Na vrijeme; hitro; odmah; točno",
     "w": "ažurno"
-  }
-,
+  },
+
   {
-    "o": "",
+    "o": "Trzajući udovima; koprcajući se",
     "w": "bacakajući"
   },
   {
-    "o": "",
+    "o": "Nakon odbacivanja; hitnuvši",
     "w": "bacivši"
   },
   {
-    "o": "",
+    "o": "Besplatno; nizašto; uzalud",
     "w": "badava"
   },
   {
-    "o": "",
+    "o": "Ubošvši nakratko; taknuvši",
     "w": "badnuvši"
   },
   {
-    "o": "",
+    "o": "Podcjenjujući; čineći nevažnim",
     "w": "bagatelizirajući"
   },
   {
-    "o": "",
+    "o": "Nakon podcjenjivanja; omalovaživši",
     "w": "bagateliziravši"
   },
   {
-    "o": "",
+    "o": "Radeći strojem za iskop; kopajući",
     "w": "bagerirajući"
   },
   {
-    "o": "",
+    "o": "Nakon iskapanja; prokopavši",
     "w": "bageriravši"
   },
   {
-    "o": "",
+    "o": "Oholo; nadmeno; drsko",
     "w": "bahato"
   },
   {
-    "o": "",
-    "w": "bajućinajući"
-  },
-  {
-    "o": "",
+    "o": "Mučeći se oko nečega; radeći",
     "w": "bakćući"
   },
   {
-    "o": "",
+    "o": "Održavajući ravnotežu",
     "w": "balansirajući"
   },
   {
-    "o": "",
+    "o": "Ispuštajući slinu; kmečeći",
     "w": "balaveći"
   },
   {
-    "o": "",
+    "o": "Poput djeteta; nezrelo",
     "w": "balavo"
   },
   {
-    "o": "",
-    "w": "baleći"
-  },
-  {
-    "o": "",
+    "o": "Vršiti nuždu (za stoku) (prilog)",
     "w": "balegajući"
   },
   {
-    "o": "",
+    "o": "Čineći primitivnim i grubim",
     "w": "balkanizirajući"
   },
   {
-    "o": "",
+    "o": "Nakon srozavanja kulture",
     "w": "balkaniziravši"
   },
   {
-    "o": "",
+    "o": "Konzervirajući tijelo; mirišući",
     "w": "balzamirajući"
   },
   {
-    "o": "",
+    "o": "Nakon konzerviranja; očuvavši",
     "w": "balzamiravši"
   },
   {
-    "o": "",
+    "o": "Govoreći gluposti; lupetajući",
     "w": "baljezgajući"
   },
   {
-    "o": "",
+    "o": "Čineći običnim; pojednostavljujući",
     "w": "banalizirajući"
   },
   {
-    "o": "",
+    "o": "Nakon gubljenja dubine značenja",
     "w": "banaliziravši"
   },
   {
-    "o": "",
+    "o": "Obično; otrcano; plitko",
     "w": "banalno"
   },
   {
-    "o": "",
+    "o": "Lumpajući; pijući cijelu noć",
     "w": "bančeći"
   },
   {
-    "o": "",
+    "o": "Povijajući ranu; stežući",
     "w": "bandažirajući"
   },
   {
-    "o": "",
+    "o": "Nakon povijanja; omotavši",
     "w": "bandažiravši"
   },
   {
-    "o": "",
-    "w": "bankrojućirajući"
-  },
-  {
-    "o": "",
+    "o": "Propadajući novčano (iskriv.)",
     "w": "bankrotirajući"
   },
   {
-    "o": "",
+    "o": "Ostavši bez novca; propadajući",
+    "w": "bankrotirajući"
+  },
+  {
+    "o": "Nakon financijskog sloma",
     "w": "bankrotiravši"
   },
   {
-    "o": "",
+    "o": "Upavši iznenada; nahrupivši",
     "w": "banuvši"
   },
   {
-    "o": "",
+    "o": "Rukujući čime; služeći se",
     "w": "baratajući"
   },
   {
-    "o": "",
+    "o": "Puno močvara; močvarno",
     "w": "barovito"
   },
   {
-    "o": "",
+    "o": "Rubens, vozač F1; brazilski pilot",
     "w": "Barrichello"
   },
   {
-    "o": "",
+    "o": "Uživajući u miru; odmarajući se",
     "w": "baškareći"
   },
   {
-    "o": "",
+    "o": "Nasljeđujući od predaka",
     "w": "baštineći"
   },
   {
-    "o": "",
+    "o": "Tukući štapom; kažnjavajući",
     "w": "batinajući"
   },
   {
-    "o": "",
+    "o": "Posrćući; jedva se krećući",
     "w": "batrgajući"
   },
   {
-    "o": "",
+    "o": "Tumurajući; teturajući u mraku",
     "w": "bauljajući"
   },
   {
-    "o": "",
+    "o": "Zanimajući se čime; radeći",
     "w": "baveći"
   },
   {
-    "o": "",
+    "o": "Lutajući bez cilja; šetajući",
     "w": "bazajući"
   },
   {
-    "o": "",
+    "o": "Osnovno; temeljno",
     "w": "bazalno"
   },
   {
-    "o": "",
+    "o": "Smrdeći; ispuštajući neugodan miris",
     "w": "bazdeći"
   },
   {
-    "o": "",
+    "o": "Oslanjajući se na što; temeljeći",
     "w": "bazirajući"
   },
   {
-    "o": "",
+    "o": "Nakon postavljanja temelja",
     "w": "baziravši"
   },
   {
-    "o": "",
+    "o": "Mjereći obujam posude; žigosajući",
     "w": "baždareći"
   },
   {
-    "o": "",
+    "o": "Nakon provjere mjera; izmjerivši",
     "w": "baždarivši"
   },
   {
-    "o": "",
+    "o": "Nespavajući; čuvajući stražu",
     "w": "bdijući"
   },
   {
-    "o": "",
+    "o": "Šireći oči; gledajući začuđeno",
     "w": "bečeći"
   },
   {
-    "o": "",
+    "o": "Vodeći veseo život; lumpajući",
     "w": "bećareći"
   },
   {
-    "o": "",
+    "o": "Izustivši bar riječ; pisnuvši",
     "w": "beknuvši"
   },
   {
-    "o": "",
+    "o": "Ponašajući se ludo; ludujući",
     "w": "benaveći"
   },
   {
-    "o": "",
+    "o": "Dobraćudno; bezopasno (med.)",
     "w": "benigno"
   },
   {
-    "o": "",
+    "o": "Sakupljajući plodove; otkidajući",
     "w": "berući"
   },
   {
-    "o": "",
+    "o": "Uzaludno; bez koristi",
     "w": "beskorisno"
   },
   {
-    "o": "",
+    "o": "Bez granica; vječno",
     "w": "beskrajno"
   },
   {
-    "o": "",
+    "o": "Blijedo; bez životnosti i energije",
     "w": "beskrvno"
   },
   {
-    "o": "",
+    "o": "Bez logike; ludo; nepotrebno",
     "w": "besmisleno"
   },
+
   {
     "o": "",
     "w": "besplatno"
