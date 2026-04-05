@@ -15,7 +15,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _wordsPlacedDuringIterations = 0;
         EnsureTermsCaches(terms);
 
-        var solved = Solve(theKrizaljka.Slots, theKrizaljka.State);
+        var solved = Solve(theKrizaljka.Slots);
 
         return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
     }
@@ -116,19 +116,19 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return false;
         }
 
-        if (!Fits(slot, term, theKrizaljka.State))
+        if (!Fits(slot, term))
         {
             error = "TermDoesNotFit";
             return false;
         }
 
-        Place(slot, term, theKrizaljka.State);
+        Place(slot, term);
         return true;
     }
 
-    private bool Solve(IReadOnlyList<KrizaljkaSlot> slots, KrizaljkaSolveState state)
+    private bool Solve(IReadOnlyList<KrizaljkaSlot> slots)
     {
-        if (!TryGetBestNextSlot(slots, state, out var nextSlot))
+        if (!TryGetBestNextSlot(slots, out var nextSlot))
         {
             return false;
         }
@@ -138,42 +138,39 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return true;
         }
 
-        foreach (var term in GetIndexedMatchingTerms(nextSlot, state))
+        foreach (var term in GetIndexedMatchingTermsCore(nextSlot))
         {
-            if (state.UsedTermsIds.Contains(term.Id))
+            if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
             {
                 continue;
             }
 
-            if (!Fits(nextSlot, term, state))
+            if (!Fits(nextSlot, term))
             {
                 continue;
             }
             
-            var placement = Place(nextSlot, term, state);
+            var placement = Place(nextSlot, term);
 
-            if (!PassesForwardCheck(nextSlot, state))
+            if (!PassesForwardCheck(nextSlot))
             {
-                Undo(placement, state);
+                Undo(placement);
                 continue;
             }
 
-            if (Solve(slots, state))
+            if (Solve(slots))
             {
                 return true;
             }
 
-            Undo(placement, state);
+            Undo(placement);
 
         }
 
         return false;
     }
 
-    private  bool TryGetBestNextSlot(
-        IReadOnlyList<KrizaljkaSlot> slots, 
-        KrizaljkaSolveState state, 
-        out KrizaljkaSlot? bestSlot)
+    private  bool TryGetBestNextSlot(IReadOnlyList<KrizaljkaSlot> slots, out KrizaljkaSlot? bestSlot)
     {
         bestSlot = null;
         var bestCount = int.MaxValue;
@@ -181,7 +178,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         foreach (var slot in slots)
         {
-            if (state.IsAssigned(slot.Id))
+            if (theKrizaljka.State.IsAssigned(slot.Id))
             {
                 continue;
             }
@@ -189,9 +186,9 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             hasUnassignedSlots = true;
             var fittingCount = 0;
 
-            foreach (var term in GetIndexedMatchingTerms(slot, state))
+            foreach (var term in GetIndexedMatchingTermsCore(slot))
             {
-                if (state.UsedTermsIds.Contains(term.Id))
+                if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
                 {
                     continue;
                 }
@@ -225,17 +222,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return bestSlot is not null;
     }
     
-    private static bool Fits(
-        KrizaljkaSlot slot,
-        Term term,
-        KrizaljkaSolveState state)
+    private bool Fits(KrizaljkaSlot slot, Term term)
     {
-        if (state.IsAssigned(slot.Id))
+        if (theKrizaljka.State.IsAssigned(slot.Id))
         {
             return false;
         }
 
-        if (state.UsedTermsIds.Contains(term.Id))
+        if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
         {
             return false;
         }
@@ -252,7 +246,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
             var key = (slotCell.Row, slotCell.Col);
 
-            if (state.LettersByCell.TryGetValue(key, out var existingLetter) &&
+            if (theKrizaljka.State.LettersByCell.TryGetValue(key, out var existingLetter) &&
                 !existingLetter.Equals(termLetter, StringComparison.CurrentCultureIgnoreCase))
             {
                 return false;
@@ -262,15 +256,12 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return true;
     }
 
-    private PlacementResult Place(
-        KrizaljkaSlot slot,
-        Term term,
-        KrizaljkaSolveState state)
+    private PlacementResult Place(KrizaljkaSlot slot, Term term)
     {
         List<(int Row, int Col)> newCells = [];
         List<(int SlotId, long TermId)> assignedSlots = [];
 
-        AssignSlot(slot, term, state, newCells, assignedSlots);
+        AssignSlot(slot, term, newCells, assignedSlots);
 
         Queue<int> queue = new();
         queue.Enqueue(slot.Id);
@@ -293,7 +284,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                if (state.IsAssigned(neighborSlotId))
+                if (theKrizaljka.State.IsAssigned(neighborSlotId))
                 {
                     continue;
                 }
@@ -303,13 +294,13 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                if (!IsFullyFilled(neighborSlot, state))
+                if (!IsFullyFilled(neighborSlot))
                 {
                     continue;
                 }
 
-                var matchingTerms = GetIndexedMatchingTerms(neighborSlot, state)
-                    .Where(x => !state.UsedTermsIds.Contains(x.Id))
+                var matchingTerms = GetIndexedMatchingTermsCore(neighborSlot)
+                    .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
                     .ToList();
 
                 if (matchingTerms.Count != 1)
@@ -317,7 +308,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                AssignSlot(neighborSlot, matchingTerms[0], state, newCells, assignedSlots);
+                AssignSlot(neighborSlot, matchingTerms[0], newCells, assignedSlots);
                 queue.Enqueue(neighborSlotId);
             }
         }
@@ -325,16 +316,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
     }
 
-    private static bool IsFullyFilled(
-        KrizaljkaSlot slot,
-        KrizaljkaSolveState state)
+    private bool IsFullyFilled(KrizaljkaSlot slot)
     {
         for (var i = 0; i < slot.Cells.Count; i++)
         {
             var cell = slot.Cells[i];
             var key = (cell.Row, cell.Col);
 
-            if (!state.LettersByCell.ContainsKey(key))
+            if (!theKrizaljka.State.LettersByCell.ContainsKey(key))
             {
                 return false;
             }
@@ -343,19 +332,18 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return true;
     }
 
-    private  void AssignSlot(
+    private void AssignSlot(
         KrizaljkaSlot slot,
         Term term,
-        KrizaljkaSolveState state,
         List<(int Row, int Col)> newCells,
         List<(int SlotId, long TermId)> assignedSlots)
     {
         _wordsPlacedDuringIterations++;
-        state.AssignedTermsBySlotId.Add(
+        theKrizaljka.State.AssignedTermsBySlotId.Add(
             slot.Id,
             new AssignedTerm(slot.Id, term.Id, term.Letters));
 
-        state.UsedTermsIds.Add(term.Id);
+        theKrizaljka.State.UsedTermsIds.Add(term.Id);
         assignedSlots.Add((slot.Id, term.Id));
 
         for (var i = 0; i < slot.Cells.Count; i++)
@@ -363,33 +351,34 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             var slotCell = slot.Cells[i];
             var key = (slotCell.Row, slotCell.Col);
 
-            if (!state.LettersByCell.ContainsKey(key))
+            if (!theKrizaljka.State.LettersByCell.ContainsKey(key))
             {
-                state.LettersByCell.Add(key, term.Letters[i]);
+                theKrizaljka.State.LettersByCell.Add(key, term.Letters[i]);
                 newCells.Add(key);
             }
         }
     }
 
-    private static void Undo(
-        PlacementResult placement,
-        KrizaljkaSolveState state)
+    private void Undo(PlacementResult placement)
     {
         foreach (var (slotId, termId) in placement.AssignedSlots)
         {
-            state.AssignedTermsBySlotId.Remove(slotId);
-            state.UsedTermsIds.Remove(termId);
+            theKrizaljka.State.AssignedTermsBySlotId.Remove(slotId);
+            theKrizaljka.State.UsedTermsIds.Remove(termId);
         }
 
         foreach (var cell in placement.NewCells)
         {
-            state.LettersByCell.Remove(cell);
+            theKrizaljka.State.LettersByCell.Remove(cell);
         }
     }
 
-    private  IReadOnlyList<Term> GetIndexedMatchingTerms(
-        KrizaljkaSlot slot,
-        KrizaljkaSolveState state)
+    //private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
+    //{
+    //    var pattern = GetSlot
+    //}
+
+    private  IReadOnlyList<Term> GetIndexedMatchingTermsCore(KrizaljkaSlot slot)
     {
         if (!GlobalCaches.TermsByLength.TryGetValue(slot.Length, out var allTerms))
         {
@@ -408,7 +397,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             var cell = slot.Cells[i];
             var key = (cell.Row, cell.Col);
 
-            if (!state.LettersByCell.TryGetValue(key, out var existingLetter))
+            if (!theKrizaljka.State.LettersByCell.TryGetValue(key, out var existingLetter))
             {
                 continue;
             }
@@ -446,7 +435,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 var cell = slot.Cells[i];
                 var key = (cell.Row, cell.Col);
 
-                if (state.LettersByCell.TryGetValue(key, out var existingLetter) &&
+                if (theKrizaljka.State.LettersByCell.TryGetValue(key, out var existingLetter) &&
                     term.Letters[i] != existingLetter)
                 {
                     matches = false;
@@ -462,7 +451,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return result;
     }
-    private  bool PassesForwardCheck(KrizaljkaSlot placedSlot, KrizaljkaSolveState state)
+    private  bool PassesForwardCheck(KrizaljkaSlot placedSlot)
     {
         if (!theKrizaljka.NeighborSlotsIdsBySlotId.TryGetValue(placedSlot.Id, out var neighborSlotsIds))
         {
@@ -471,7 +460,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         foreach (var neighborSlotId in neighborSlotsIds)
         {
-            if (state.IsAssigned(neighborSlotId))
+            if (theKrizaljka.State.IsAssigned(neighborSlotId))
             {
                 continue;
             }
@@ -483,14 +472,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
             var hasAnythingFitting = false;
 
-            foreach (var term in GetIndexedMatchingTerms(neighborSlot, state))
+            foreach (var term in GetIndexedMatchingTermsCore(neighborSlot))
             {
-                if (state.UsedTermsIds.Contains(term.Id))
+                if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
                 {
                     continue;
                 }
 
-                if (!Fits(neighborSlot, term, state))
+                if (!Fits(neighborSlot, term))
                 {
                     continue;
                 }
