@@ -17,4 +17,6 @@ internal sealed class CreatorCache
         = new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
 
     public Dictionary<(int SlotId, string Pattern), IReadOnlyList<Term>> MatchingTermsCache { get; } = [];
+
+    public Dictionary<(int SlotId, string Pattern), int> FittingCountCache = [];
 }

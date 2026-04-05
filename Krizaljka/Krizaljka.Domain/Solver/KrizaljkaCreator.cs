@@ -7,16 +7,16 @@ namespace Krizaljka.Domain.Solver;
 
 public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 {   
-    private readonly CreatorCache _cache = new();
+    private CreatorCache _cache = new();
     private int _wordsPlacedDuringIterations;
 
     public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms)
     {
         _wordsPlacedDuringIterations = 0;
+        _cache = new CreatorCache();
         EnsureTermsCaches(terms);
 
         var solved = Solve(theKrizaljka.Slots);
-
         return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
     }
 
@@ -184,17 +184,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             }
 
             hasUnassignedSlots = true;
-            var fittingCount = 0;
-
-            foreach (var term in GetIndexedMatchingTermsCore(slot))
-            {
-                if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-                {
-                    continue;
-                }
-
-                fittingCount++;
-            }
+            var fittingCount = GetFittingCount(slot);
 
             if (fittingCount == 0)
             {
@@ -530,6 +520,30 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         }
 
         return true;
+    }
+
+    private int GetFittingCount(KrizaljkaSlot slot)
+    {
+        var pattern = GetSlotPattern(slot);
+        var key = (slot.Id, pattern);
+
+        if (_cache.FittingCountCache.TryGetValue(key, out var cached))
+        {
+            return cached;
+        }
+
+        var count = 0;
+        foreach (var term in GetIndexedMatchingTerms(slot))
+        {
+            if (!theKrizaljka.State.UsedTermsIds.Contains(term.Id))
+            {
+                count++;
+            }
+        }
+        
+        _cache.FittingCountCache[key] = count;
+
+        return count;
     }
 
 }
