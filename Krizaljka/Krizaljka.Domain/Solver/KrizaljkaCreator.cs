@@ -373,10 +373,45 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         }
     }
 
-    //private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
-    //{
-    //    var pattern = GetSlot
-    //}
+    private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
+    {
+        var pattern = GetSlotPattern(slot);
+        var cacheKey = (slot.Id, pattern);
+
+        if (_cache.MatchingTermsCache.TryGetValue(cacheKey, out var cached))
+        {
+            return cached;
+        }
+
+        var result = GetIndexedMatchingTermsCore(slot);
+        _cache.MatchingTermsCache[cacheKey] = result;
+
+        return result;
+    }
+
+    private string GetSlotPattern(KrizaljkaSlot slot)
+    {
+        var state = theKrizaljka.State;
+        var chars = new char[slot.Cells.Count];
+
+        for (var i = 0; i < slot.Cells.Count; i++)
+        {
+            var cell = slot.Cells[i];
+            var key = (cell.Row, cell.Col);
+
+            if (state.LettersByCell.TryGetValue(key, out var letter) &&
+                !string.IsNullOrWhiteSpace(letter))
+            {
+                chars[i] = letter[0];
+            }
+            else
+            {
+                chars[i] = '_';
+            }
+        }
+
+        return new string(chars);
+    }
 
     private  IReadOnlyList<Term> GetIndexedMatchingTermsCore(KrizaljkaSlot slot)
     {
