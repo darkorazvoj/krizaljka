@@ -8,6 +8,7 @@ namespace Krizaljka.Domain.Solver;
 public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 {   
     private CreatorCache _cache = new();
+    private readonly HashSet<int> _dirtySlots = [];
     private int _wordsPlacedDuringIterations;
 
     public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms)
@@ -15,6 +16,12 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _wordsPlacedDuringIterations = 0;
         _cache = new CreatorCache();
         EnsureTermsCaches(terms);
+
+        _dirtySlots.Clear();
+        foreach (var slot in theKrizaljka.Slots)
+        {
+            _dirtySlots.Add(slot.Id);
+        }
 
         var solved = Solve(theKrizaljka.Slots);
         return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
@@ -150,11 +157,13 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
             
+            var prevDirty = new HashSet<int>(_dirtySlots);
             var placement = Place(nextSlot, term);
 
             if (!PassesForwardCheck(nextSlot))
             {
                 Undo(placement);
+                RestoreDirty(prevDirty);
                 continue;
             }
 
@@ -164,7 +173,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             }
 
             Undo(placement);
-
+            RestoreDirty(prevDirty);
         }
 
         return false;
@@ -176,7 +185,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         var bestCount = int.MaxValue;
         var hasUnassignedSlots = false;
 
-        foreach (var slot in slots)
+        var slotsToCheck = _dirtySlots.Count > 0
+            ? _dirtySlots
+                .Where(theKrizaljka.SlotsById.ContainsKey)
+                .Select(id => theKrizaljka.SlotsById[id])
+            : slots;
+
+
+        foreach (var slot in slotsToCheck)
         {
             if (theKrizaljka.State.IsAssigned(slot.Id))
             {
@@ -203,13 +219,62 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             }
         }
 
+        if (bestSlot is not null)
+        {
+            return true;
+        }
+
         if (!hasUnassignedSlots)
+        {
+            foreach (var slot in slots)
+            {
+                if (!theKrizaljka.State.IsAssigned(slot.Id))
+                {
+                    hasUnassignedSlots = true;
+                    break;
+                }
+            }
+
+            if (!hasUnassignedSlots)
+            {
+                bestSlot = null;
+                return true;
+            }
+        }
+
+        foreach (var slot in slots)
+        {
+            if (theKrizaljka.State.IsAssigned(slot.Id))
+            {
+                continue;
+            }
+
+            var fittingCount = GetFittingCount(slot);
+
+            if (fittingCount == 0)
+            {
+                return false;
+            }
+
+            if (fittingCount < bestCount)
+            {
+                bestCount = fittingCount;
+                bestSlot = slot;
+
+                if (bestCount == 1)
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (bestSlot is null)
         {
             bestSlot = null;
             return true;
         }
 
-        return bestSlot is not null;
+        return true;
     }
     
     private bool Fits(KrizaljkaSlot slot, Term term)
@@ -300,6 +365,21 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
                 AssignSlot(neighborSlot, matchingTerms[0], newCells, assignedSlots);
                 queue.Enqueue(neighborSlotId);
+            }
+        }
+
+        _dirtySlots.Clear();
+
+        foreach (var (assignedSlotId, _) in assignedSlots)
+        {
+            _dirtySlots.Add(assignedSlotId);
+
+            if (theKrizaljka.NeighborSlotsIdsBySlotId.TryGetValue(assignedSlotId, out var neighbors))
+            {
+                foreach (var n in neighbors)
+                {
+                    _dirtySlots.Add(n);
+                }
             }
         }
 
@@ -544,6 +624,15 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _cache.FittingCountCache[key] = count;
 
         return count;
+    }
+
+    private void RestoreDirty(HashSet<int> prev)
+    {
+        _dirtySlots.Clear();
+        foreach (var id in prev)
+        {
+            _dirtySlots.Add(id);
+        }
     }
 
 }
