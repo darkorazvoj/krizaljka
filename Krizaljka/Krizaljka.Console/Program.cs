@@ -38,6 +38,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("lk -> load krizaljka template")
     .AppendLine("k -> Show current krizaljka")
     .AppendLine("kp -> Assign pojam to krizaljka")
+    .Append("kd -> Delete pojam from krizaljka")
     .AppendLine("kcr -> Run krizaljka creator")
     .ToString();
 
@@ -382,6 +383,79 @@ while (true)
 
             break;
 
+        case "kd":
+            if (currentKrizaljkaTemplate is null)
+            {
+                Console.WriteLine("Krizaljka template not loaded.");
+                Console.ReadKey();
+                continue;
+            }
+
+            if (currentKrizaljkaState is null || 
+                currentKrizaljkaState.AssignedTermsBySlotId.Count == 0)
+            {
+                Console.WriteLine("Krizaljka is empty.");
+                Console.ReadKey();
+                continue;
+            }
+
+            var slotToDelete = -1;
+            var exitDp = false;
+            while (true)
+            {
+                PrintCurrentTemplate();
+
+                Console.Write("Slot ID to delete (x for exit): ");
+                var slotIdToDeleteString = Console.ReadLine();
+                if (slotIdToDeleteString == "x")
+                {
+                    exitDp = true;
+                    break;
+                }
+
+                if (!int.TryParse(slotIdToDeleteString, out slotToDelete))
+                {
+                    continue;
+                }
+
+                if (slotToDelete <= 0)
+                {
+                    continue;
+                }
+
+                break;
+            }
+
+            if (exitDp)
+            {
+                continue;
+            }
+
+            if (currentKrizaljkaState.AssignedTermsBySlotId.Remove(slotToDelete))
+            {
+                try
+                {
+                    var currentStateToWriteJson = JsonSerializer.Serialize(currentKrizaljkaState, options1);
+                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName?? "no_name")), currentStateToWriteJson);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    continue;
+                }
+                Console.Clear();
+                PrintCurrentTemplate();
+                Console.WriteLine("DELETED");
+                Console.ReadKey();
+
+                continue;
+            }
+
+            Console.WriteLine("Delete FAILED");
+            PrintCurrentTemplate();
+            Console.ReadKey();
+
+            break;
         case "kcr":
 
             if (currentKrizaljkaTemplate is null ||
