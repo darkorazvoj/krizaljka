@@ -145,7 +145,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return true;
         }
 
-        foreach (var term in GetIndexedMatchingTermsCore(nextSlot))
+        foreach (var term in GetIndexedMatchingTerms(nextSlot))
         {
             if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
             {
@@ -179,71 +179,160 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return false;
     }
 
-    private  bool TryGetBestNextSlot(IReadOnlyList<KrizaljkaSlot> slots, out KrizaljkaSlot? bestSlot)
+    //private  bool TryGetBestNextSlot(IReadOnlyList<KrizaljkaSlot> slots, out KrizaljkaSlot? bestSlot)
+    //{
+    //    bestSlot = null;
+    //    var bestCount = int.MaxValue;
+    //    var hasUnassignedSlots = false;
+
+    //    var slotsToCheck = _dirtySlots.Count > 0
+    //        ? _dirtySlots
+    //            .Where(theKrizaljka.SlotsById.ContainsKey)
+    //            .Select(id => theKrizaljka.SlotsById[id])
+    //        : slots;
+
+
+    //    foreach (var slot in slotsToCheck)
+    //    {
+    //        if (theKrizaljka.State.IsAssigned(slot.Id))
+    //        {
+    //            continue;
+    //        }
+
+    //        hasUnassignedSlots = true;
+    //        var fittingCount = GetFittingCount(slot);
+
+    //        if (fittingCount == 0)
+    //        {
+    //            return false;
+    //        }
+
+    //        if (fittingCount < bestCount)
+    //        {
+    //            bestCount = fittingCount;
+    //            bestSlot = slot;
+
+    //            if (bestCount == 1)
+    //            {
+    //                return true;
+    //            }
+    //        }
+    //    }
+
+    //    if (bestSlot is not null)
+    //    {
+    //        return true;
+    //    }
+
+    //    if (!hasUnassignedSlots)
+    //    {
+    //        foreach (var slot in slots)
+    //        {
+    //            if (!theKrizaljka.State.IsAssigned(slot.Id))
+    //            {
+    //                hasUnassignedSlots = true;
+    //                break;
+    //            }
+    //        }
+
+    //        if (!hasUnassignedSlots)
+    //        {
+    //            bestSlot = null;
+    //            return true;
+    //        }
+    //    }
+
+    //    foreach (var slot in slots)
+    //    {
+    //        if (theKrizaljka.State.IsAssigned(slot.Id))
+    //        {
+    //            continue;
+    //        }
+
+    //        var fittingCount = GetFittingCount(slot);
+
+    //        if (fittingCount == 0)
+    //        {
+    //            return false;
+    //        }
+
+    //        if (fittingCount < bestCount)
+    //        {
+    //            bestCount = fittingCount;
+    //            bestSlot = slot;
+
+    //            if (bestCount == 1)
+    //            {
+    //                return true;
+    //            }
+    //        }
+    //    }
+
+    //    if (bestSlot is null)
+    //    {
+    //        bestSlot = null;
+    //    }
+
+    //    return true;
+    //}
+
+    private bool TryGetBestNextSlot(
+        IReadOnlyList<KrizaljkaSlot> slots,
+        out KrizaljkaSlot? bestSlot)
     {
         bestSlot = null;
         var bestCount = int.MaxValue;
-        var hasUnassignedSlots = false;
 
-        var slotsToCheck = _dirtySlots.Count > 0
-            ? _dirtySlots
-                .Where(theKrizaljka.SlotsById.ContainsKey)
-                .Select(id => theKrizaljka.SlotsById[id])
-            : slots;
+        var checkedSlotIds = new HashSet<int>();
 
-
-        foreach (var slot in slotsToCheck)
+        if (_dirtySlots.Count > 0)
         {
-            if (theKrizaljka.State.IsAssigned(slot.Id))
+            foreach (var slotId in _dirtySlots)
             {
-                continue;
-            }
-
-            hasUnassignedSlots = true;
-            var fittingCount = GetFittingCount(slot);
-
-            if (fittingCount == 0)
-            {
-                return false;
-            }
-
-            if (fittingCount < bestCount)
-            {
-                bestCount = fittingCount;
-                bestSlot = slot;
-
-                if (bestCount == 1)
+                if (!theKrizaljka.SlotsById.TryGetValue(slotId, out var slot))
                 {
-                    return true;
+                    continue;
                 }
-            }
-        }
 
-        if (bestSlot is not null)
-        {
-            return true;
-        }
+                checkedSlotIds.Add(slot.Id);
 
-        if (!hasUnassignedSlots)
-        {
-            foreach (var slot in slots)
-            {
-                if (!theKrizaljka.State.IsAssigned(slot.Id))
+                if (theKrizaljka.State.IsAssigned(slot.Id))
                 {
-                    hasUnassignedSlots = true;
-                    break;
+                    continue;
+                }
+
+                var fittingCount = GetFittingCount(slot);
+
+                if (fittingCount == 0)
+                {
+                    return false;
+                }
+
+                if (fittingCount < bestCount)
+                {
+                    bestCount = fittingCount;
+                    bestSlot = slot;
+
+                    if (bestCount == 1)
+                    {
+                        return true;
+                    }
                 }
             }
 
-            if (!hasUnassignedSlots)
+            if (bestSlot is not null)
             {
-                bestSlot = null;
                 return true;
             }
         }
 
         foreach (var slot in slots)
         {
+            if (!checkedSlotIds.Add(slot.Id))
+            {
+                continue;
+            }
+
             if (theKrizaljka.State.IsAssigned(slot.Id))
             {
                 continue;
@@ -266,12 +355,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     return true;
                 }
             }
-        }
-
-        if (bestSlot is null)
-        {
-            bestSlot = null;
-            return true;
         }
 
         return true;
@@ -296,12 +379,9 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         for (var i = 0; i < slot.Cells.Count; i++)
         {
-            var slotCell = slot.Cells[i];
             var termLetter = term.Letters[i];
 
-            var key = (slotCell.Row, slotCell.Col);
-
-            if (theKrizaljka.State.LettersByCell.TryGetValue(key, out var existingLetter) &&
+            if (theKrizaljka.State.LettersByCell.TryGetValue( slot.CellKeys[i], out var existingLetter) &&
                 !existingLetter.Equals(termLetter, StringComparison.CurrentCultureIgnoreCase))
             {
                 return false;
@@ -354,7 +434,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                var matchingTerms = GetIndexedMatchingTermsCore(neighborSlot)
+                var matchingTerms = GetIndexedMatchingTerms(neighborSlot)
                     .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
                     .ToList();
 
@@ -367,8 +447,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 queue.Enqueue(neighborSlotId);
             }
         }
-
-        _dirtySlots.Clear();
 
         foreach (var (assignedSlotId, _) in assignedSlots)
         {
@@ -566,7 +644,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
             var hasAnythingFitting = false;
 
-            foreach (var term in GetIndexedMatchingTermsCore(neighborSlot))
+            foreach (var term in GetIndexedMatchingTerms(neighborSlot))
             {
                 if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
                 {
