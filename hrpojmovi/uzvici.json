@@ -1,190 +1,167 @@
 [
   {
-    "o": "",
+    "o": "Uzdah tuge",
     "w": "ah"
   },
   {
-    "o": "",
+    "o": "Potvrda; razumijevanje; da",
     "w": "aha"
   },
   {
-    "o": "",
+    "o": "Kratki poziv; poticaj",
     "w": "aj"
   },
   {
-    "o": "",
+    "o": "Kreni; hajde; požuri",
     "w": "ajde"
   },
   {
-    "o": "",
+    "o": "Zar",
     "w": "ama"
   },
   {
-    "o": "",
+    "o": "Zvuk prepadanja; plašenje",
     "w": "bu"
   },
   {
-    "o": "",
+    "o": "Jako loše; užasno; grozno",
     "w": "doboga"
   },
   {
-    "o": "",
+    "o": "Ljuta psovka; k vragu",
     "w": "dođavola"
   },
   {
-    "o": "",
+    "o": "Pozdrav pri odlasku",
     "w": "doviđenja"
   },
   {
-    "o": "",
+    "o": "Bestraga; k vragu",
     "w": "dovraga"
   },
   {
-    "o": "",
+    "o": "Poticaj konju na kas",
     "w": "điha"
   },
   {
-    "o": "",
+    "o": "Uzdah sjete ili ironije",
     "w": "eh"
   },
   {
-    "o": "",
+    "o": "Dozivanje; hej; čuj",
     "w": "ej"
   },
   {
-    "o": "",
+    "o": "Pokazivanje na viđeno",
     "w": "eto"
   },
   {
-    "o": "",
+    "o": "Pokazivanje na nešto blizu",
     "w": "evo"
   },
   {
-    "o": "",
+    "o": "Onomatopeja vjetra; fijuk",
     "w": "fiju"
-  },
+  },  
   {
-    "o": "",
-    "w": "gijo"
-  },
-  {
-    "o": "",
+    "o": "Poticaj na kretanje; idi",
     "w": "hajde"
   },
   {
-    "o": "",
+    "o": "Kratki smijeh; usklik",
     "w": "ho"
   },
   {
-    "o": "",
+    "o": "Pastirski poziv blagu",
     "w": "hoj"
   },
   {
-    "o": "",
+    "o": "Tjeranje ptica ili mačaka",
     "w": "iš"
-  },
+  },  
   {
-    "o": "",
-    "w": "jah"
-  },
-  {
-    "o": "",
+    "o": "Usklik bola ili straha",
     "w": "jao"
   },
   {
-    "o": "",
+    "o": "Psovka rezignacije; ma k vragu",
     "w": "jebiga"
   },
   {
-    "o": "",
+    "o": "Uzdah boli; jadanje",
     "w": "joj"
   },
   {
-    "o": "",
+    "o": "Usklik veselja; radost",
     "w": "jupi"
   },
   {
-    "o": "",
+    "o": "Kamo ćete (kajkavski)",
     "w": "kajde"
   },
   {
-    "o": "",
+    "o": "Onomatopeja kucanja",
     "w": "kvoc"
-  },
+  }, 
   {
-    "o": "",
-    "w": "mlačevo"
-  },
-  {
-    "o": "",
+    "o": "Zabrana radnje; prestanite",
     "w": "nemojte"
   },
   {
-    "o": "",
+    "o": "Vokativni usklik; zaziv",
     "w": "o"
   },
   {
-    "o": "",
+    "o": "Uzdah čuđenja ili bola",
     "w": "oh"
   },
-  {
-    "o": "",
-    "w": "oha"
-  },
-  {
-    "o": "",
+   {
+    "o": "Usklik kod iznenađenja",
     "w": "opa"
   },
   {
-    "o": "",
+    "o": "Usklik kod male nezgode",
     "w": "ops"
   },
-  {
-    "o": "",
-    "w": "pih"
-  },
-  {
-    "o": "",
+  
+   {
+    "o": "Onomatopeja udarca o vodu",
     "w": "pljus"
   },
   {
-    "o": "",
+    "o": "Poziv na tišinu; šuti",
     "w": "pst"
   },
   {
-    "o": "",
+    "o": "Tjeranje mačke",
     "w": "šic"
   },
-  {
-    "o": "",
+    {
+    "o": "Onomatopeja naglog loma",
     "w": "tras"
   },
   {
-    "o": "",
+    "o": "Uzdah olakšanja ili muke",
     "w": "uh"
   },
   {
-    "o": "",
+    "o": "Usklik oduševljenja",
     "w": "uhu"
   },
   {
-    "o": "",
+    "o": "Krik u nevolji; traženje spasa",
     "w": "upomoć"
   },
   {
-    "o": "",
+    "o": "Nipošto; kamo sreće; psovka",
     "w": "vraga"
   },
   {
-    "o": "",
+    "o": "Usklik čuđenja; doista",
     "w": "zaboga"
   },
   {
-    "o": "",
-    "w": "zagreboh"
-  },
-  {
-    "o": "",
+    "o": "Konačan pozdrav; adio",
     "w": "zbogom"
   }
 ]
