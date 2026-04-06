@@ -423,6 +423,20 @@
   {"o": "Što se može obaviti", "w": "izvršivo"},
   {"o": "Tko se dade uvjeriti", "w": "kadro"},
   {"o": "Topli napitak od kave", "w": "kapučino"},
-  {"o": "Što je ukrašeno resama", "w": "kićeno"}
-]
+  {"o": "Što je ukrašeno resama", "w": "kićeno"},
+  [
+{"o": "Koje je bez snage", "w": "klonulo"},
+{"o": "Trag kotača na putu", "w": "kolotrag"},
+{"o": "Koji ima sposobnost", "w": "kompetentno"},
+{"o": "Koje je potpuno", "w": "kompletno"},
+{"o": "Koje nije jednostavno", "w": "komplicirano"},
+{"o": "Koje je sabrano", "w": "koncentrirano"},
+{"o": "Koji nema prekida", "w": "kontinuirano"},
+{"o": "Suho tlo kao prostor", "w": "kopnom"},
+{"o": "Ono što je isitnjeno", "w": "kosano"}
+{"o": "Koje je umjetno napravljeno", "w": "krivotvoreno"},
+{"o": "Koje je nastalo od dvije vrste", "w": "križano"},
+{"o": "Ono što je podvrgnuto mjeri", "w": "mjereno"},
+{"o": "Tekućina koja je natopljena", "w": "močeno"},
+{"o": "Ono što se ne može vratiti", "w": "nadoknadivo"},
 ]
