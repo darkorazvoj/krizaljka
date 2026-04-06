@@ -78,6 +78,11 @@ while (true)
                 categories.Add(new CategoryJsonDbItem(kv.Key, kv.Value));
             }
 
+            if (File.Exists(Path.Combine(dbPath, categoriesDbName)))
+            {
+                File.Delete(Path.Combine(dbPath, categoriesDbName));
+            }
+
             var categoryDb = new CategoryJsonDb(categories);
             var categoriesDbJson = JsonSerializer.Serialize(categoryDb, options1);
             File.WriteAllText(Path.Combine(dbPath, categoriesDbName), categoriesDbJson);
