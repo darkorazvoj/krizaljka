@@ -13,10 +13,10 @@ public class StructureTermService
         string term, 
         int category)
     {
-        if (string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(term))
-        {
-            return new InvalidTerm($"missing description and/or term. Description: {description}, Term: {term}");
-        }
+        //if (string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(term))
+        //{
+        //    return new InvalidTerm($"missing description and/or term. Description: {description}, Term: {term}");
+        //}
 
         var descCleaned = description.TrimExtra();
 

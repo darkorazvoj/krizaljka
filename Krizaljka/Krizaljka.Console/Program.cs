@@ -107,9 +107,12 @@ while (true)
                 return;
             }
 
+
             while (true)
             {
                 Console.Clear();
+                Console.WriteLine($"number of terms: {pojmoviDb.Terms.Count}");
+
                 Console.WriteLine("TERMS LOOKUP");
                 Console.Write("Length (x for exit): ");
                 var lengthString = Console.ReadLine();
@@ -306,6 +309,7 @@ while (true)
             
             while (true)
             {
+                PrintKrizaljka();
                 Console.Write("Slot id (x for exit): ");
                 var slotIdInputString = Console.ReadLine();
                 if (slotIdInputString == "x")
