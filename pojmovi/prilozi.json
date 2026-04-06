@@ -1,2152 +1,493 @@
 [
-  {
-    "o": "Nakon silaska s vlasti; odrekavši se",
-    "w": "abdiciravši"
-  },
-  {
-    "o": "Složivši po redu slova",
-    "w": "abecediravši"
-  },
-  {
-    "o": "Po redu slova; po poretku",
-    "w": "abecedno"
-  },
-  {
-    "o": "Nakon poništenja kazne; oslobodivši",
-    "w": "aboliravši"
-  },
-  {
-    "o": "Nakon prekida trudnoće",
-    "w": "abortiravši"
-  },
-  {
-    "o": "Nakon prilagodbe; preradivši",
-    "w": "adaptiravši"
-  },
-  {
-    "o": "Odgovarajuće; prikladno",
-    "w": "adekvatno"
-  },
-  {
-    "o": "Službeno; upravno",
-    "w": "administrativno"
-  },
-  {
-    "o": "Upravljajući uredom; vodeći poslove",
-    "w": "administrirajući"
-  },
-  {
-    "o": "Nakon upravljanja; obavivši upravu",
-    "w": "administriravši"
-  },
-  {
-    "o": "Nakon posvojenja; usvojivši",
-    "w": "adoptiravši"
-  },
-  {
-    "o": "Napisavši adresu; uputivši",
-    "w": "adresiravši"
-  },
-  {
-    "o": "Nakon upijanja na površini",
-    "w": "adsorbiravši"
-  },
-  {
-    "o": "Uz prisustvo kisika",
-    "w": "aerobno"
-  },
-  {
-    "o": "U stanju uzbuđenosti; neprirodno",
-    "w": "afektirno"
-  },
-  {
-    "o": "Nakon udruživanja; pripojivši",
-    "w": "afiliravši"
-  },
-  {
-    "o": "Potvrdno; pozitivno",
-    "w": "afirmativno"
-  },
-  {
-    "o": "Ističući se; stječući ugled",
-    "w": "afirmirajući"
-  },
-  {
-    "o": "Nakon potvrde; stekavši ugled",
-    "w": "afirmiravši"
-  },
-  {
-    "o": "Nakon poticanja; nagovorivši",
-    "w": "agitiravši"
-  },
-  {
-    "o": "Napadački; navalno",
-    "w": "agresivno"
-  },
-  {
-    "o": "Verdijeva opera",
-    "w": "Aida"
-  },
-  {
-    "o": "Naglasivši; istaknuvši",
-    "w": "akcentiravši"
-  },
-  {
-    "o": "Prihvaćajući ponudu",
-    "w": "akceptirajući"
-  },
-  {
-    "o": "Nakon prihvaćanja; primivši",
-    "w": "akceptiravši"
-  },
-  {
-    "o": "Nakon prilagodbe na podneblje",
-    "w": "aklimatiziravši"
-  },
-  {
-    "o": "Nakon usklađivanja; prilagodivši",
-    "w": "akomodiravši"
-  },
-  {
-    "o": "Na račun; unaprijed",
-    "w": "akonto"
-  },
-  {
-    "o": "Nakon davanja povjerenja",
-    "w": "akreditiravši"
-  },
-  {
-    "o": "Stavljajući u pogon; pokrećući",
-    "w": "aktivirajući"
-  },
-  {
-    "o": "Nakon pokretanja; stavivši u rad",
-    "w": "aktiviravši"
-  },
-  {
-    "o": "Djelatno; marljivo",
-    "w": "aktivno"
-  },
-  {
-    "o": "Čineći suvremenim; pretvarajući u rad",
-    "w": "aktualizirajući"
-  },
-  {
-    "o": "Nakon osuvremenjivanja",
-    "w": "aktualiziravši"
-  },
-  {
-    "o": "Trenutačno; sadašnje",
-    "w": "aktualno"
-  },
-  {
-    "o": "Sakupljajući; gomilajući",
-    "w": "akumulirajući"
-  },
-  {
-    "o": "Nakon sakupljanja; nakupivši",
-    "w": "akumuliravši"
-  },
-  {
-    "o": "Vezano uz sluh; zvučno",
-    "w": "akustično"
-  },
-  {
-    "o": "Naglo; žestoko; goruće",
-    "w": "akutno"
-  },
-  {
-    "o": "Nakon uzbune; upozorivši",
-    "w": "alarmiravši"
-  },
-  {
-    "o": "Brzo; veselo (glazba)",
-    "w": "alegro"
-  },
-  {
-    "o": "Lužnato; bazično",
-    "w": "alkalno"
-  },
-  {
-    "o": "Razmještajući; dodjeljujući",
-    "w": "alocirajući"
-  },
-  {
-    "o": "Druga mogućnost; zamjensko",
-    "w": "alternativno"
-  },
-  {
-    "o": "Nesebično; plemenito",
-    "w": "altruistično"
-  },
-  {
-    "o": "Nagovješćujući; ciljajući na nešto",
-    "w": "aludirajući"
-  },
-  {
-    "o": "Nakon davanja natuknice",
-    "w": "aludiravši"
-  },
-  {
-    "o": "Od lake kovine; napravljeno od Al",
-    "w": "aluminijevo"
-  },
-  {
-    "o": "Površno; nemarno",
-    "w": "aljkavo"
-  },
-  {
-    "o": "S puno želje za uspjehom",
-    "w": "ambiciozno"
-  },
-  {
-    "o": "Nakon usvajanja običaja SAD-a",
-    "w": "amerikaniziravši"
-  },
-  {
-    "o": "Davajući oprost kazne",
-    "w": "amnestirajući"
-  },
-  {
-    "o": "Nakon općeg oprosta kazne",
-    "w": "amnestiravši"
-  },
-  {
-    "o": "Na ovu stranu; ovamo",
-    "w": "amo"
-  },
-  {
-    "o": "Bezoblično; bez kristala",
-    "w": "amorfno"
-  },
-  {
-    "o": "Na obje strane; posvuda",
-    "w": "amo-tamo"
-  },
-  {
-    "o": "Uklanjajući dio tijela kirurški",
-    "w": "amputirajući"
-  },
-  {
-    "o": "Nakon odsijecanja uda",
-    "w": "amputiravši"
-  },
-  {
-    "o": "Bez prisustva zraka",
-    "w": "anaerobno"
-  },
-  {
-    "o": "Rastavljajući na dijelove; ispitujući",
-    "w": "analizirajući"
-  },
-  {
-    "o": "Nakon raščlambe; proučivši",
-    "w": "analiziravši"
-  },
-  {
-    "o": "Zadnje; po završetku crijeva",
-    "w": "analno"
-  },
-  {
-    "o": "Slično; sukladno",
-    "w": "analogno"
-  },
-  {
-    "o": "Bacajući prokletstvo",
-    "w": "anatemizirajući"
-  },
-  {
-    "o": "Nakon izopćenja; prokleto",
-    "w": "anatemiziravši"
-  },
-  {
-    "o": "Pripajajući tuđi teritorij",
-    "w": "anektirajući"
-  },
-  {
-    "o": "Nakon nasilnog prisvajanja zemlje",
-    "w": "anektiravši"
-  },
-  {
-    "o": "Uspavljujući bolesnika",
-    "w": "anestezirajući"
-  },
-  {
-    "o": "Nakon davanja narkoze",
-    "w": "anesteziravši"
-  },
-  {
-    "o": "Zapošljavajući; uključujući u rad",
-    "w": "angažirajući"
-  },
-  {
-    "o": "Nakon davanja posla; unajmivši",
-    "w": "angažiravši"
-  },
-  {
-    "o": "Oživljavajući likove; potičući",
-    "w": "animirajući"
-  },
-  {
-    "o": "Nakon oživljavanja; potaknuvši",
-    "w": "animiravši"
-  },
-  {
-    "o": "Ispitujući javnost",
-    "w": "anketirajući"
-  },
-  {
-    "o": "Nakon ispitivanja ljudi",
-    "w": "anketiravši"
-  },
-  {
-    "o": "Usput; u prolazu",
-    "w": "anpasan"
-  },
-  {
-    "o": "Unaprijed očekujući",
-    "w": "anticipirajući"
-  },
-  {
-    "o": "Nakon predviđanja; unaprijed",
-    "w": "anticipiravši"
-  },
-  {
-    "o": "Poništivši; svedavši na nulu",
-    "w": "anuliravši"
-  },
-  {
-    "o": "Ravnodušno; bezvoljno",
-    "w": "apatično"
-  },
-  {
-    "o": "Pozivajući u pomoć; obraćajući se",
-    "w": "apelirajući"
-  },
-  {
-    "o": "Nakon poziva; uputivši molbu",
-    "w": "apeliravši"
-  },
-  {
-    "o": "Pljeskajući rukama; odobravajući",
-    "w": "aplaudirajući"
-  },
-  {
-    "o": "Nakon pljeskanja; pohvalivši",
-    "w": "aplaudiravši"
-  },
-  {
-    "o": "Primjenjujući; nanoseći",
-    "w": "aplicirajući"
-  },
-  {
-    "o": "Nakon prijave; primijenivši",
-    "w": "apliciravši"
-  },
-  {
-    "o": "Sumnjivo; neautentično",
-    "w": "apokrifno"
-  },
-  {
-    "o": "Nakon donošenja plijena psu",
-    "w": "aportiravši"
-  },
-  {
-    "o": "Nakon naglašavanja; istaknuvši",
-    "w": "apostrofiravši"
-  },
-  {
-    "o": "Unaprijed; bez iskustva",
-    "w": "apriori"
-  },
-  {
-    "o": "Otprilike; približno",
-    "w": "aproksimativno"
-  },
-  {
-    "o": "Približavajući se vrijednosti",
-    "w": "aproksimirajući"
-  },
-  {
-    "o": "Nakon procjene; približivši",
-    "w": "aproksimiravši"
-  },
-  {
-    "o": "Proglašavajući vrhovnim",
-    "w": "apsolutizirajući"
-  },
-  {
-    "o": "Nakon uzdizanja na vrh",
-    "w": "apsolutiziravši"
-  },
-  {
-    "o": "Sasvim; potpuno; bezuvjetno",
-    "w": "apsolutno"
-  },
-  {
-    "o": "Dovršavajući studij; rješavajući",
-    "w": "apsolvirajući"
-  },
-  {
-    "o": "Nakon završetka školovanja",
-    "w": "apsolviravši"
-  },
-  {
-    "o": "Upijajući; usisavajući",
-    "w": "apsorbirajući"
-  },
-  {
-    "o": "Nakon upijanja; usisavši",
-    "w": "apsorbiravši"
-  },
-  {
-    "o": "Nakon suzdržavanja od nečega",
-    "w": "apstiniravši"
-  },
-  {
-    "o": "Nakon poopćavanja; izuzevši",
-    "w": "apstrahiravši"
-  },
-  {
-    "o": "Besmisleno; smiješno",
-    "w": "apsurdno"
-  },
-  {
-    "o": "Uređujući; pripremajući; slažući",
-    "w": "aranžirajući"
-  },
-  {
-    "o": "Složivši; pripremivši; uredivši",
-    "w": "aranžiravši"
-  },
-  {
-    "o": "Presuđujući; posredujući u sporu",
-    "w": "arbitrirajući"
-  },
-  {
-    "o": "Donijevši presudu; presudivši",
-    "w": "arbitriravši"
-  },
-  {
-    "o": "Dokazano; potkrijepljeno; logično",
-    "w": "argumentirano"
-  },
-  {
-    "o": "Iznijevši dokaze; obrazloživši",
-    "w": "argumentiravši"
-  },
-  {
-    "o": "Obrazlažući; dokazujući",
-    "w": "argumentirajući"
-  },
-  {
-    "o": "Spremivši u pismohranu; pohranivši",
-    "w": "arhiviravši"
-  },
-  {
-    "o": "Jasno izgovarajući",
-    "w": "artikulirajući"
-  },
-  {
-    "o": "Ojačavajući konstrukciju; pojačavajući",
-    "w": "armirajući"
-  },
-  {
-    "o": "Ojačavši čelikom; učvrstivši",
-    "w": "armiravši"
-  },
-  {
-    "o": "Oholo; drsko; nadmeno; prepotentno",
-    "w": "arogantno"
-  },
-  {
-    "o": "Dodajući miris; začinjajući",
-    "w": "aromatizirajući"
-  },
-  {
-    "o": "Namirisavši; začinivši mirodijama",
-    "w": "aromatiziravši"
-  },
-  {
-    "o": "Jasno izgovarajući; razgovijetno",
-    "w": "artikulirajući"
-  },
-  {
-    "o": "Razgovijetno izrekavši; izrazivši",
-    "w": "artikuliravši"
-  },
-  {
-    "o": "Sastavivši dijelove; montiravši",
-    "w": "asembliravši"
-  },
-  {
-    "o": "Presvlačeći cestu; gradeći put",
-    "w": "asfaltirajući"
-  },
-  {
-    "o": "Dovršivši cestu; popločivši",
-    "w": "asfaltiravši"
-  },
-  {
-    "o": "Gradeći cestu; taracajući",
-    "w": "asfaltirajući"
-  },
-  {
-    "o": "Uklapajući se; stapajući se; upijajući",
-    "w": "asimilirajući"
-  },
-  {
-    "o": "Prilagodivši se okolini; stopivši se",
-    "w": "asimiliravši"
-  },
-  {
-    "o": "Pomažući drugome; služeći",
-    "w": "asistirajući"
-  },
-  {
-    "o": "Pružajući pomoć; bivajući pri ruci",
-    "w": "asistirajući"
-  },
-  {
-    "o": "Pomogavši u radu; bivši prisutan",
-    "w": "asistiravši"
-  },
-  {
-    "o": "Povezujući misli; podsjećajući",
-    "w": "asocirajući"
-  },
-  {
-    "o": "Povezavši pojmove; podsjetivši",
-    "w": "asociravši"
-  },
-  {
-    "o": "Težeći nečemu; usisavajući",
-    "w": "aspirirajući"
-  },
-  {
-    "o": "Iskazavši težnju; usisavši",
-    "w": "aspiriravši"
-  },
-  {
-    "o": "Oslabivši; ublaživši; razrijedivši",
-    "w": "atenuiravši"
-  },
-  {
-    "o": "Spuštajući se na tlo; slijećući",
-    "w": "aterirajući"
-  },
-  {
-    "o": "Sletjevši na zemlju; spustivši se",
-    "w": "ateriravši"
-  },
-  {
-    "o": "Razbijajući na sitne dijelove",
-    "w": "atomizirajući"
-  },
-  {
-    "o": "Raspršivši; rastavivši na čestice",
-    "w": "atomiziravši"
-  },
-  {
-    "o": "Pridajući svojstva; dodjeljujući",
-    "w": "atribuirajući"
-  },
-  {
-    "o": "Pridavši osobinu; dodijelivši",
-    "w": "atribuiravši"
-  },
-  {
-    "o": "Izvorno; pravo; vjerodostojno",
-    "w": "autentično"
-  },
-  {
-    "o": "Uvodeći samostalan rad",
-    "w": "automatizirajući"
-  },
-  {
-    "o": "Strojno vođeno; samostalno",
-    "w": "automatizirano"
-  },
-  {
-    "o": "Učinivši samostalnim; mehaniziravši",
-    "w": "automatiziravši"
-  },
-  {
-    "o": "Strojno; samoradno; bez volje",
-    "w": "automatsko"
-  },
-  {
-    "o": "Mjerodavno; nadmoćno; odlučno",
-    "w": "autoritativno"
-  },
-  {
-    "o": "Dajući dopuštenje; potvrđujući",
-    "w": "autorizirajući"
-  },
-  {
-    "o": "Odobrivši objavu; ovlastivši",
-    "w": "autoriziravši"
-  },
-  {
-    "o": "Putovši besplatno; stopiravši",
-    "w": "autostopiravši"
-  },
-  {
-    "o": "Jamčivši za mjenicu; potpisavši",
-    "w": "avaliravši"
-  },
-  {
-    "o": "Čineći istočnjačkim; prilagođavajući",
-    "w": "azijatizirajući"
-  },
-  {
-    "o": "Učinivši istočnjačkim; prilagodivši",
-    "w": "azijatiziravši"
-  },
-  {
-    "o": "Na vrijeme; hitro; odmah; točno",
-    "w": "ažurno"
-  },
-
-  {
-    "o": "Trzajući udovima; koprcajući se",
-    "w": "bacakajući"
-  },
-  {
-    "o": "Nakon odbacivanja; hitnuvši",
-    "w": "bacivši"
-  },
-  {
-    "o": "Besplatno; nizašto; uzalud",
-    "w": "badava"
-  },
-  {
-    "o": "Ubošvši nakratko; taknuvši",
-    "w": "badnuvši"
-  },
-  {
-    "o": "Podcjenjujući; čineći nevažnim",
-    "w": "bagatelizirajući"
-  },
-  {
-    "o": "Nakon podcjenjivanja; omalovaživši",
-    "w": "bagateliziravši"
-  },
-  {
-    "o": "Radeći strojem za iskop; kopajući",
-    "w": "bagerirajući"
-  },
-  {
-    "o": "Nakon iskapanja; prokopavši",
-    "w": "bageriravši"
-  },
-  {
-    "o": "Oholo; nadmeno; drsko",
-    "w": "bahato"
-  },
-  {
-    "o": "Mučeći se oko nečega; radeći",
-    "w": "bakćući"
-  },
-  {
-    "o": "Održavajući ravnotežu",
-    "w": "balansirajući"
-  },
-  {
-    "o": "Ispuštajući slinu; kmečeći",
-    "w": "balaveći"
-  },
-  {
-    "o": "Poput djeteta; nezrelo",
-    "w": "balavo"
-  },
-  {
-    "o": "Vršiti nuždu (za stoku) (prilog)",
-    "w": "balegajući"
-  },
-  {
-    "o": "Čineći primitivnim i grubim",
-    "w": "balkanizirajući"
-  },
-  {
-    "o": "Nakon srozavanja kulture",
-    "w": "balkaniziravši"
-  },
-  {
-    "o": "Konzervirajući tijelo; mirišući",
-    "w": "balzamirajući"
-  },
-  {
-    "o": "Nakon konzerviranja; očuvavši",
-    "w": "balzamiravši"
-  },
-  {
-    "o": "Govoreći gluposti; lupetajući",
-    "w": "baljezgajući"
-  },
-  {
-    "o": "Čineći običnim; pojednostavljujući",
-    "w": "banalizirajući"
-  },
-  {
-    "o": "Nakon gubljenja dubine značenja",
-    "w": "banaliziravši"
-  },
-  {
-    "o": "Obično; otrcano; plitko",
-    "w": "banalno"
-  },
-  {
-    "o": "Lumpajući; pijući cijelu noć",
-    "w": "bančeći"
-  },
-  {
-    "o": "Povijajući ranu; stežući",
-    "w": "bandažirajući"
-  },
-  {
-    "o": "Nakon povijanja; omotavši",
-    "w": "bandažiravši"
-  },
-  {
-    "o": "Propadajući novčano (iskriv.)",
-    "w": "bankrotirajući"
-  },
-  {
-    "o": "Ostavši bez novca; propadajući",
-    "w": "bankrotirajući"
-  },
-  {
-    "o": "Nakon financijskog sloma",
-    "w": "bankrotiravši"
-  },
-  {
-    "o": "Upavši iznenada; nahrupivši",
-    "w": "banuvši"
-  },
-  {
-    "o": "Rukujući čime; služeći se",
-    "w": "baratajući"
-  },
-  {
-    "o": "Puno močvara; močvarno",
-    "w": "barovito"
-  },
-  {
-    "o": "Rubens, vozač F1; brazilski pilot",
-    "w": "Barrichello"
-  },
-  {
-    "o": "Uživajući u miru; odmarajući se",
-    "w": "baškareći"
-  },
-  {
-    "o": "Nasljeđujući od predaka",
-    "w": "baštineći"
-  },
-  {
-    "o": "Tukući štapom; kažnjavajući",
-    "w": "batinajući"
-  },
-  {
-    "o": "Posrćući; jedva se krećući",
-    "w": "batrgajući"
-  },
-  {
-    "o": "Tumurajući; teturajući u mraku",
-    "w": "bauljajući"
-  },
-  {
-    "o": "Zanimajući se čime; radeći",
-    "w": "baveći"
-  },
-  {
-    "o": "Lutajući bez cilja; šetajući",
-    "w": "bazajući"
-  },
-  {
-    "o": "Osnovno; temeljno",
-    "w": "bazalno"
-  },
-  {
-    "o": "Smrdeći; ispuštajući neugodan miris",
-    "w": "bazdeći"
-  },
-  {
-    "o": "Oslanjajući se na što; temeljeći",
-    "w": "bazirajući"
-  },
-  {
-    "o": "Nakon postavljanja temelja",
-    "w": "baziravši"
-  },
-  {
-    "o": "Mjereći obujam posude; žigosajući",
-    "w": "baždareći"
-  },
-  {
-    "o": "Nakon provjere mjera; izmjerivši",
-    "w": "baždarivši"
-  },
-  {
-    "o": "Nespavajući; čuvajući stražu",
-    "w": "bdijući"
-  },
-  {
-    "o": "Šireći oči; gledajući začuđeno",
-    "w": "bečeći"
-  },
-  {
-    "o": "Vodeći veseo život; lumpajući",
-    "w": "bećareći"
-  },
-  {
-    "o": "Izustivši bar riječ; pisnuvši",
-    "w": "beknuvši"
-  },
-  {
-    "o": "Ponašajući se ludo; ludujući",
-    "w": "benaveći"
-  },
-  {
-    "o": "Dobraćudno; bezopasno (med.)",
-    "w": "benigno"
-  },
-  {
-    "o": "Sakupljajući plodove; otkidajući",
-    "w": "berući"
-  },
-  {
-    "o": "Uzaludno; bez koristi",
-    "w": "beskorisno"
-  },
-  {
-    "o": "Bez granica; vječno",
-    "w": "beskrajno"
-  },
-  {
-    "o": "Blijedo; bez životnosti i energije",
-    "w": "beskrvno"
-  },
-  {
-    "o": "Bez logike; ludo; nepotrebno",
-    "w": "besmisleno"
-  },
-
-  {
-    "o": "Badava; nizašto; bez plaćanja",
-    "w": "besplatno"
-  },
-  {
-    "o": "Jadno; bez ikakve zaštite",
-    "w": "bespomoćno"
-  },
-  {
-    "o": "Lutajući bez posla; dangubeći",
-    "w": "besposličareći"
-  },
-  {
-    "o": "Uzaludno; bez prave svrhe",
-    "w": "bespotrebno"
-  },
-  {
-    "o": "Protuzakonito; ilegalno",
-    "w": "bespravno"
-  },
-  {
-    "o": "Suvišno; nepotrebno; bez svrhe",
-    "w": "bespredmetno"
-  },
-  {
-    "o": "Stalno; bez prestanka; u kontinuitetu",
-    "w": "besprekidno"
-  },
-  {
-    "o": "Savršeno; bez ijedne mane",
-    "w": "besprijekorno"
-  },
-  {
-    "o": "Drsko; bez stida; bezobzirno",
-    "w": "besramno"
-  },
-  {
-    "o": "Bez srama; otvoreno drsko",
-    "w": "bestidno"
-  },
-  {
-    "o": "Duhovno; bez fizičkog oblika",
-    "w": "bestjelesno"
-  },
-  {
-    "o": "Okrutno; bez imalo suosjećanja",
-    "w": "bešćutno"
-  },
-  {
-    "o": "Psujući (reg.); grdeći; kuneći",
-    "w": "beštimavajući"
-  },
-  {
-    "o": "Lijevajući smjesu pijeska i cementa",
-    "w": "betonirajući"
-  },
-  {
-    "o": "Nakon zalijevanja cementom",
-    "w": "betoniravši"
-  },
-  {
-    "o": "Naivno; nevino; bez loše namjere",
-    "w": "bezazleno"
-  },
-  {
-    "o": "Prozirno; sivo; bez živosti",
-    "w": "bezbojno"
-  },
-  {
-    "o": "Lako; bez ikakve patnje",
-    "w": "bezbolno"
-  },
-  {
-    "o": "Mirno; bez ikakvih briga",
-    "w": "bezbrižno"
-  },
-  {
-    "o": "Okrutno; bez milosti; nemilosrdno",
-    "w": "bezdušno"
-  },
-  {
-    "o": "Tiho; nijemo; bez ikakva zvuka",
-    "w": "bezglasno"
-  },
-  {
-    "o": "Beskrajno; neizmjerno",
-    "w": "bezgranično"
-  },
-  {
-    "o": "Nevino; bez ijednog grijeha",
-    "w": "bezgrešno"
-  },
-  {
-    "o": "Prazno; bez ikakvih zamisli",
-    "w": "bezidejno"
-  },
-  {
-    "o": "Nepoznato; anonimno",
-    "w": "bezimeno"
-  },
-  {
-    "o": "Očajno; bez nade u spas",
-    "w": "bezizlazno"
-  },
-  {
-    "o": "U svakom slučaju; nipošto drukčije",
-    "w": "beziznimno"
-  },
-  {
-    "o": "Hladno; kamenog lica; ravnodušno",
-    "w": "bezizražajno"
-  },
-  {
-    "o": "Prosječno; bez osobitosti",
-    "w": "bezlično"
-  },
-  {
-    "o": "Očajno; u teškom stanju",
-    "w": "beznadno"
-  },
-  {
-    "o": "Amorfno; bez određenih kontura",
-    "w": "bezoblično"
-  },
-  {
-    "o": "Drsko; bez imalo poštovanja",
-    "w": "bezobrazno"
-  },
-  {
-    "o": "Okrutno; ne mareći za druge",
-    "w": "bezobzirno"
-  },
-  {
-    "o": "Besramno; bez imalo stida",
-    "w": "bezočno"
-  },
-  {
-    "o": "Benigno; bez rizika",
-    "w": "bezopasno"
-  },
-  {
-    "o": "Hladno; bešćutno; bez emocija",
-    "w": "bezosjećajno"
-  },
-  {
-    "o": "Otupjelo; bez osjeta",
-    "w": "bezosjetno"
-  },
-  {
-    "o": "Uzaludno; bez ikakva povoda",
-    "w": "bezrazložno"
-  },
-  {
-    "o": "Potpuno; sasvim; do kraja",
-    "w": "bezrezervno"
-  },
-  {
-    "o": "Ludo; bez pameti; nerazumno",
-    "w": "bezumno"
-  },
-  {
-    "o": "Uzaludno; bez rezultata",
-    "w": "bezuspješno"
-  },
-  {
-    "o": "Apsolutno; bez ikakvih uvjeta",
-    "w": "bezuvjetno"
-  },
-  {
-    "o": "Ludo; glupo; bez ikakva smisla",
-    "w": "bezvezno"
-  },
-  {
-    "o": "Bez ikakve vjere; ateistički",
-    "w": "bezvjerno"
-  },
-  {
-    "o": "Ravnodušno; bez ikakva elana",
-    "w": "bezvoljno"
-  },
-  {
-    "o": "Vječno; izvan svih epoha",
-    "w": "bezvremeno"
-  },
-  {
-    "o": "Jeftino; bez ikakve kvalitete",
-    "w": "bezvrijedno"
-  },
-  {
-    "o": "Tiho; bez ijednog tona",
-    "w": "bezvučno"
-  },
-  {
-    "o": "Putem valova; bez kabela",
-    "w": "bežično"
-  },
-  {
-    "o": "Mrtvo; bez imalo energije",
-    "w": "beživotno"
-  },
-  {
-    "o": "Šibajući; kažnjavajući udarcima",
-    "w": "bičujući"
-  },
-  {
-    "o": "Učeći napamet; nabubavajući",
-    "w": "biflajući"
-  },
-  {
-    "o": "Jadno; vrlo loše; oskudno",
-    "w": "bijedno"
-  },
-  {
-    "o": "Čineći svijetlim; uklanjajući boju",
-    "w": "bijeleći"
-  },
-  {
-    "o": "Svijetlo; poput snijega",
-    "w": "bijelo"
-  },
-  {
-    "o": "Gnjevno; s puno ljutnje",
-    "w": "bijesno"
-  },
-  {
-    "o": "Tukujući; zadajući udarce",
-    "w": "bijući"
-  },
-  {
-    "o": "Dvojezično; na dva jezika",
-    "w": "bilingvalno"
-  },
-  {
-    "o": "Nakon ovjere dokumenta; taksiravši",
-    "w": "biljegovavši"
-  },
-  {
-    "o": "Pišući; unoseći podatke; kiteći",
-    "w": "bilježeći"
-  },
-  {
-    "o": "Vršeći selekciju; izdvajajući",
-    "w": "birajući"
-  },
-  {
-    "o": "Probrano; visoke kvalitete",
-    "w": "birano"
-  },
-  {
-    "o": "Čineći previše krutim i upravnim",
-    "w": "birokratizirajući"
-  },
-  {
-    "o": "Nakon uvođenja stroge uprave",
-    "w": "birokratiziravši"
-  },
-  {
-    "o": "Čineći jasnim; pročišćavajući",
-    "w": "bistreći"
-  },
-  {
-    "o": "Postojeći; nalazeći se negdje",
-    "w": "bivajući"
-  },
-  {
-    "o": "Postojeći kao biće; bivajući",
-    "w": "bivstvujući"
-  },
-  {
-    "o": "Svijetleći slabim sjajem; ljeskajući",
-    "w": "bjelasajući"
-  },
-  {
-    "o": "Nakon kratkog bljeska svjetlosti",
-    "w": "bjelasnuvši"
-  },
-  {
-    "o": "Ljuteći se; gnjeveći se",
-    "w": "bjesneći"
-  },
-  {
-    "o": "Divlje; s velikim žarom",
-    "w": "bjesomučno"
-  },
-  {
-    "o": "Udaljavajući se hitro; bježeći",
-    "w": "bježeći"
-  },
-  {
-    "o": "Udaljavajući se hitro",
-    "w": "bježeći"
-  },
-  {
-    "o": "Nježno; lagano; ugodno",
-    "w": "blago"
-  },
-  {
-    "o": "Prijateljski; s dobrim namjerama",
-    "w": "blagonaklono"
-  },
-  {
-    "o": "Nakon davanja križa; posvetivši",
-    "w": "blagoslovivši"
-  },
-  {
-    "o": "Na vrijeme; točno u rok",
-    "w": "blagovremeno"
-  },
-  {
-    "o": "Jedući i pijući; uživajući u jelu",
-    "w": "blagujući"
-  },
-  {
-    "o": "Sramoteći se; izvrgavajući ruglu",
-    "w": "blamirajući"
-  },
-  {
-    "o": "Nakon javnog sramoćenja",
-    "w": "blamiravši"
-  },
-  {
-    "o": "Kuhajući nakratko; izbjeljujući kosu",
-    "w": "blanširajući"
-  },
-  {
-    "o": "Nakon kratkog prokuhavanja",
-    "w": "blanširavši"
-  },
-  {
-    "o": "Prljajući; govoreći loše o drugome",
-    "w": "blateći"
-  },
-  {
-    "o": "Uprljano zemljom i vodom",
-    "w": "blatno"
-  },
-  {
-    "o": "Sretno; u rajskom miru",
-    "w": "blaženo"
-  },
-  {
-    "o": "Brbljajući; pričajući gluposti",
-    "w": "blebećući"
-  },
-  {
-    "o": "Hineći; varajući u igri",
-    "w": "blefirajući"
-  },
-  {
-    "o": "Nakon uspjele varke",
-    "w": "blefiravši"
-  },
-  {
-    "o": "Gledajući tupo; ispuštajući glas ovce",
-    "w": "blejeći"
-  },
-  {
-    "o": "Pogledavši začuđeno i tupo",
-    "w": "blenuvši"
-  },
-  {
-    "o": "Gubeći boju; postajući bijel",
-    "w": "blijedeći"
-  },
-  {
-    "o": "Slabo; bez sjaja; svijetlo",
-    "w": "blijedo"
-  },
-  {
-    "o": "Svijetleći jako; isijavajući",
-    "w": "bliješteći"
-  },
-  {
-    "o": "Ojačavajući oklopom; štiteći",
-    "w": "blindirajući"
-  },
-  {
-    "o": "Nakon postavljanja oklopa",
-    "w": "blindiravši"
-  },
-  {
-    "o": "Intimno; vrlo blizu",
-    "w": "blisko"
-  },
-  {
-    "o": "Sjajeći; ljeskajući se",
-    "w": "blistajući"
-  },
-  {
-    "o": "Sjajno; s puno svjetla",
-    "w": "blistavo"
-  },
-  {
-    "o": "Na manjoj udaljenosti",
-    "w": "bliže"
-  },
-  {
-    "o": "Dolazeći u neposrednu blizinu",
-    "w": "bližeći"
-  },
-  {
-    "o": "Zaustavljajući; onemogućujući rad",
-    "w": "blokirajući"
-  },
-  {
-    "o": "Nakon zatvaranja prolaza",
-    "w": "blokiravši"
-  },
-  {
-    "o": "Bez dovoljno boje; slabašno",
-    "w": "bljedunjavo"
-  },
-  {
-    "o": "Svijetleći u intervalima",
-    "w": "bljeskajući"
-  },
-  {
-    "o": "Zasvijetlivši naglo",
-    "w": "bljesnuvši"
-  },
-  {
-    "o": "S velikim sjajem; blistavo",
-    "w": "blještavo"
-  },
-  {
-    "o": "Povraćajući; izbacujući iz usta",
-    "w": "bljujući"
-  },
-  {
-    "o": "Lagano ubadajući; provocirajući",
-    "w": "bockajući"
-  },
-  {
-    "o": "Ubošvši oštrim predmetom",
-    "w": "bocnuvši"
-  },
-  {
-    "o": "Sa strane; postrano",
-    "w": "bočno"
-  },
-  {
-    "o": "Igrajući s kuglama na pijesku",
-    "w": "boćajući"
-  },
-  {
-    "o": "S puno trnja; oštro",
-    "w": "bodljikavo"
-  },
-  {
-    "o": "Ubošvši jednom; taknuvši vrhom",
-    "w": "bodnuvši"
-  },
-  {
-    "o": "Hrabreći; potičući na uspjeh",
-    "w": "bodreći"
-  },
-  {
-    "o": "Nakon davanja podrške; osokolivši",
-    "w": "bodrivši"
-  },
-  {
-    "o": "Dodjeljujući poene; ocjenjujući",
-    "w": "bodujući"
-  },
-  {
-    "o": "Stječući imetak; bivajući imućniji",
-    "w": "bogateći"
-  },
-  {
-    "o": "Imućno; s puno novca i luksuza",
-    "w": "bogato"
-  },
-  {
-    "o": "Pobožno; sa strahopoštovanjem",
-    "w": "bogobojazno"
-  },
-  {
-    "o": "Vrijeđajući svetinje",
-    "w": "bogohuleći"
-  },
-  {
-    "o": "Uvredljivo za vjeru",
-    "w": "bogohulno"
-  },
-  {
-    "o": "Živeći kao u raju; zapovijedajući",
-    "w": "bogujući"
-  },
-  {
-    "o": "Strašljivo; s puno opreza",
-    "w": "bojažljivo"
-  },
-  {
-    "o": "Osjećajući strah; strahujući",
-    "w": "bojeći"
-  },
-  {
-    "o": "Odbijajući suradnju (iskriv.)",
-    "w": "bojkotirajući"
-  },
-  {
-    "o": "Prekidajući odnose; ignorirajući",
-    "w": "bojkotirajući"
-  },
-  {
-    "o": "Nakon prestanka kupnje ili rada",
-    "w": "bojkotiravši"
-  },
-  {
-    "o": "Ratujući; boreći se oružjem",
-    "w": "bojujući"
-  },
-  {
-    "o": "Cvjetajući u grmovima",
-    "w": "bokoreći"
-  },
-  {
-    "o": "Udarajući se šakama u ringu",
-    "w": "boksajući"
-  },
-  {
-    "o": "S puno patnje; mučno",
-    "w": "bolno"
-  },
-  {
-    "o": "Bivajući bolestan; pateći",
-    "w": "bolujući"
-  },
-  {
-    "o": "Uvodeći komunističke metode",
-    "w": "boljševizirajući"
-  },
-  {
-    "o": "Nakon uvođenja crvene vlasti",
-    "w": "boljševiziravši"
-  },
-  {
-    "o": "Napadajući bombama; zasipajući",
-    "w": "bombardirajući"
-  },
-  {
-    "o": "Nakon zračnog napada",
-    "w": "bombardiravši"
-  },
-  {
-    "o": "Ocjenjujući kreditnu sposobnost",
-    "w": "bonitirajući"
-  },
-  {
-    "o": "Nakon procjene stanja tvrtke",
-    "w": "bonitiravši"
-  },
-  {
-    "o": "Nalazeći se negdje; stanujući",
-    "w": "boraveći"
-  },
-  {
-    "o": "Ratoborno; s voljom za pobjedu",
-    "w": "borbeno"
-  },
-  {
-    "o": "Jedreći cik-cak uz vjetar",
-    "w": "bordižajući"
-  },
-  {
-    "o": "Vodeći bitku; trudeći se",
-    "w": "boreći"
-  },
-  {
-    "o": "Nakon bitke; izborivši se",
-    "w": "borivši"
-  },
-  {
-    "o": "Ograničavajući; skučavajući vidike",
-    "w": "bornirajući"
-  },
-  {
-    "o": "Nakon uskogrudnog djelovanja",
-    "w": "borniravši"
-  },
-  {
-    "o": "Proučavajući biljke",
-    "w": "botanizirajući"
-  },
-  {
-    "o": "Nakon proučavanja flore",
-    "w": "botaniziravši"
-  },
-  {
-    "o": "Obrađujući zemlju drljačom",
-    "w": "branajući"
-  },
-  {
-    "o": "Čuvajući od napada; štiteći",
-    "w": "braneći"
-  },
-  {
-    "o": "Nakon obrane; sačuvavši",
-    "w": "branivši"
-  },
-  {
-    "o": "Slično mljevenom žitu",
-    "w": "brašnasto"
-  },
-  {
-    "o": "Od samljevenog žita",
-    "w": "brašneno"
-  },
-  {
-    "o": "Ponašajući se kao braća",
-    "w": "brateći"
-  },
-  {
-    "o": "Postajući vrlo bliski prijatelji",
-    "w": "bratimeći"
-  },
-  {
-    "o": "Praveći usjeke u tlu; sjekući vodu",
-    "w": "brazdajući"
-  },
-  {
-    "o": "Pričajući bez prestanka; naklapajući",
-    "w": "brbljajući"
-  },
-  {
-    "o": "Sklono pričanju; govorljivo",
-    "w": "brbljavo"
-  },
-
-  {
-    "o": "Ispuštajući mjehuriće; klokotajući",
-    "w": "brboćući"
-  },
-  {
-    "o": "Mrmljajući; tiho govoreći",
-    "w": "brboreći"
-  },
-  {
-    "o": "Igrajući se u vodi; pljuskajući",
-    "w": "brčkajući"
-  },
-  {
-    "o": "Nakon ulaska u plićak; smočivši se",
-    "w": "brčnuvši"
-  },
-  {
-    "o": "Nakon oštrog odgovora; odbrusivši",
-    "w": "brecnuvši"
-  },
-  {
-    "o": "Postajući bremenit (za stoku)",
-    "w": "bređajući"
-  },
-  {
-    "o": "Kočeći; zaustavljajući kretanje",
-    "w": "bremzajući"
-  },
-  {
-    "o": "Skrbeći; vodeći računa o čemu",
-    "w": "brigajući"
-  },
-  {
-    "o": "Uklanjajući dlake oštricom",
-    "w": "brijući"
-  },
-  {
-    "o": "Nakon izvrsnog uspjeha; zablistavši",
-    "w": "briljiravši"
-  },
-  {
-    "o": "Vodeći skrb; razmišljajući s mukom",
-    "w": "brinući"
-  },
-  {
-    "o": "Nakon preuzimanja skrbi",
-    "w": "brinuvši"
-  },
-  {
-    "o": "Oštro; jasno; rezano",
-    "w": "britko"
-  },
-  {
-    "o": "Štrcajući tekućinu; prskajući",
-    "w": "brizgajući"
-  },
-  {
-    "o": "Nakon naglog plača; briznuvši u plač",
-    "w": "briznuvši"
-  },
-  {
-    "o": "S puno pažnje; marljivo",
-    "w": "brižljivo"
-  },
-  {
-    "o": "S puno pažnje i straha",
-    "w": "brižno"
-  },
-  {
-    "o": "Miješajući pojmove; griješeći",
-    "w": "brkajući"
-  },
-  {
-    "o": "Radeći površno i loše; griješeći",
-    "w": "brljaveći"
-  },
-  {
-    "o": "Ploveći morem; upravljajući brodom",
-    "w": "brodareći"
-  },
-  {
-    "o": "Ploveći; sjekući valove",
-    "w": "brodeći"
-  },
-  {
-    "o": "Tragično; poput propasti lađe",
-    "w": "brodolomno"
-  },
-  {
-    "o": "Zbrajajući; nabrajajući",
-    "w": "brojeći"
-  },
-  {
-    "o": "Povezujući meke korice knjige",
-    "w": "broširajući"
-  },
-  {
-    "o": "Nakon uvezivanja u papir",
-    "w": "broširavši"
-  },
-  {
-    "o": "Jedući lišće s grana",
-    "w": "brsteći"
-  },
-  {
-    "o": "Zatvarajući otvore da ne cure",
-    "w": "brtveći"
-  },
-  {
-    "o": "Zujeći; ispuštajući dubok zvuk",
-    "w": "brujeći"
-  },
-  {
-    "o": "Sramoteći; čineći štetu ugledu",
-    "w": "brukajući"
-  },
-  {
-    "o": "Mrmljajući u bradu; gunđajući",
-    "w": "brundajući"
-  },
-  {
-    "o": "Bojeći metal u tamno; polirajući",
-    "w": "brunirajući"
-  },
-  {
-    "o": "Nakon tamnog bojenja metala",
-    "w": "bruniravši"
-  },
-  {
-    "o": "Oštreći; čisteći površinu trenjem",
-    "w": "bruseći"
-  },
-  {
-    "o": "Okrutno; nasilno; divljački",
-    "w": "brutalno"
-  },
-  {
-    "o": "Hitajući; pretjerano ubrzavajući",
-    "w": "brzajući"
-  },
-  {
-    "o": "Hitro; naglo; smjesta",
-    "w": "brzo"
-  },
-
-  {
-    "o": "Nakon slanja hitne poruke",
-    "w": "brzojavivši"
-  },
-  {
-    "o": "Putem telegrama; hitno",
-    "w": "brzojavno"
-  },
-  {
-    "o": "Nepromišljeno; naglo",
-    "w": "brzopleto"
-  },
-  {
-    "o": "Većom brzinom; hitrije",
-    "w": "brže"
-  },
-  {
-    "o": "Što je hitnije moguće",
-    "w": "bržebolje"
-  },
-  {
-    "o": "Nakon tupog udarca ili izjave",
-    "w": "bubnuvši"
-  },
-  {
-    "o": "Udarajući u opnu; lupajući",
-    "w": "bubnjajući"
-  },
-  {
-    "o": "Rastući od vlage; nateći",
-    "w": "bubreći"
-  },
-  {
-    "o": "Galamiti; ispuštati jak šum",
-    "w": "bučeći"
-  },
-  {
-    "o": "S puno galame; glasno",
-    "w": "bučno"
-  },
-  {
-    "o": "Miješajući tekućinu; mućkajući",
-    "w": "bućkajući"
-  },
-  {
-    "o": "Nakon pada u vodu; zaronivši",
-    "w": "bućnuvši"
-  },
-  {
-    "o": "Glupo; luckasto; smiješno",
-    "w": "budalasto"
-  },
-  {
-    "o": "Praveći se lud; lupetajući",
-    "w": "budaleći"
-  },
-  {
-    "o": "Prekidajući san; potičući",
-    "w": "budeći"
-  },
-  {
-    "o": "Oprezno; bez spavanja",
-    "w": "budno"
-  },
-
-  {
-    "o": "Plijesnivo; s neugodnim mirisom",
-    "w": "buđavo"
-  },
-
-  {
-    "o": "Nagli rast; širenje",
-    "w": "bujajući"
-  },
-
-  {
-    "o": "Rezervirajući smještaj",
-    "w": "bukirajući"
-  },
-  {
-    "o": "Nakon obavljene rezervacije",
-    "w": "bukiravši"
-  },
-  {
-    "o": "Nakon naglog paljenja; planuvši",
-    "w": "buknuvši"
-  },
-  {
-    "o": "Goreći velikim plamenom",
-    "w": "buktajući"
-  },
-  {
-    "o": "Goreći; isijavajući snažnu vatru",
-    "w": "bukteći"
-  },
-  {
-    "o": "Doslovno; točno po riječima",
-    "w": "bukvalno"
-  },
-  {
-    "o": "Pričajući besmislice u bunilu",
-    "w": "bulazneći"
-  },
-  {
-    "o": "Netremice gledajući; zureći",
-    "w": "buljeći"
-  },
-
-  {
-    "o": "Govoreći nepovezano u snu ili bolesti",
-    "w": "buncajući"
-  },
-  {
-    "o": "Prigovarajući; protiveći se čemu",
-    "w": "buneći"
-  },
-  {
-    "o": "Spremajući u sklonište; skrivajući",
-    "w": "bunkerirajući"
-  },
-  {
-    "o": "Nakon sklanjanja na sigurno",
-    "w": "bunkeriravši"
-  },
-  {
-    "o": "Otporno; puno pobune",
-    "w": "buntovno"
-  },
-  {
-    "o": "Mreškajući vodu; uznemirujući",
-    "w": "burkajući"
-  },
-  {
-    "o": "Olujno; s puno nemira",
-    "w": "burno"
-  },
-  {
-    "o": "Udarajući se u prsa; hvalisajući se",
-    "w": "busajući"
-  },
-  {
-    "o": "Praveći otvore; prodirući kroz što",
-    "w": "bušeći"
-  },
-
-  {
-    "o": "Sjajeći se; blistajući glatkoćom",
-    "w": "cakleći"
-  },
-  {
-    "o": "Koračajući sitno i tiho",
-    "w": "capkajući"
-  },
-  {
-    "o": "Naplaćujući državni namet",
-    "w": "carineći"
-  },
-  {
-    "o": "Vladajući apsolutno; uživajući",
-    "w": "carujući"
-  },
-  {
-    "o": "Ustupajući potraživanje drugome",
-    "w": "cedirajući"
-  },
-  {
-    "o": "Stanično; vezano uz ćelije",
-    "w": "celularno"
-  },
-  {
-    "o": "Vezujući smjesom; učvršćujući",
-    "w": "cementirajući"
-  },
-  {
-    "o": "Nakon učvršćivanja smjesom",
-    "w": "cementiravši"
-  },
-  {
-    "o": "Spajajući građevinskom tvari (isk.)",
-    "w": "cemenjućirajući"
-  },
-  {
-    "o": "Plačući sitno; zanovijetajući",
-    "w": "cendrajući"
-  },
-  {
-    "o": "Nakon zanovijetanja i plača",
-    "w": "cendravši"
-  },
-
-  {
-    "o": "Sakupljajući moć u središtu",
-    "w": "centralizirajući"
-  },
-  {
-    "o": "Nakon uvođenja središnje vlasti",
-    "w": "centraliziravši"
-  },
-  {
-    "o": "Središnje; glavno",
-    "w": "centralno"
-  },
-  {
-    "o": "Koji bježi iz središta",
-    "w": "centrifugalno"
-  },
-  {
-    "o": "Koji teži prema središtu",
-    "w": "centripetalno"
-  },
-  {
-    "o": "Usmjeravajući u sredinu; namještajući",
-    "w": "centrirajući"
-  },
-  {
-    "o": "Nakon namještanja u sredinu",
-    "w": "centriravši"
-  },
-  {
-    "o": "Provodeći pregled i zabranu",
-    "w": "cenzurirajući"
-  },
-  {
-    "o": "Nakon izvršene zabrane sadržaja",
-    "w": "cenzuriravši"
-  },
-  {
-    "o": "Podrhtavajući; dršćući od zime",
-    "w": "cepteći"
-  },
-  {
-    "o": "Smijući se podrugljivo",
-    "w": "cereći"
-  },
-  {
-    "o": "Glasno se i blesavo smijući",
-    "w": "cerekajući"
-  },
-
-  { "o": "Sišući; vukući tekućinu", "w": "cicajući" },
-  { "o": "Ponašajući se škrtarski", "w": "cicijašeći" },
-  { "o": "Puštajući prodoran, visok ton", "w": "cičeći" },
-  { "o": "Ukrašavajući; dotjerujući", "w": "cifrajući" },
-  { "o": "Istiskujući tekućinu iz nečega", "w": "cijedeći" },
-  { "o": "Nakon što je tekućina istisnuta", "w": "cijedivši" },
-  { "o": "Potpuno; u punom iznosu", "w": "cijelo" },
-  { "o": "Iskazujući poštovanje; uvažavajući", "w": "cijeneći" },
-  { "o": "Razdvajajući drvo na dijelove", "w": "cijepajući" },
-  { "o": "Dajući vakcinu; razdvajajući", "w": "cijepeći" },
-  { "o": "Nakon davanja vakcine", "w": "cijepivši" },
-  { "o": "Onomatopeja ptica; pijučući", "w": "cijučući" },
-  { "o": "Tiho se glasajući poput ptice", "w": "cijućirajući" },
-  { "o": "Nakon što se pustio oštar zvuk", "w": "cijuknuvši" },
-  { "o": "Glasaj se oštro i visoko", "w": "cikći" },
-  { "o": "Vrišteći od veselja", "w": "cikćući" },
-  { "o": "Nakon kratkog i oštrog krika", "w": "ciknuvši" },
-  { "o": "Upirući pogled ili oružje u metu", "w": "ciljajući" },
-  { "o": "Lagano trzajući; potresajući", "w": "cimajući" },
-  { "o": "Nakon kratkog trzanja", "w": "cimnuvši" },
-  { "o": "Odajući koga; prijavljujući", "w": "cinkajući" },
-  { "o": "Nakon što je netko izdan", "w": "cinkavši" },
-  { "o": "Krećući se u krug; protječući", "w": "cirkulirajući" },
-  { "o": "Nakon što je prošlo kroz sustav", "w": "cirkuliravši" },
-  { "o": "Praveći budalu od sebe", "w": "cirkusirajući" },
-  { "o": "Koji se odnosi na mjehuraste izrasline", "w": "cistično" },
-  { "o": "Navodeći tuđe riječi", "w": "citirajući" },
-  { "o": "Nakon navođenja teksta", "w": "citiravši" },
-  { "o": "Uzdignuti na viši kulturni stupanj", "w": "civilizirajući" },
-  { "o": "Nakon provedbe prosvjećenja", "w": "civiliziravši" },
-  { "o": "Koji se izražava cijelim brojem", "w": "cjelobrojno" },
-  { "o": "U potpunosti; posvema", "w": "cjelokupno" },
-  { "o": "Potpuno; bez nedostataka", "w": "cjelovito" },
-  { "o": "Pregovarajući o nižoj cijeni", "w": "cjenkajući" },
-  { "o": "S obzirom na trošak ili vrijednost", "w": "cjenovno" },
-  { "o": "Pokušavajući sniziti iznos", "w": "cjenjkajući" },
-  { "o": "Sitničareći; prigovarajući na malo", "w": "cjepidlačeći" },
-  { "o": "Lomeći na sitne dijelove", "w": "cjepkajući" },
-  { "o": "Nakon kratkog udarca sjekirom", "w": "cjepnuvši" },
-  { "o": "Glasno ljubeći; jedući s bukom", "w": "cmačući" },
-  { "o": "Plačljivo; sklono jadikovanju", "w": "cmizdravo" },
-  { "o": "Tiho plačući; jadikujući", "w": "cmizdreći" },
-  { "o": "Nakon zvučnog poljupca", "w": "cmoknuvši" },
-  { "o": "Proizvodeći zvuk jezikom", "w": "cokćući" },
-  { "o": "Nakon zvučnog udarca jezikom", "w": "coknuvši" },
-  { "o": "Umirući od muke; propadajući", "w": "crkavajući" },
-  { "o": "Nakon uginuća ili kvara", "w": "crknuvši" },
-  
-  { "o": "Radeći naporno; mučeći se", "w": "crnčeći" },
-  { "o": "Postajući taman; tamneći", "w": "crneći" },
-  { "o": "Izvlačeći tekućinu; uzimajući", "w": "crpeći" },
-  { "o": "Praveći linije; slikajući", "w": "crtajući" },
-  { "o": "Prikazano linijama; ilustrirano", "w": "crtano" },
-  { "o": "Povlačeći sitne linije", "w": "crtkajući" },
-  { "o": "Postajući rumen u licu", "w": "crveneći" },
-  { "o": "Sišući polako; mljackajući", "w": "cuclajući" },
-  { "o": "Pijući alkohol; ispijajući", "w": "cugajući" },
-  { "o": "Skakućući u mjestu", "w": "cupkajući" },
-  { "o": "Nakon malog skoka", "w": "cupnuvši" },
-  { "o": "Istjecajući iz posude", "w": "cureći" },
-  { "o": "Nakon što je malo iscurilo", "w": "curnuvši" },
-  { "o": "Koji ima cvjetove; napredan", "w": "cvatući" },
-  { "o": "Praveći rupice; sjekući", "w": "cvikajući" },
-  { "o": "Puštajući tanak, bolan zvuk", "w": "cvileći" },
-  { "o": "Razvijajući se; u punom jeku", "w": "cvjetajući" },
-  { "o": "Puno biljnih ukrasa; mirisno", "w": "cvjetno" },
-  { "o": "Nakon kratkog udara zubima", "w": "cvoknuvši" },
-  { "o": "Dršćući od hladnoće", "w": "cvokoćući" },
-  { "o": "Glasajući se poput zrikavca", "w": "cvrčeći" },
-  { "o": "Pjevajući poput ptice", "w": "cvrkućući" },
-  { "o": "Dirajući što šiljastim predmetom", "w": "čačkajući" },
-  { "o": "Prekriveno garom; mračno", "w": "čađavo" },
-  { "o": "Prekrivajući garom; prljajući", "w": "čađeći" },
-  { "o": "Stalno prigovarajući; mrmljajući", "w": "čangrizajući" },
-  { "o": "Prekrasno; puno čuda; bajno", "w": "čarobno" },
-  { "o": "Vrlo brzo; u trenu", "w": "časkom" },
-  { "o": "Pošteno; dostojanstveno", "w": "časno" },
-  { "o": "Plaćajući piće ili jelo drugome", "w": "časteći" },
-  { "o": "Nakon priređene gozbe", "w": "častivši" },
-  { "o": "Dostojanstveno; s poštovanjem", "w": "častno" },
-  { "o": "Koji teži ugledu i slavi", "w": "častoljubivo" },
-  { "o": "Skromno; pošteno; nevino", "w": "čedno" },
-  { "o": "Boraveći negdje do dolaska koga", "w": "čekajući" },
-  { "o": "Nakon provedenog vremena u zastoju", "w": "čekavši" },
-  { "o": "Nakon rada s alatom za zabijanje", "w": "čekićavši" },
-  { "o": "Jačajući karakter; kaleći se", "w": "čeličeći" },
-  { "o": "Kopajući po površini; tražeći", "w": "čeprkajući" },
-  { "o": "Nakon površnog kopanja", "w": "čeprkavši" },
-  { "o": "Skidajući perje ili dlaku", "w": "čerupajući" },
-  { "o": "Nakon što je otkinut pramen", "w": "čerupnuvši" },
-  { "o": "Izražavajući dobre želje", "w": "čestitajući" },
-  { "o": "Nakon upućene pohvale za uspjeh", "w": "čestitavši" },
-  { "o": "Iskreno; pošteno; valjano", "w": "čestito" },
-  { "o": "U mnogo navrata; učestalo", "w": "često" },
-  { "o": "Stružući noktima po koži", "w": "češajući" },
-  { "o": "Više puta; s većom učestalošću", "w": "češće" },
-  { "o": "Uređujući kosu priborom", "w": "češljajući" },
-  { "o": "Nakon laganog dodira noktima", "w": "češnuvši" },
-  { "o": "Bodljikavo; poput iglica bora", "w": "četinjavo" },
-  { "o": "Trljajući priborom za čišćenje", "w": "četkajući" },
-  { "o": "Živeći kao odmetnik u šumi", "w": "četnikujući" },
-  { "o": "U obliku kvadrata", "w": "četverokutno" },
-  { "o": "Koji se ponavlja četiri puta", "w": "četverostruko" },
-  { "o": "Koji ima četiri kuta", "w": "četvorokutno" },
-  { "o": "Redni broj iza trećega", "w": "četvrto" },
-  { "o": "Jako želeći; žudeći", "w": "čeznući" },
-  { "o": "S puno čežnje; sjetno", "w": "čeznutljivo" },
-  { "o": "U onom trenutku kad; tek što", "w": "čim" },
-  { "o": "Bilo čime; bez obzira na sredstvo", "w": "čimgod" },
-  { "o": "Radeći; stvarajući; postupajući", "w": "čineći" },
-  { "o": "Nakon obavljenog posla", "w": "činivši" },
-  { "o": "Izrađujući mrežasti ukras", "w": "čipkajući" },
-  { "o": "Uklanjajući prljavštinu", "w": "čisteći" },
-  { "o": "Koji se tiče mjesta pokore", "w": "čistilišno" },
-  { "o": "Bez mrlja; posve; bistro", "w": "čisto" },
-  { "o": "Lako za čitanje; razgovijetno", "w": "čitko" },
-  { "o": "Plemenito; suosjećajno", "w": "čovječno" },
-  { "o": "Koji voli ljude; altruistično", "w": "čovjekoljubivo" },
-  { "o": "Pišući neuredno; šarajući", "w": "črčkajući" },
-  { "o": "Sjedeći na petama", "w": "čučeći" },
-  { "o": "Nakon spuštanja na pete", "w": "čučnuvši" },
-  { "o": "Iskazujući iznenađenje", "w": "čudeći" },
-  { "o": "Nevjerojatno; nadnaravno", "w": "čudesno" },
-  { "o": "Neobično; nesvakidašnje", "w": "čudno" },
-  { "o": "Vrlo neobično; bizarno", "w": "čudnovato" },
-  { "o": "Koji radi čudesa; magično", "w": "čudotvorno" },
-  { "o": "Nakon lakšeg udarca", "w": "čuknuvši" },
-  { "o": "Vukući silom; kidajući", "w": "čupajući" },
-  { "o": "Neraščešljano; dlakavo", "w": "čupavo" },
-  { "o": "Lagano vukući; otkidajući komadiće", "w": "čupkajući" },
-  { "o": "Nakon naglog poteza rukom", "w": "čupnuvši" },
-  { "o": "Pazeći na koga ili što", "w": "čuvajući" },
-  { "o": "Nakon što je osigurana zaštita", "w": "čuvavši" },
-  { "o": "Slavno; nadaleko poznato", "w": "čuveno" },
-  { "o": "Nakon što je dopro zvuk do uha", "w": "čuvši" },
-  { "o": "Nakon udarca po glavi ili nosu", "w": "čvoknuvši" },
-  { "o": "Puno izbočina; kvrgavo", "w": "čvorasto" },
-  { "o": "Koji ima mnogo čvorova", "w": "čvornato" },
-  { "o": "Nakon brzog i lakog udarca", "w": "čvrknuvši" },
-  { "o": "Pržeći se na laganoj vatri", "w": "čvrljeći" },
-  { "o": "Solidno; jako; nepomično", "w": "čvrsto" },
-  { "o": "S većom snagom; jače", "w": "čvršće" },
-  { "o": "Brbljajući; neobavezno pričajući", "w": "ćakulajući" },
-  { "o": "Razgovarajući o nebitnim stvarima", "w": "ćaskajući" },
-  { "o": "Gubeći kosu", "w": "ćelaveći" },
-  { "o": "Nakon što je što zgrabljeno", "w": "ćopivši" },
-  { "o": "Postajući slijep; gubeći vid", "w": "ćoraveći" },
-  { "o": "Napeto slušajući; podižući uši", "w": "ćuleći" },
-  { "o": "Udaranje dlanom po licu", "w": "ćuškajući" },
-  { "o": "Nakon što je zadan udarac dlanom", "w": "ćušnuvši" },
-  { "o": "Osjećajući; proživljavajući", "w": "ćuteći" },
-  { "o": "Izraz želje da se što ostvari", "w": "dabogda" },
-  { "o": "Nakon što se duboko udahnulo", "w": "dahnuvši" },
-  { "o": "Pružajući kome što; darujući", "w": "dajući" },
-  { "o": "Na velikoj udaljenosti", "w": "daleko" },
-  { "o": "S posljedicama u budućnosti", "w": "dalekosežno" },
-  { "o": "Na većem razmaku; u nastavku", "w": "dalje" },
-  { "o": "Kojim se upravlja izdaleka", "w": "daljinsko" },
-  { "o": "U ovo vrijeme; u tekućem danu", "w": "danas" },
-  { "o": "U današnje vrijeme; još uvijek", "w": "dandanas" },
-  { "o": "Postajući svijetao; svićući", "w": "daneći" },
-  { "o": "Gubeći vrijeme uzalud", "w": "dangubeći" },
-  { "o": "Svakoga dana; svakodnevno", "w": "danomice" },
-  { "o": "Tijekom cijelog vremena", "w": "danonoćno" },
-  { "o": "Za vrijeme svjetla; ne noću", "w": "danju" },
-  { "o": "Štoviše; čak; upravo suprotno", "w": "dapače" },
-  { "o": "Poklanjajući što kome", "w": "darivajući" },
-  { "o": "Nakon što je predan poklon", "w": "darivavši" },
-  { "o": "Nakon što je tko blago dodirnut", "w": "darnuvši" },
-  { "o": "Nakon učinjenog dobročinstva", "w": "darovavši" },
-  { "o": "Naravno; razumije se", "w": "dašto" },
-  { "o": "Označavajući vrijeme nastanka", "w": "datirajući" },
-  { "o": "Nakon upisanog datuma", "w": "datiravši" },
-  { "o": "Gušeći koga; gnjaveći", "w": "daveći" },
-  { "o": "Nakon što je tko ugušen", "w": "davivši" },
-  { "o": "Iz starijih vremena; ranije", "w": "davnije" },
-  { "o": "Prije mnogo vremena; staro", "w": "davno" },
-  { "o": "Nakon što je što predano", "w": "davši" },
-  { "o": "Nakon isključenja sustava", "w": "deaktiviravši" },
-  { "o": "Koji ima velik obujam; krupno", "w": "debelo" },
-  { "o": "Nakon prvog javnog nastupa", "w": "debitiravši" },
-  { "o": "Koji se odnosi na bankovnu karticu", "w": "debitno" },
-  { "o": "Nakon uklanjanja prepreke", "w": "deblokiravši" },
-  { "o": "Dobivajući na težini", "w": "debljajući" },
-  { "o": "Šireći vlast s centra na regije", "w": "decentralizirajući" },
-  { "o": "Nakon prijenosa ovlasti", "w": "decentraliziravši" },
-  { "o": "Zaključujući iz općega", "w": "deducirajući" },
-  { "o": "Nakon izvedenog zaključka", "w": "deduciravši" },
-  { "o": "Koji ima nedostatak; nepotpuno", "w": "defektivno" },
-  { "o": "Svečano prolazeći u povorci", "w": "defilirajući" },
-  { "o": "Nakon prolaska postrojenih snaga", "w": "defiliravši" },
-  { "o": "Nakon što je pojam objašnjen", "w": "definiravši" },
-  { "o": "Konačno; bez sumnje", "w": "definitivno" },
-  { "o": "Kvareći prirodni oblik", "w": "deformirajući" },
-  { "o": "Izobličeno; nepravilno", "w": "deformirano" },
-  { "o": "Nakon gubitka prvotnog oblika", "w": "deformiravši" },
-  { "o": "Propadajući; gubeći odlike vrste", "w": "degenerirajući" },
-  { "o": "Nakon procesa nazadovanja", "w": "degeneriravši" },
-  { "o": "Snizujući rang ili vrijednost", "w": "degradirajući" },
-  { "o": "Nakon sramoćenja ili sniženja", "w": "degradiravši" },
-  { "o": "Isprobavajući okus jela", "w": "degustirajući" },
-  { "o": "Nakon što je hrana isprobana", "w": "degustiravši" },
-  { "o": "Gubeći vodu iz tijela", "w": "dehidrirajući" },
-  { "o": "Nakon gubitka tekućine", "w": "dehidriravši" },
-  { "o": "Nakon gubitka ljudskih osobina", "w": "dehumaniziravši" },
-  { "o": "Nakon uklanjanja programa", "w": "deinstaliravši" },
-  { "o": "Nakon uklanjanja iona", "w": "deioniziravši" },
-  { "o": "Ostavljajući bez novca", "w": "dekintirajući" },
-  { "o": "Nakon što je tko ostao bez pare", "w": "dekintiravši" },
-  { "o": "Oduzimajući povlašteni status", "w": "deklasirajući" },
-  { "o": "Nakon gubitka društvenog položaja", "w": "deklasiravši" },
-  { "o": "Nakon provedene promjene po padežu", "w": "dekliniravši" },
-  { "o": "Pretvarajući šifru u tekst", "w": "dekodirajući" },
-  { "o": "Nakon odgonetavanja tajne poruke", "w": "dekodiravši" },
-  { "o": "Oslobađajući od kolonijalne vlasti", "w": "dekolonizirajući" },
-  { "o": "Nakon stjecanja neovisnosti", "w": "dekoloniziravši" },
-  { "o": "Izrezujući duboki izrez na haljini", "w": "dekoltirajući" },
-  { "o": "Nakon izrade dubokog izreza", "w": "dekoltiravši" },
-  { "o": "Rastavljajući na dijelove", "w": "dekoljućirajući" },
-  { "o": "Rastvarajući složenu cjelinu", "w": "dekomponirajući" },
-  { "o": "Nakon razlaganja na sastojke", "w": "dekomponiravši" },
-  { "o": "Ometajući pažnju koga", "w": "dekoncentrirajući" },
-  { "o": "Nakon gubitka usredotočenosti", "w": "dekoncentriravši" },
-  { "o": "Nakon razlaganja strukture", "w": "dekonstruiravši" },
-  { "o": "Nakon uklanjanja zračenja", "w": "dekontaminiravši" },
-  { "o": "Uređujući prostor; kiteći", "w": "dekorirajući" },
-  { "o": "Nakon što je dvorana ukrašena", "w": "dekoriravši" },
-  { "o": "Dešifrirajući poruku", "w": "dekriptirajući" },
-  { "o": "Nakon odgonetke tajnog pisma", "w": "dekriptiravši" },
-  { "o": "Šaljući koga kao zastupnika", "w": "delegirajući" },
-  { "o": "Nakon imenovanja izaslanika", "w": "delegiravši" },
-  { "o": "Iseljavajući koga sudskim putem", "w": "deložirajući" },
-  { "o": "Nakon izbacivanja iz stana", "w": "deložiravši" },
-  { "o": "Uklanjajući magnetska svojstva", "w": "demagnetizirajući" },
-  { "o": "Nakon gubitka magnetizma", "w": "demagnetiziravši" },
-  { "o": "Poričući istinitost tvrdnje", "w": "demantirajući" },
-  { "o": "Nakon opovrgavanja vijesti", "w": "demantiravši" },
-  { "o": "Uklanjajući vojsku s područja", "w": "demilitarizirajući" },
-  { "o": "Nakon proglašenja mira i razoružanja", "w": "demilitariziravši" },
-  { "o": "Koji izražava umanjeno značenje", "w": "deminutivno" },
-  { "o": "Uklanjajući veo tajne s čega", "w": "demistificirajući" },
-  { "o": "Otpuštajući vojsku iz službe", "w": "demobilizirajući" },
-  { "o": "Nakon prelaska u civilstvo", "w": "demobiliziravši" },
-  { "o": "Uvodeći vlast naroda", "w": "demokratizirajući" },
-  { "o": "Nakon uvođenja pučkih sloboda", "w": "demokratiziravši" },
-  { "o": "Nakon potpunog razaranja", "w": "demoliravši" },
-  { "o": "Prikazujući koga zlim duhom", "w": "demonizirajući" },
-  { "o": "Nakon proglašenja koga vragom", "w": "demoniziravši" },
-  { "o": "Javno pokazujući; prosvjedujući", "w": "demonstrirajući" },
-  { "o": "Nakon izvedenog pokusa", "w": "demonstriravši" },
-  { "o": "Nakon rastavljanja stroja", "w": "demontiravši" },
-  { "o": "Nakon gubitka borbenog duha", "w": "demoraliziravši" },
-  { "o": "Vraćajući imovinu u privatne ruke", "w": "denacionalizirajući" },
-  { "o": "Nakon vraćanja vlasništva građanima", "w": "denacionaliziravši" },
-  { "o": "Kajkavski: danas", "w": "denes" },
-  { "o": "Uklanjajući dlake s tijela", "w": "depilirajući" },
-  { "o": "Nakon kozmetičkog čišćenja kože", "w": "depiliravši" },
-  { "o": "Odlažući što na čuvanje", "w": "deponirajući" },
-  { "o": "Nakon što je novac stavljen u banku", "w": "deponiravši" },
-  { "o": "Protjerujući koga iz zemlje", "w": "deportirajući" },
-  { "o": "Nakon prisilnog odvođenja", "w": "deportiravši" },
-  { "o": "Potišteno; turobno; klonulo", "w": "depresivno" },
-  { "o": "Nakon bacanja u očaj", "w": "deprimiravši" },
-  { "o": "Vraćajući u državno vlasništvo", "w": "deprivatizirajući" },
-  { "o": "Nakon provedene podržavljivanja", "w": "deprivatiziravši" },
-  { "o": "Uništavajući glodavce otrovom", "w": "deratizirajući" },
-  { "o": "Nakon provedenog trovanja štakora", "w": "deratiziravši" },
-  { "o": "Nakon ukidanja državnih pravila", "w": "dereguliravši" },
-  { "o": "Izvodeći što iz čega", "w": "derivirajući" },
-  { "o": "Nakon izračuna izvedenice", "w": "deriviravši" },
-  { "o": "Koji se uvećalo deset puta", "w": "deseterostruko" },
-  { "o": "Nakon masovnog uništenja", "w": "desetkovavši" },
-  { "o": "Redni broj iza devetoga", "w": "deseto" },
-  { "o": "Koji se ponavlja u deset navrata", "w": "desetorostruko" },
-  { "o": "Nakon što se što dogodilo", "w": "desivši" },
-  { "o": "Koji se nalazi više udesno", "w": "desnije" },
-  { "o": "Suprotno od lijevo", "w": "desno" },
-  { "o": "Koji se služi desnom rukom", "w": "desnoruko" },
-  { "o": "Nakon narušavanja stabilnosti", "w": "destabiliziravši" },
-  { "o": "Pročišćavajući tekućinu isparavanjem", "w": "destilirajući" },
-  { "o": "Nakon pečenja rakije ili čišćenja", "w": "destiliravši" },
-  { "o": "Uklanjajući poticaj za rad", "w": "destimulirajući" },
-  { "o": "Nakon što je tko obeshrabren", "w": "destimuliravši" },
-  { "o": "Događajući se; zbivajući se", "w": "dešavajući" },
-  { "o": "Odgonetavajući tajnu poruku", "w": "dešifrirajući" },
-  { "o": "Nakon rješavanja enigme ili šifre", "w": "dešifriravši" },
-  { "o": "Iznoseći sve pojedinosti", "w": "detaljizirajući" },
-  { "o": "Nakon temeljitog opisa sitnica", "w": "detaljiziravši" },
-  { "o": "Opširno; sa svim sitnicama", "w": "detaljno" },
-  { "o": "Otkrivajući prisutnost čega", "w": "detektirajući" },
-  { "o": "Nakon što je što otkriveno", "w": "detektiravši" },
-  { "o": "Točno određujući; uvjetujući", "w": "determinirajući" },
-  { "o": "Nakon što je uzrok utvrđen", "w": "determiniravši" },
-  { "o": "Nakon izazivanja eksplozije", "w": "detoniravši" },
-  { "o": "Smanjujući vrijednost novca", "w": "devalvirajući" },
-  { "o": "Nakon pada vrijednosti valute", "w": "devalviravši" },
-  { "o": "Pustošeći; teško oštećujući", "w": "devastirajući" },
-  { "o": "Nakon razaranja i pustošenja", "w": "devastiravši" },
-  { "o": "Koji se uvećao devet puta", "w": "deveterostruko" },
-  { "o": "Redni broj iza osmoga", "w": "deveto" },
-  { "o": "Bježeći iz vojne službe", "w": "dezertirajući" },
+  { "o": "Nakon silaska s vlasti (pril.)", "w": "abdiciravši" },
+  { "o": "Složivši po redu slova (pril.)", "w": "abecediravši" },
+  { "o": "Nakon poništenja kazne (pril.)", "w": "aboliravši" },
+  { "o": "Nakon prekida trudnoće (pril.)", "w": "abortiravši" },
+  { "o": "Nakon prilagodbe; preradivši (pril.)", "w": "adaptiravši" },
+  { "o": "Upravljajući uredom (pril.)", "w": "administrirajući" },
+  { "o": "Nakon upravljanja (pril.)", "w": "administriravši" },
+  { "o": "Nakon posvojenja; usvojivši (pril.)", "w": "adoptiravši" },
+  { "o": "Napisavši adresu; uputivši (pril.)", "w": "adresiravši" },
+  { "o": "Nakon upijanja na površini (pril.)", "w": "adsorbiravši" },
+  { "o": "Nakon udruživanja; pripojivši (pril.)", "w": "afiliravši" },
+  { "o": "Ističući se; stječući ugled (pril.)", "w": "afirmirajući" },
+  { "o": "Nakon potvrde; stekavši ugled (pril.)", "w": "afirmiravši" },
+  { "o": "Nakon poticanja; nagovorivši (pril.)", "w": "agitiravši" },
+  { "o": "Naglasivši; istaknuvši (pril.)", "w": "akcentiravši" },
+  { "o": "Prihvaćajući ponudu (pril.)", "w": "akceptirajući" },
+  { "o": "Nakon prihvaćanja; primivši (pril.)", "w": "akceptiravši" },
+  { "o": "Nakon prilagodbe podneblju (pril.)", "w": "aklimatiziravši" },
+  { "o": "Nakon usklađivanja (pril.)", "w": "akomodiravši" },
+  { "o": "Nakon davanja povjerenja (pril.)", "w": "akreditiravši" },
+  { "o": "Stavljajući u pogon (pril.)", "w": "aktivirajući" },
+  { "o": "Nakon pokretanja (pril.)", "w": "aktiviravši" },
+  { "o": "Čineći suvremenim (pril.)", "w": "aktualizirajući" },
+  { "o": "Nakon osuvremenjivanja (pril.)", "w": "aktualiziravši" },
+  { "o": "Sakupljajući; gomilajući (pril.)", "w": "akumulirajući" },
+  { "o": "Nakon sakupljanja; nakupivši (pril.)", "w": "akumuliravši" },
+  { "o": "Nakon uzbune; upozorivši (pril.)", "w": "alarmiravši" },
+  { "o": "Razmještajući; dodjeljujući (pril.)", "w": "alocirajući" },
+  { "o": "Nagovješćujući; ciljajući (pril.)", "w": "aludirajući" },
+  { "o": "Nakon davanja natuknice (pril.)", "w": "aludiravši" },
+  { "o": "Nakon usvajanja običaja SAD (pril.)", "w": "amerikaniziravši" },
+  { "o": "Davajući oprost kazne (pril.)", "w": "amnestirajući" },
+  { "o": "Nakon općeg oprosta kazne (pril.)", "w": "amnestiravši" },
+  { "o": "Kirurški uklanjajući dio (pril.)", "w": "amputirajući" },
+  { "o": "Nakon odsijecanja uda (pril.)", "w": "amputiravši" },
+  { "o": "Rastavljajući na dijelove (pril.)", "w": "analizirajući" },
+  { "o": "Nakon raščlambe; proučivši (pril.)", "w": "analiziravši" },
+  { "o": "Bacajući prokletstvo (pril.)", "w": "anatemizirajući" },
+  { "o": "Nakon izopćenja; prokleto (pril.)", "w": "anatemiziravši" },
+  { "o": "Pripajajući tuđi teritorij (pril.)", "w": "anektirajući" },
+  { "o": "Nakon nasilnog prisvajanja (pril.)", "w": "anektiravši" },
+  { "o": "Uspavljujući bolesnika (pril.)", "w": "anestezirajući" },
+  { "o": "Nakon davanja narkoze (pril.)", "w": "anesteziravši" },
+  { "o": "Zapošljavajući; uključujući (pril.)", "w": "angažirajući" },
+  { "o": "Nakon davanja posla (pril.)", "w": "angažiravši" },
+  { "o": "Oživljavajući likove (pril.)", "w": "animirajući" },
+  { "o": "Nakon oživljavanja (pril.)", "w": "animiravši" },
+  { "o": "Ispitujući javnost (pril.)", "w": "anketirajući" },
+  { "o": "Nakon ispitivanja ljudi (pril.)", "w": "anketiravši" },
+  { "o": "Unaprijed očekujući (pril.)", "w": "anticipirajući" },
+  { "o": "Nakon predviđanja (pril.)", "w": "anticipiravši" },
+  { "o": "Poništivši; svedavši na nulu (pril.)", "w": "anuliravši" },
+  { "o": "Pozivajući u pomoć (pril.)", "w": "apelirajući" },
+  { "o": "Nakon poziva; uputivši molbu (pril.)", "w": "apeliravši" },
+  { "o": "Pljeskajući; odobravajući (pril.)", "w": "aplaudirajući" },
+  { "o": "Nakon pljeskanja; pohvalivši (pril.)", "w": "aplaudiravši" },
+  { "o": "Primjenjujući; nanoseći (pril.)", "w": "aplicirajući" },
+  { "o": "Nakon prijave; primijenivši (pril.)", "w": "apliciravši" },
+  { "o": "Nakon donošenja plijena (pril.)", "w": "aportiravši" },
+  { "o": "Nakon naglašavanja (pril.)", "w": "apostrofiravši" },
+  { "o": "Približavajući se (pril.)", "w": "aproksimirajući" },
+  { "o": "Nakon procjene (pril.)", "w": "aproksimiravši" },
+  { "o": "Proglašavajući vrhovnim (pril.)", "w": "apsolutizirajući" },
+  { "o": "Nakon uzdizanja na vrh (pril.)", "w": "apsolutiziravši" },
+  { "o": "Dovršavajući studij (pril.)", "w": "apsolvirajući" },
+  { "o": "Nakon završetka školovanja (pril.)", "w": "apsolviravši" },
+  { "o": "Upijajući; usisavajući (pril.)", "w": "apsorbirajući" },
+  { "o": "Nakon upijanja; usisavši (pril.)", "w": "apsorbiravši" },
+  { "o": "Nakon suzdržavanja (pril.)", "w": "apstiniravši" },
+  { "o": "Nakon poopćavanja (pril.)", "w": "apstrahiravši" },
+  { "o": "Uređujući; pripremajući (pril.)", "w": "aranžirajući" },
+  { "o": "Složivši; pripremivši (pril.)", "w": "aranžiravši" },
+  { "o": "Presuđujući u sporu (pril.)", "w": "arbitrirajući" },
+  { "o": "Donijevši presudu (pril.)", "w": "arbitriravši" },
+  { "o": "Iznijevši dokaze (pril.)", "w": "argumentiravši" },
+  { "o": "Obrazlažući; dokazujući (pril.)", "w": "argumentirajući" },
+  { "o": "Spremivši u pismohranu (pril.)", "w": "arhiviravši" },
+  { "o": "Jasno izgovarajući (pril.)", "w": "artikulirajući" },
+  { "o": "Ojačavajući konstrukciju (pril.)", "w": "armirajući" },
+  { "o": "Ojačavši čelikom (pril.)", "w": "armiravši" },
+  { "o": "Dodajući miris; začinjajući (pril.)", "w": "aromatizirajući" },
+  { "o": "Namirisavši; začinivši (pril.)", "w": "aromatiziravši" },
+  { "o": "Razgovijetno izrekavši (pril.)", "w": "artikuliravši" },
+  { "o": "Sastavivši dijelove (pril.)", "w": "asembliravši" },
+  { "o": "Presvlačeći cestu (pril.)", "w": "asfaltirajući" },
+  { "o": "Dovršivši cestu; popločivši (pril.)", "w": "asfaltiravši" },
+  { "o": "Uklapajući se; stapajući se (pril.)", "w": "asimilirajući" },
+  { "o": "Prilagodivši se okolini (pril.)", "w": "asimiliravši" },
+  { "o": "Pomažući drugome; služeći (pril.)", "w": "asistirajući" },
+  { "o": "Pomogavši u radu (pril.)", "w": "asistiravši" },
+  { "o": "Povezujući misli (pril.)", "w": "asocirajući" },
+  { "o": "Povezavši pojmove (pril.)", "w": "asociravši" },
+  { "o": "Težeći nečemu; usisavajući (pril.)", "w": "aspirirajući" },
+  { "o": "Iskazavši težnju; usisavši (pril.)", "w": "aspiriravši" },
+  { "o": "Oslabivši; ublaživši (pril.)", "w": "atenuiravši" },
+  { "o": "Spuštajući se na tlo (pril.)", "w": "aterirajući" },
+  { "o": "Sletjevši na zemlju (pril.)", "w": "ateriravši" },
+  { "o": "Razbijajući na sitne dijelove (pril.)", "w": "atomizirajući" },
+  { "o": "Raspršivši na čestice (pril.)", "w": "atomiziravši" },
+  { "o": "Pridajući svojstva (pril.)", "w": "atribuirajući" },
+  { "o": "Pridavši osobinu (pril.)", "w": "atribuiravši" },
+  { "o": "Uvodeći samostalan rad (pril.)", "w": "automatizirajući" },
+  { "o": "Učinivši samostalnim (pril.)", "w": "automatiziravši" },
+  { "o": "Dajući dopuštenje (pril.)", "w": "autorizirajući" },
+  { "o": "Odobrivši objavu (pril.)", "w": "autoriziravši" },
+  { "o": "Putovši besplatno (pril.)", "w": "autostopiravši" },
+  { "o": "Jamčivši za mjenicu (pril.)", "w": "avaliravši" },
+  { "o": "Čineći istočnjačkim (pril.)", "w": "azijatizirajući" },
+  { "o": "Učinivši istočnjačkim (pril.)", "w": "azijatiziravši" },
+  { "o": "Trzajući udovima (pril.)", "w": "bacakajući" },
+  { "o": "Nakon odbacivanja; hitnuvši (pril.)", "w": "bacivši" },
+  { "o": "Ubošvši nakratko; taknuvši (pril.)", "w": "badnuvši" },
+  { "o": "Podcjenjujući (pril.)", "w": "bagatelizirajući" },
+  { "o": "Nakon podcjenjivanja (pril.)", "w": "bagateliziravši" },
+  { "o": "Radeći strojem za iskop (pril.)", "w": "bagerirajući" },
+  { "o": "Nakon iskapanja (pril.)", "w": "bageriravši" },
+  { "o": "Mučeći se oko nečega (pril.)", "w": "bakćući" },
+  { "o": "Održavajući ravnotežu (pril.)", "w": "balansirajući" },
+  { "o": "Ispuštajući slinu (pril.)", "w": "balaveći" },
+  { "o": "Vršiti nuždu (za stoku) (pril.)", "w": "balegajući" },
+  { "o": "Čineći primitivnim i grubim (pril.)", "w": "balkanizirajući" },
+  { "o": "Nakon srozavanja kulture (pril.)", "w": "balkaniziravši" },
+  { "o": "Konzervirajući tijelo (pril.)", "w": "balzamirajući" },
+  { "o": "Nakon konzerviranja (pril.)", "w": "balzamiravši" },
+  { "o": "Govoreći gluposti; lupetajući (pril.)", "w": "baljezgajući" },
+  { "o": "Čineći običnim (pril.)", "w": "banalizirajući" },
+  { "o": "Nakon gubljenja značenja (pril.)", "w": "banaliziravši" },
+  { "o": "Lumpajući; pijući (pril.)", "w": "bančeći" },
+  { "o": "Povijajući ranu; stežući (pril.)", "w": "bandažirajući" },
+  { "o": "Nakon povijanja; omotavši (pril.)", "w": "bandažiravši" },
+  { "o": "Ostavši bez novca (pril.)", "w": "bankrotirajući" },
+  { "o": "Nakon financijskog sloma (pril.)", "w": "bankrotiravši" },
+  { "o": "Upavši iznenada; nahrupivši (pril.)", "w": "banuvši" },
+  { "o": "Rukujući čime; služeći se (pril.)", "w": "baratajući" },
+  { "o": "Uživajući u miru (pril.)", "w": "baškareći" },
+  { "o": "Nasljeđujući od predaka (pril.)", "w": "baštineći" },
+  { "o": "Tukući štapom (pril.)", "w": "batinajući" },
+  { "o": "Posrćući; jedva se krećući (pril.)", "w": "batrgajući" },
+  { "o": "Tumurajući; teturajući (pril.)", "w": "bauljajući" },
+  { "o": "Zanimajući se čime; radeći (pril.)", "w": "baveći" },
+  { "o": "Lutajući bez cilja; šetajući (pril.)", "w": "bazajući" },
+  { "o": "Smrdeći; ispuštajući miris (pril.)", "w": "bazdeći" },
+  { "o": "Oslanjajući se na što (pril.)", "w": "bazirajući" },
+  { "o": "Nakon postavljanja temelja (pril.)", "w": "baziravši" },
+  { "o": "Mjereći obujam posude (pril.)", "w": "baždareći" },
+  { "o": "Nakon provjere mjera (pril.)", "w": "baždarivši" },
+  { "o": "Nespavajući; čuvajući stražu (pril.)", "w": "bdijući" },
+  { "o": "Šireći oči; gledajući (pril.)", "w": "bečeći" },
+  { "o": "Vodeći veseo život; lumpajući (pril.)", "w": "bećareći" },
+  { "o": "Izustivši bar riječ; pisnuvši (pril.)", "w": "beknuvši" },
+  { "o": "Ponašajući se ludo; ludujući (pril.)", "w": "benaveći" },
+  { "o": "Sakupljajući plodove (pril.)", "w": "berući" },
+  { "o": "Lutajući bez posla (pril.)", "w": "besposličareći" },
+  { "o": "Lijevajući smjesu pijeska (pril.)", "w": "betonirajući" },
+  { "o": "Nakon zalijevanja cementom (pril.)", "w": "betoniravši" },
+  { "o": "Šibajući; kažnjavajući (pril.)", "w": "bičujući" },
+  { "o": "Učeći napamet (pril.)", "w": "biflajući" },
+  { "o": "Čineći svijetlim (pril.)", "w": "bijeleći" },
+  { "o": "Tukući; zadajući udarce (pril.)", "w": "bijući" },
+  { "o": "Nakon ovjere dokumenta (pril.)", "w": "biljegovavši" },
+  { "o": "Pišući; unoseći podatke (pril.)", "w": "bilježeći" },
+  { "o": "Vršeći selekciju; izdvajajući (pril.)", "w": "birajući" },
+  { "o": "Čineći previše krutim (pril.)", "w": "birokratizirajući" },
+  { "o": "Nakon uvođenja stroge uprave (pril.)", "w": "birokratiziravši" },
+  { "o": "Čineći jasnim; pročišćavajući (pril.)", "w": "bistreći" },
+  { "o": "Postojeći; nalazeći se negdje (pril.)", "w": "bivajući" },
+  { "o": "Postojeći kao biće; bivajući (pril.)", "w": "bivstvujući" },
+  { "o": "Svijetleći slabim sjajem (pril.)", "w": "bjelasajući" },
+  { "o": "Nakon kratkog bljeska (pril.)", "w": "bjelasnuvši" },
+  { "o": "Ljuteći se; gnjeveći se (pril.)", "w": "bjesneći" },
+  { "o": "Udaljavajući se hitro (pril.)", "w": "bježeći" },
+  { "o": "Nakon davanja križa (pril.)", "w": "blagoslovivši" },
+  { "o": "Jedući i pijući; uživajući (pril.)", "w": "blagujući" },
+  { "o": "Sramoteći se; rugajući se (pril.)", "w": "blamirajući" },
+  { "o": "Nakon javnog sramoćenja (pril.)", "w": "blamiravši" },
+  { "o": "Kuhajući nakratko (pril.)", "w": "blanširajući" },
+  { "o": "Nakon kratkog prokuhavanja (pril.)", "w": "blanširavši" },
+  { "o": "Prljajući; govoreći loše (pril.)", "w": "blateći" },
+  { "o": "Brbljajući; govoreći gluposti (pril.)", "w": "blebećući" },
+  { "o": "Hineći; varajući u igri (pril.)", "w": "blefirajući" },
+  { "o": "Nakon uspjele varke (pril.)", "w": "blefiravši" },
+  { "o": "Gledajući tupo; blejeći (pril.)", "w": "blejeći" },
+  { "o": "Pogledavši začuđeno i tupo (pril.)", "w": "blenuvši" },
+  { "o": "Gubeći boju; bijeleći (pril.)", "w": "blijedeći" },
+  { "o": "Svijetleći jako; isijavajući (pril.)", "w": "bliješteći" },
+  { "o": "Ojačavajući oklopom; štiteći (pril.)", "w": "blindirajući" },
+  { "o": "Nakon postavljanja oklopa (pril.)", "w": "blindiravši" },
+  { "o": "Sjajeći; ljeskajući se (pril.)", "w": "blistajući" },
+  { "o": "Na manjoj udaljenosti (pril.)", "w": "bliže" },
+  { "o": "Dolazeći vrlo blizu (pril.)", "w": "bližeći" },
+  { "o": "Zaustavljajući rad (pril.)", "w": "blokirajući" },
+  { "o": "Nakon zatvaranja prolaza (pril.)", "w": "blokiravši" },
+  { "o": "Svijetleći u intervalima (pril.)", "w": "bljeskajući" },
+  { "o": "Zasvijetlivši naglo (pril.)", "w": "bljesnuvši" },
+  { "o": "Povraćajući; izbacujući (pril.)", "w": "bljujući" },
+  { "o": "Lagano ubadajući (pril.)", "w": "bockajući" },
+  { "o": "Ubošvši oštrim predmetom (pril.)", "w": "bocnuvši" },
+  { "o": "Igrajući s kuglama na pijesku (pril.)", "w": "boćajući" },
+  { "o": "Ubošvši jednom; taknuvši (pril.)", "w": "bodnuvši" },
+  { "o": "Hrabreći; potičući (pril.)", "w": "bodreći" },
+  { "o": "Nakon davanja podrške (pril.)", "w": "bodrivši" },
+  { "o": "Dodjeljujući poene (pril.)", "w": "bodujući" },
+  { "o": "Postajući imućniji (pril.)", "w": "bogateći" },
+  { "o": "Vrijeđajući svetinje (pril.)", "w": "bogohuleći" },
+  { "o": "Živeći kao u raju (pril.)", "w": "bogujući" },
+  { "o": "Osjećajući strah; strahujući (pril.)", "w": "bojeći" },
+  { "o": "Prekidajući odnose (pril.)", "w": "bojkotirajući" },
+  { "o": "Nakon prestanka suradnje (pril.)", "w": "bojkotiravši" },
+  { "o": "Ratujući; boreći se (pril.)", "w": "bojujući" },
+  { "o": "Cvjetajući u grmovima (pril.)", "w": "bokoreći" },
+  { "o": "Udarajući se šakama u ringu (pril.)", "w": "boksajući" },
+  { "o": "Bivajući bolestan; pateći (pril.)", "w": "bolujući" },
+  { "o": "Uvodeći komunističke metode (pril.)", "w": "boljševizirajući" },
+  { "o": "Nakon uvođenja crvene vlasti (pril.)", "w": "boljševiziravši" },
+  { "o": "Napadajući bombama (pril.)", "w": "bombardirajući" },
+  { "o": "Nakon zračnog napada (pril.)", "w": "bombardiravši" },
+  { "o": "Ocjenjujući kreditnu sposobnost (pril.)", "w": "bonitirajući" },
+  { "o": "Nakon procjene stanja tvrtke (pril.)", "w": "bonitiravši" },
+  { "o": "Nalazeći se negdje; stanujući (pril.)", "w": "boraveći" },
+  { "o": "Jedreći cik-cak uz vjetar (pril.)", "w": "bordižajući" },
+  { "o": "Vodeći bitku; trudeći se (pril.)", "w": "boreći" },
+  { "o": "Nakon bitke; izborivši se (pril.)", "w": "borivši" },
+  { "o": "Ograničavajući vidike (pril.)", "w": "bornirajući" },
+  { "o": "Nakon uskogrudnog djelovanja (pril.)", "w": "borniravši" },
+  { "o": "Proučavajući biljke (pril.)", "w": "botanizirajući" },
+  { "o": "Nakon proučavanja flore (pril.)", "w": "botaniziravši" },
+  { "o": "Obrađujući zemlju drljačom (pril.)", "w": "branajući" },
+  { "o": "Čuvajući od napada; štiteći (pril.)", "w": "braneći" },
+  { "o": "Nakon obrane; sačuvavši (pril.)", "w": "branivši" },
+  { "o": "Ponašajući se kao braća (pril.)", "w": "brateći" },
+  { "o": "Postajući bliski prijatelji (pril.)", "w": "bratimeći" },
+  { "o": "Praveći usjeke u tlu (pril.)", "w": "brazdajući" },
+  { "o": "Pričajući bez prestanka (pril.)", "w": "brbljajući" },
+  { "o": "Ispuštajući mjehuriće (pril.)", "w": "brboćući" },
+  { "o": "Mrmljajući; tiho govoreći (pril.)", "w": "brboreći" },
+  { "o": "Igrajući se u vodi (pril.) (pril.)", "w": "brčkajući" },
+  { "o": "Nakon ulaska u plićak (pril.)", "w": "brčnuvši" },
+  { "o": "Nakon oštrog odgovora (pril.)", "w": "brecnuvši" },
+  { "o": "Postajući bremenit (za stoku) (pril.)", "w": "bređajući" },
+  { "o": "Kočeći; zaustavljajući (pril.)", "w": "bremzajući" },
+  { "o": "Skrbeći; vodeći računa (pril.)", "w": "brigajući" },
+  { "o": "Uklanjajući dlake oštricom (pril.)", "w": "brijući" },
+  { "o": "Nakon izvrsnog uspjeha (pril.)", "w": "briljiravši" },
+  { "o": "Vodeći skrb; razmišljajući (pril.)", "w": "brinući" },
+  { "o": "Nakon preuzimanja skrbi (pril.)", "w": "brinuvši" },
+  { "o": "Štrcajući tekućinu (pril.)", "w": "brizgajući" },
+  { "o": "Nakon naglog plača (pril.)", "w": "briznuvši" },
+  { "o": "Miješajući pojmove; griješeći (pril.)", "w": "brkajući" },
+  { "o": "Radeći površno i loše (pril.)", "w": "brljaveći" },
+  { "o": "Ploveći morem; upravljajući (pril.)", "w": "brodareći" },
+  { "o": "Ploveći; sjekući valove (pril.)", "w": "brodeći" },
+  { "o": "Zbrajajući; nabrajajući (pril.)", "w": "brojeći" },
+  { "o": "Povezujući meke korice knjige (pril.)", "w": "broširajući" },
+  { "o": "Nakon uvezivanja u papir (pril.)", "w": "broširavši" },
+  { "o": "Jedući lišće s grana (pril.)", "w": "brsteći" },
+  { "o": "Zatvarajući otvore (pril.)", "w": "brtveći" },
+  { "o": "Zujeći; ispuštajući zvuk (pril.)", "w": "brujeći" },
+  { "o": "Sramoteći; čineći štetu ugledu (pril.)", "w": "brukajući" },
+  { "o": "Mrmljajući u bradu (pril.)", "w": "brundajući" },
+  { "o": "Bojeći metal u tamno (pril.)", "w": "brunirajući" },
+  { "o": "Nakon tamnog bojenja metala (pril.)", "w": "bruniravši" },
+  { "o": "Oštreći; čisteći površinu (pril.)", "w": "bruseći" },
+  { "o": "Hitajući; ubrzavajući (pril.)", "w": "brzajući" },
+  { "o": "Nakon slanja hitne poruke (pril.)", "w": "brzojavivši" },
+  { "o": "Većom brzinom; hitrije (pril.)", "w": "brže" },
+  { "o": "Što je hitnije moguće (pril.)", "w": "bržebolje" },
+  { "o": "Nakon tupog udarca ili izjave (pril.)", "w": "bubnuvši" },
+  { "o": "Udarajući u opnu; lupajući (pril.)", "w": "bubnjajući" },
+  { "o": "Rastući od vlage; nateći (pril.)", "w": "bubreći" },
+  { "o": "Galamiti; ispuštati jak šum (pril.)", "w": "bučeći" },
+  { "o": "Miješajući tekućinu (pril.)", "w": "bućkajući" },
+  { "o": "Nakon pada u vodu; zaronivši (pril.)", "w": "bućnuvši" },
+  { "o": "Praveći se lud; lupetajući (pril.)", "w": "budaleći" },
+  { "o": "Prekidajući san; potičući (pril.)", "w": "budeći" },
+  { "o": "Nagli rast; širenje (pril.)", "w": "bujajući" },
+  { "o": "Rezervirajući smještaj (pril.)", "w": "bukirajući" },
+  { "o": "Nakon obavljene rezervacije (pril.)", "w": "bukiravši" },
+  { "o": "Nakon naglog paljenja (pril.)", "w": "buknuvši" },
+  { "o": "Goreći velikim plamenom (pril.)", "w": "buktajući" },
+  { "o": "Goreći; isijavajući vatru (pril.)", "w": "bukteći" },
+  { "o": "Pričajući besmislice u bunilu (pril.)", "w": "bulazneći" },
+  { "o": "Netremice gledajući; zureći (pril.)", "w": "buljeći" },
+  { "o": "Govoreći nepovezano u snu (pril.)", "w": "buncajući" },
+  { "o": "Prigovarajući; protiveći se (pril.)", "w": "buneći" },
+  { "o": "Spremajući u sklonište (pril.)", "w": "bunkerirajući" },
+  { "o": "Nakon sklanjanja na sigurno (pril.)", "w": "bunkeriravši" },
+  { "o": "Mreškajući vodu; uznemirujući (pril.)", "w": "burkajući" },
+  { "o": "Udarajući se u prsa (pril.)", "w": "busajući" },
+  { "o": "Praveći otvore; prodirući (pril.)", "w": "bušeći" },
+  { "o": "Sjajeći se; blistajući (pril.)", "w": "cakleći" },
+  { "o": "Koračajući sitno i tiho (pril.)", "w": "capkajući" },
+  { "o": "Naplaćujući državni namet (pril.)", "w": "carineći" },
+  { "o": "Vladajući apsolutno; uživajući (pril.)", "w": "carujući" },
+  { "o": "Ustupajući potraživanje (pril.)", "w": "cedirajući" },
+  { "o": "Vezujući smjesom; učvršćujući (pril.)", "w": "cementirajući" },
+  { "o": "Nakon učvršćivanja smjesom (pril.)", "w": "cementiravši" },
+  { "o": "Plačući sitno; zanovijetajući (pril.)", "w": "cendrajući" },
+  { "o": "Nakon zanovijetanja i plača (pril.)", "w": "cendravši" },
+  { "o": "Sakupljajući moć u središtu (pril.)", "w": "centralizirajući" },
+  { "o": "Nakon uvođenja središnje vlasti (pril.)", "w": "centraliziravši" },
+  { "o": "Usmjeravajući u sredinu (pril.)", "w": "centrirajući" },
+  { "o": "Nakon namještanja u sredinu (pril.)", "w": "centriravši" },
+  { "o": "Provodeći pregled i zabranu (pril.)", "w": "cenzurirajući" },
+  { "o": "Nakon izvršene zabrane sadržaja (pril.)", "w": "cenzuriravši" },
+  { "o": "Podrhtavajući; dršćući (pril.)", "w": "cepteći" },
+  { "o": "Smijući se podrugljivo (pril.)", "w": "cereći" },
+  { "o": "Glasno se i blesavo smijući (pril.)", "w": "cerekajući" },
+  { "o": "Sišući; vukući tekućinu (pril.)", "w": "cicajući" },
+  { "o": "Ponašajući se škrtarski (pril.)", "w": "cicijašeći" },
+  { "o": "Puštajući prodoran ton (pril.)", "w": "cičeći" },
+  { "o": "Ukrašavajući; dotjerujući (pril.)", "w": "cifrajući" },
+  { "o": "Istiskujući tekućinu (pril.)", "w": "cijedeći" },
+  { "o": "Nakon istiskivanja (pril.)", "w": "cijedivši" },
+  { "o": "Uvažavajući; cijeniti koga (pril.)", "w": "cijeneći" },
+  { "o": "Razdvajajući drvo (pril.)", "w": "cijepajući" },
+  { "o": "Dajući vakcinu (pril.)", "w": "cijepeći" },
+  { "o": "Nakon cijepljenja (pril.)", "w": "cijepivši" },
+  { "o": "Pijučući, poput ptica (pril.)", "w": "cijučući" },
+  { "o": "Tiho glasajući se (pril.)", "w": "cijućirajući" },
+  { "o": "Nakon oštrog zvuka (pril.)", "w": "cijuknuvši" },
+  { "o": "Vrišteći od veselja (pril.)", "w": "cikćući" },
+  { "o": "Nakon kratkog krika (pril.)", "w": "ciknuvši" },
+  { "o": "Ciljajući u metu (pril.)", "w": "ciljajući" },
+  { "o": "Lagano trzajući (pril.)", "w": "cimajući" },
+  { "o": "Nakon trzanja (pril.)", "w": "cimnuvši" },
+  { "o": "Odajući koga; prijaviti (pril.)", "w": "cinkajući" },
+  { "o": "Nakon što je tko izdan (pril.)", "w": "cinkavši" },
+  { "o": "Krećući se u krug (pril.)", "w": "cirkulirajući" },
+  { "o": "Nakon protoka (pril.)", "w": "cirkuliravši" },
+  { "o": "Praveći budalu od sebe (pril.)", "w": "cirkusirajući" },
+  { "o": "Navodeći tuđe riječi (pril.)", "w": "citirajući" },
+  { "o": "Nakon navoda teksta (pril.)", "w": "citiravši" },
+  { "o": "Kulturno uzdizati (pril.)", "w": "civilizirajući" },
+  { "o": "Nakon prosvjećenja (pril.)", "w": "civiliziravši" },
+  { "o": "Pregovarajući o cijeni (pril.)", "w": "cjenkajući" },
+  { "o": "Pokušaj sniženja iznosa (pril.)", "w": "cjenjkajući" },
+  { "o": "Sitničareći u nečemu (pril.)", "w": "cjepidlačeći" },
+  { "o": "Lomeći na sitno (pril.)", "w": "cjepkajući" },
+  { "o": "Nakon udarca sjekirom (pril.)", "w": "cjepnuvši" },
+  { "o": "Glasno ljubeći (pril.)", "w": "cmačući" },
+  { "o": "Tiho plačući; jadikujući (pril.)", "w": "cmizdreći" },
+  { "o": "Nakon cmoka (pril.)", "w": "cmoknuvši" },
+  { "o": "Zvuk jezikom (pril.)", "w": "cokćući" },
+  { "o": "Nakon zvuka jezikom (pril.)", "w": "coknuvši" },
+  { "o": "Umirući od muke (pril.)", "w": "crkavajući" },
+  { "o": "Nakon uginuća (pril.)", "w": "crknuvši" },
+  { "o": "Radeći naporno (pril.)", "w": "crnčeći" },
+  { "o": "Postajući taman (pril.)", "w": "crneći" },
+  { "o": "Izvlačeći tekućinu (pril.)", "w": "crpeći" },
+  { "o": "Praveći linije; crtati (pril.)", "w": "crtajući" },
+  { "o": "Povlačeći sitne linije (pril.)", "w": "crtkajući" },
+  { "o": "Postajući rumen u licu (pril.)", "w": "crveneći" },
+  { "o": "Sišući polako (pril.)", "w": "cuclajući" },
+  { "o": "Pijući alkohol (pril.)", "w": "cugajući" },
+  { "o": "Skakućući u mjestu (pril.)", "w": "cupkajući" },
+  { "o": "Nakon malog skoka (pril.)", "w": "cupnuvši" },
+  { "o": "Istjecajući iz posude (pril.)", "w": "cureći" },
+  { "o": "Nakon curenja (pril.)", "w": "curnuvši" },
+  { "o": "Praveći rupice (pril.)", "w": "cvikajući" },
+  { "o": "Puštajući tanak zvuk (pril.)", "w": "cvileći" },
+  { "o": "Razvijajući se; u jeku (pril.)", "w": "cvjetajući" },
+  { "o": "Nakon udara zubima (pril.)", "w": "cvoknuvši" },
+  { "o": "Dršćući od zime (pril.)", "w": "cvokoćući" },
+  { "o": "Poput zrikavca (pril.)", "w": "cvrčeći" },
+  { "o": "Poput ptice pjevice (pril.)", "w": "cvrkućući" },
+  { "o": "Dirati šiljastim (pril.)", "w": "čačkajući" },
+  { "o": "Prljajući garom (pril.)", "w": "čađeći" },
+  { "o": "Stalno prigovarajući (pril.)", "w": "čangrizajući" },
+  { "o": "Plaćajući piće drugome (pril.)", "w": "časteći" },
+  { "o": "Nakon gozbe (pril.)", "w": "častivši" },
+  { "o": "Boraveći do dolaska (pril.)", "w": "čekajući" },
+  { "o": "Nakon čekanja (pril.)", "w": "čekavši" },
+  { "o": "Nakon rada s čekićem (pril.)", "w": "čekićavši" },
+  { "o": "Jačajući karakter (pril.)", "w": "čeličeći" },
+  { "o": "Kopajući po površini (pril.)", "w": "čeprkajući" },
+  { "o": "Nakon površnog kopanja (pril.)", "w": "čeprkavši" },
+  { "o": "Skidajući perje (pril.)", "w": "čerupajući" },
+  { "o": "Nakon otkinutog pramena (pril.)", "w": "čerupnuvši" },
+  { "o": "Izražavajući dobre želje (pril.)", "w": "čestitajući" },
+  { "o": "Nakon pohvale (pril.)", "w": "čestitavši" },
+  { "o": "Stružući noktima (pril.)", "w": "češajući" },
+  { "o": "Uređujući kosu (pril.)", "w": "češljajući" },
+  { "o": "Nakon dodira noktima (pril.)", "w": "češnuvši" },
+  { "o": "Trljajući četkom (pril.)", "w": "četkajući" },
+  { "o": "Živeći kao odmetnik (pril.)", "w": "četnikujući" },
+  { "o": "Jako želeći; žudeći (pril.)", "w": "čeznući" },
+  { "o": "Radeći; stvarajući (pril.)", "w": "čineći" },
+  { "o": "Nakon obavljenog posla (pril.)", "w": "činivši" },
+  { "o": "Izrađujući mrežasti ukras (pril.)", "w": "čipkajući" },
+  { "o": "Uklanjajući prljavštinu (pril.)", "w": "čisteći" },
+  { "o": "Šarajući neuredno (pril.)", "w": "črčkajući" },
+  { "o": "Sjedeći na petama (pril.)", "w": "čučeći" },
+  { "o": "Nakon čučnja (pril.)", "w": "čučnuvši" },
+  { "o": "Iskazujući iznenađenje (pril.)", "w": "čudeći" },
+  { "o": "Nakon lakšeg udarca (pril.)", "w": "čuknuvši" },
+  { "o": "Vukući silom; kidati (pril.)", "w": "čupajući" },
+  { "o": "Otkidajući komadiće (pril.)", "w": "čupkajući" },
+  { "o": "Nakon naglog poteza (pril.)", "w": "čupnuvši" },
+  { "o": "Pazeći na koga (pril.)", "w": "čuvajući" },
+  { "o": "Nakon osigurane zaštite (pril.)", "w": "čuvavši" },
+  { "o": "Nakon što je dopro zvuk (pril.)", "w": "čuvši" },
+  { "o": "Udarac po glavi ili nosu (pril.)", "w": "čvoknuvši" },
+  { "o": "Nakon brzog udarca (pril.)", "w": "čvrknuvši" },
+  { "o": "Pržeći se na vatri (pril.)", "w": "čvrljeći" },
+  { "o": "Neobavezno pričajući (pril.)", "w": "ćakulajući" },
+  { "o": "Razgovarajući o nebitnom (pril.)", "w": "ćaskajući" },
+  { "o": "Gubeći kosu (pril.)", "w": "ćelaveći" },
+  { "o": "Nakon što je zgrabljeno (pril.)", "w": "ćopivši" },
+  { "o": "Gubeći vid; slijepiti (pril.)", "w": "ćoraveći" },
+  { "o": "Podižući uši (pril.)", "w": "ćuleći" },
+  { "o": "Udarajući dlanom po licu (pril.)", "w": "ćuškajući" },
+  { "o": "Nakon udarca dlanom (pril.)", "w": "ćušnuvši" },
+  { "o": "Osjećajući; proživjeti (pril.)", "w": "ćuteći" },
+  { "o": "Nakon dubokog udaha (pril.)", "w": "dahnuvši" },
+  { "o": "Pružajući kome što (pril.)", "w": "dajući" },
+  { "o": "Nakon što je predano (pril.)", "w": "davši" },
+  { "o": "Dobivajući na težini (pril.)", "w": "debljajući" },
+  { "o": "Zaključujući iz općega (pril.)", "w": "deducirajući" },
+  { "o": "Nakon izvedenog zaključka (pril.)", "w": "deduciravši" },
+  { "o": "Prolazeći u povorci (pril.)", "w": "defilirajući" },
+  { "o": "Nakon defilea (pril.)", "w": "defiliravši" },
+  { "o": "Nakon što je definirano (pril.)", "w": "definiravši" },
+  { "o": "Kvareći prirodni oblik (pril.)", "w": "deformirajući" },
+  { "o": "Nakon gubitka oblika (pril.)", "w": "deformiravši" },
+  { "o": "Nazadujući (pril.)", "w": "degenerirajući" },
+  { "o": "Snizujući rang (pril.)", "w": "degradirajući" },
+  { "o": "Nakon sramoćenja (pril.)", "w": "degradiravši" },
+  { "o": "Isprobavajući okus jela (pril.)", "w": "degustirajući" },
+  { "o": "Gubeći tekućinu (pril.)", "w": "dehidrirajući" },
+  { "o": "Nakon gubitka tekućine (pril.)", "w": "dehidriravši" },
+  { "o": "Ostavljajući bez novca (pril.)", "w": "dekintirajući" },
+  { "o": "Oduzimajući status (pril.)", "w": "deklasirajući" },
+  { "o": "Nakon gubitka položaja (pril.)", "w": "deklasiravši" },
+  { "o": "Pretvarajući šifru u tekst (pril.)", "w": "dekodirajući" },
+  { "o": "Nakon odgonetavanja (pril.)", "w": "dekodiravši" },
+  { "o": "Izrez na haljini (pril.)", "w": "dekoltirajući" },
+  { "o": "Nakon izrade izreza (pril.)", "w": "dekoltiravši" },
+  { "o": "Rastvarajući složeno (pril.)", "w": "dekomponirajući" },
+  { "o": "Nakon razlaganja (pril.)", "w": "dekomponiravši" },
+  { "o": "Ometajući pažnju (pril.)", "w": "dekoncentrirajući" },
+  { "o": "Uređujući prostor (pril.)", "w": "dekorirajući" },
+  { "o": "Nakon ukrašavanja (pril.)", "w": "dekoriravši" },
+  { "o": "Dešifrirajući poruku (pril.)", "w": "dekriptirajući" },
+  { "o": "Nakon odgonetke (pril.)", "w": "dekriptiravši" },
+  { "o": "Šaljući zastupnika (pril.)", "w": "delegirajući" },
+  { "o": "Nakon imenovanja (pril.)", "w": "delegiravši" },
+  { "o": "Iseljavajući sudski (pril.)", "w": "deložirajući" },
+  { "o": "Nakon izbacivanja iz stana (pril.)", "w": "deložiravši" },
+  { "o": "Poričući istinu (pril.)", "w": "demantirajući" },
+  { "o": "Nakon opovrgavanja (pril.)", "w": "demantiravši" },
+  { "o": "Otpuštajući iz vojske (pril.)", "w": "demobilizirajući" },
+  { "o": "Nakon demobilizacije (pril.)", "w": "demobiliziravši" },
+  { "o": "Uvodeći vlast naroda (pril.)", "w": "demokratizirajući" },
+  { "o": "Nakon potpunog razaranja (pril.)", "w": "demoliravši" },
+  { "o": "Prikazujući koga zlim (pril.)", "w": "demonizirajući" },
+  { "o": "Javno prosvjedujući (pril.)", "w": "demonstrirajući" },
+  { "o": "Nakon izvedenog pokusa (pril.)", "w": "demonstriravši" },
+  { "o": "Nakon rastavljanja (pril.)", "w": "demontiravši" },
+  { "o": "Uklanjajući dlake (pril.)", "w": "depilirajući" },
+  { "o": "Nakon čišćenja kože (pril.)", "w": "depiliravši" },
+  { "o": "Odlažući na čuvanje (pril.)", "w": "deponirajući" },
+  { "o": "Nakon pologa u banku (pril.)", "w": "deponiravši" },
+  { "o": "Protjerujući iz zemlje (pril.)", "w": "deportirajući" },
+  { "o": "Nakon prisilnog odvođenja (pril.)", "w": "deportiravši" },
+  { "o": "Nakon bacanja u očaj (pril.)", "w": "deprimiravši" },
+  { "o": "Trovanje glodavaca (pril.)", "w": "deratizirajući" },
+  { "o": "Nakon trovanja štakora (pril.)", "w": "deratiziravši" },
+  { "o": "Izvodeći što iz čega (pril.)", "w": "derivirajući" },
+  { "o": "Nakon izračuna izvedenice (pril.)", "w": "deriviravši" },
+  { "o": "Nakon masovnog uništenja (pril.)", "w": "desetkovavši" },
+  { "o": "Nakon događaja (pril.)", "w": "desivši" },
+  { "o": "Pročišćavajući tekućinu (pril.)", "w": "destilirajući" },
+  { "o": "Nakon destilacije (pril.)", "w": "destiliravši" },
+  { "o": "Uklanjajući poticaj (pril.)", "w": "destimulirajući" },
+  { "o": "Nakon obeshrabrenja (pril.)", "w": "destimuliravši" },
+  { "o": "Događajući se (pril.)", "w": "dešavajući" },
+  { "o": "Odgonetavajući tajno (pril.)", "w": "dešifrirajući" },
+  { "o": "Nakon rješenja enigme (pril.)", "w": "dešifriravši" },
+  { "o": "Iznoseći pojedinosti (pril.)", "w": "detaljizirajući" },
+  { "o": "Otkrivajući prisutnost (pril.)", "w": "detektirajući" },
+  { "o": "Nakon što je otkriveno (pril.)", "w": "detektiravši" },
+  { "o": "Točno određujući (pril.)", "w": "determinirajući" },
+  { "o": "Nakon utvrđenog uzroka (pril.)", "w": "determiniravši" },
+  { "o": "Nakon eksplozije (pril.)", "w": "detoniravši" },
+  { "o": "Smanjujući vrijednost (pril.)", "w": "devalvirajući" },
+  { "o": "Nakon pada valute (pril.)", "w": "devalviravši" },
+  { "o": "Pustošeći; oštetiti (pril.)", "w": "devastirajući" },
+  { "o": "Nakon razaranja (pril.)", "w": "devastiravši" },
+  { "o": "Bježeći iz vojske (pril.)", "w": "dezertirajući" },
   {
     "o": "",
     "w": "dezertiravši"
