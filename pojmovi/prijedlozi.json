@@ -1,282 +1,72 @@
 [
-  {
-    "o": "",
-    "w": "bez"
-  },
-  {
-    "o": "",
-    "w": "do"
-  },
-  {
-    "o": "",
-    "w": "doli"
-  },
-  {
-    "o": "",
-    "w": "duž"
-  },
-  {
-    "o": "",
-    "w": "ispod"
-  },
-  {
-    "o": "",
-    "w": "ispred"
-  },
-  {
-    "o": "",
-    "w": "iz"
-  },
-  {
-    "o": "",
-    "w": "iza"
-  },
-  {
-    "o": "",
-    "w": "izim"
-  },
-  {
-    "o": "",
-    "w": "između"
-  },
-  {
-    "o": "",
-    "w": "iznad"
-  },
-  {
-    "o": "",
-    "w": "izuzev"
-  },
-  {
-    "o": "",
-    "w": "izvan"
-  },
-  {
-    "o": "",
-    "w": "k"
-  },
-  {
-    "o": "",
-    "w": "ka"
-  },
-  {
-    "o": "",
-    "w": "kao"
-  },
-  {
-    "o": "",
-    "w": "kod"
-  },
-  {
-    "o": "",
-    "w": "kroz"
-  },
-  {
-    "o": "",
-    "w": "kroza"
-  },
-  {
-    "o": "",
-    "w": "među"
-  },
-  {
-    "o": "",
-    "w": "na"
-  },
-  {
-    "o": "",
-    "w": "nad"
-  },
-  {
-    "o": "",
-    "w": "nadohvat"
-  },
-  {
-    "o": "",
-    "w": "nadomak"
-  },
-  {
-    "o": "",
-    "w": "nakon"
-  },
-  {
-    "o": "",
-    "w": "nakraj"
-  },
-  {
-    "o": "",
-    "w": "namjesto"
-  },
-  {
-    "o": "",
-    "w": "naokolo"
-  },
-  {
-    "o": "",
-    "w": "naspram"
-  },
-  {
-    "o": "",
-    "w": "nasuprot"
-  },
-  {
-    "o": "",
-    "w": "navrh"
-  },
-  {
-    "o": "",
-    "w": "o"
-  },
-  {
-    "o": "",
-    "w": "od"
-  },
-  {
-    "o": "",
-    "w": "osim"
-  },
-  {
-    "o": "",
-    "w": "po"
-  },
-  {
-    "o": "",
-    "w": "pod"
-  },
-  {
-    "o": "",
-    "w": "pokraj"
-  },
-  {
-    "o": "",
-    "w": "pomoću"
-  },
-  {
-    "o": "",
-    "w": "ponad"
-  },
-  {
-    "o": "",
-    "w": "poput"
-  },
-  {
-    "o": "",
-    "w": "poradi"
-  },
-  {
-    "o": "",
-    "w": "pored"
-  },
-  {
-    "o": "",
-    "w": "posred"
-  },
-  {
-    "o": "",
-    "w": "potkraj"
-  },
-  {
-    "o": "",
-    "w": "povrh"
-  },
-  {
-    "o": "",
-    "w": "pred"
-  },
-  {
-    "o": "",
-    "w": "preda"
-  },
-  {
-    "o": "",
-    "w": "preko"
-  },
-  {
-    "o": "",
-    "w": "prema"
-  },
-  {
-    "o": "",
-    "w": "pri"
-  },
-  {
-    "o": "",
-    "w": "prije"
-  },
-  {
-    "o": "",
-    "w": "radi"
-  },
-  {
-    "o": "",
-    "w": "s"
-  },
-  {
-    "o": "",
-    "w": "sa"
-  },
-  {
-    "o": "",
-    "w": "sporadi"
-  },
-  {
-    "o": "",
-    "w": "suprot"
-  },
-  {
-    "o": "",
-    "w": "u"
-  },
-  {
-    "o": "",
-    "w": "uključivo"
-  },
-  {
-    "o": "",
-    "w": "umjesto"
-  },
-  {
-    "o": "",
-    "w": "unatoč"
-  },
-  {
-    "o": "",
-    "w": "unutar"
-  },
-  {
-    "o": "",
-    "w": "uprkos"
-  },
-  {
-    "o": "",
-    "w": "uslijed"
-  },
-  {
-    "o": "",
-    "w": "usprkos"
-  },
-  {
-    "o": "",
-    "w": "usred"
-  },
-  {
-    "o": "",
-    "w": "usuprot"
-  },
-  {
-    "o": "",
-    "w": "uz"
-  },
-  {
-    "o": "",
-    "w": "uza"
-  },
-  {
-    "o": "",
-    "w": "za"
-  },
-  {
-    "o": "",
-    "w": "zbog"
-  }
+  { "o": "lišen ičega", "w": "bez" },
+  { "o": "zaključno s", "w": "do" },
+  { "o": "prema nižem mjestu", "w": "doli" },
+  { "o": "uz cijelu duljinu", "w": "duž" },
+  { "o": "s donje strane", "w": "ispod" },
+  { "o": "s prednje strane", "w": "ispred" },
+  { "o": "s ishodištem u", "w": "iz" },
+  { "o": "sa stražnje strane", "w": "iza" },
+  { "o": "osim", "w": "izim" },
+  { "o": "u sredini dvaju", "w": "između" },
+  { "o": "s gornje strane", "w": "iznad" },
+  { "o": "osim", "w": "izuzev" },
+  { "o": "s vanjske strane", "w": "izvan" },
+  { "o": "spram cilja", "w": "k" },
+  { "o": "spram", "w": "ka" },
+  { "o": "nalik nečemu", "w": "kao" },
+  { "o": "pri komu ili čemu", "w": "kod" },
+  { "o": "putem unutrašnjosti", "w": "kroz" },
+  { "o": "putem unutrašnjosti", "w": "kroza" },
+  { "o": "u društvu više njih", "w": "među" },
+  { "o": "povrh plohe", "w": "na" },
+  { "o": "više od", "w": "nad" },
+  { "o": "vrlo blizu ruke", "w": "nadohvat" },
+  { "o": "vrlo blizu", "w": "nadomak" },
+  { "o": "poslije", "w": "nakon" },
+  { "o": "na kraju čega", "w": "nakraj" },
+  { "o": "umjesto", "w": "namjesto" },
+  { "o": "sa svih strana", "w": "naokolo" },
+  { "o": "spram", "w": "naspram" },
+  { "o": "preko puta", "w": "nasuprot" },
+  { "o": "pri samom vrhu", "w": "navrh" },
+  { "o": "glede", "w": "o" },
+  { "o": "s ishodištem u", "w": "od" },
+  { "o": "izuzev", "w": "osim" },
+  { "o": "diljem", "w": "po" },
+  { "o": "s niže strane", "w": "pod" },
+  { "o": "blizu", "w": "pokraj" },
+  { "o": "uz pomoć", "w": "pomoću" },
+  { "o": "iznad", "w": "ponad" },
+  { "o": "nalik na", "w": "poput" },
+  { "o": "radi", "w": "poradi" },
+  { "o": "uz sami rub", "w": "pored" },
+  { "o": "u sredini", "w": "posred" },
+  { "o": "pri svršetku", "w": "potkraj" },
+  { "o": "iznad", "w": "povrh" },
+  { "o": "ispred", "w": "pred" },
+  { "o": "ispred", "w": "preda" },
+  { "o": "s jedne na drugu stranu", "w": "preko" },
+  { "o": "u smjeru k", "w": "prema" },
+  { "o": "uz", "w": "pri" },
+  { "o": "ranije od", "w": "prije" },
+  { "o": "zbog", "w": "radi" },
+  { "o": "zajedn skim", "w": "s" },
+  { "o": "zajedn s", "w": "sa" },
+  { "o": "zbog", "w": "sporadi" },
+  { "o": "nasuprot", "w": "suprot" },
+  { "o": "v", "w": "u" },
+  { "o": "zaključno s", "w": "uključivo" },
+  { "o": "namjesto", "w": "umjesto" },
+  { "o": "bez obzira na", "w": "unatoč" },
+  { "o": "s nutarnje strane", "w": "unutar" },
+  { "o": "bez obzira na", "w": "uprkos" },
+  { "o": "zbog", "w": "uslijed" },
+  { "o": "bez obzira na", "w": "usprkos" },
+  { "o": "sred čega", "w": "usred" },
+  { "o": "nasuprot", "w": "usuprot" },
+  { "o": "tik uz", "w": "uz" },
+  { "o": "tik uz", "w": "uza" },
+  { "o": "iza", "w": "za" },
+  { "o": "radi čega", "w": "zbog" }
 ]
