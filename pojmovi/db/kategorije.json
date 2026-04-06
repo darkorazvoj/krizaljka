@@ -13,120 +13,160 @@
       "Id": 3
     },
     {
-      "Name": "dijalekt",
+      "Name": "brojevi",
       "Id": 4
     },
     {
-      "Name": "ekonomija",
+      "Name": "cestice",
       "Id": 5
     },
     {
-      "Name": "enigmatskispecijaliteti",
+      "Name": "dijalekt",
       "Id": 6
     },
     {
-      "Name": "filozofija",
+      "Name": "ekonomija",
       "Id": 7
     },
     {
-      "Name": "fizika",
+      "Name": "enigmatskispecijaliteti",
       "Id": 8
     },
     {
-      "Name": "fotografija",
+      "Name": "filozofija",
       "Id": 9
     },
     {
-      "Name": "gastronomija",
+      "Name": "fizika",
       "Id": 10
     },
     {
-      "Name": "glagoli",
+      "Name": "fotografija",
       "Id": 11
     },
     {
-      "Name": "gramatika",
+      "Name": "gastronomija",
       "Id": 12
     },
     {
-      "Name": "imena",
+      "Name": "glagoli",
       "Id": 13
     },
     {
-      "Name": "it",
+      "Name": "glagoli_gen",
       "Id": 14
     },
     {
-      "Name": "kemija",
+      "Name": "gramatika",
       "Id": 15
     },
     {
-      "Name": "kiparstvo",
+      "Name": "imena",
       "Id": 16
     },
     {
-      "Name": "kratice",
+      "Name": "imenice",
       "Id": 17
     },
     {
-      "Name": "kultura",
+      "Name": "it",
       "Id": 18
     },
     {
-      "Name": "matematika",
+      "Name": "kemija",
       "Id": 19
     },
     {
-      "Name": "medicina",
+      "Name": "kiparstvo",
       "Id": 20
     },
     {
-      "Name": "mitologija",
+      "Name": "kratice",
       "Id": 21
     },
     {
-      "Name": "moda",
+      "Name": "kultura",
       "Id": 22
     },
     {
-      "Name": "opcipojmovi",
+      "Name": "matematika",
       "Id": 23
     },
     {
-      "Name": "politika",
+      "Name": "medicina",
       "Id": 24
     },
     {
-      "Name": "poslovice",
+      "Name": "mitologija",
       "Id": 25
     },
     {
-      "Name": "povijest",
+      "Name": "moda",
       "Id": 26
     },
     {
-      "Name": "prenesnoznacenje",
+      "Name": "nerazvrstano",
       "Id": 27
     },
     {
-      "Name": "pridjevi",
+      "Name": "opcipojmovi",
       "Id": 28
     },
     {
-      "Name": "sport",
+      "Name": "politika",
       "Id": 29
     },
     {
-      "Name": "stranerijeci",
+      "Name": "poslovice",
       "Id": 30
     },
     {
-      "Name": "umjetnost",
+      "Name": "povijest",
       "Id": 31
     },
     {
-      "Name": "zemljopis",
+      "Name": "prenesnoznacenje",
       "Id": 32
+    },
+    {
+      "Name": "pridjevi",
+      "Id": 33
+    },
+    {
+      "Name": "prijedlozi",
+      "Id": 34
+    },
+    {
+      "Name": "prilozi",
+      "Id": 35
+    },
+    {
+      "Name": "sport",
+      "Id": 36
+    },
+    {
+      "Name": "stranerijeci",
+      "Id": 37
+    },
+    {
+      "Name": "umjetnost",
+      "Id": 38
+    },
+    {
+      "Name": "uzvici",
+      "Id": 39
+    },
+    {
+      "Name": "veznici",
+      "Id": 40
+    },
+    {
+      "Name": "zamjenice",
+      "Id": 41
+    },
+    {
+      "Name": "zemljopis",
+      "Id": 42
     }
   ]
 }
