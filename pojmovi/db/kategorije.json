@@ -137,36 +137,32 @@
       "Id": 34
     },
     {
-      "Name": "prilozi",
+      "Name": "sport",
       "Id": 35
     },
     {
-      "Name": "sport",
+      "Name": "stranerijeci",
       "Id": 36
     },
     {
-      "Name": "stranerijeci",
+      "Name": "umjetnost",
       "Id": 37
     },
     {
-      "Name": "umjetnost",
+      "Name": "uzvici",
       "Id": 38
     },
     {
-      "Name": "uzvici",
+      "Name": "veznici",
       "Id": 39
     },
     {
-      "Name": "veznici",
+      "Name": "zamjenice",
       "Id": 40
     },
     {
-      "Name": "zamjenice",
-      "Id": 41
-    },
-    {
       "Name": "zemljopis",
-      "Id": 42
+      "Id": 41
     }
   ]
 }
