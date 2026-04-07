@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Krizaljka.Console;
+﻿using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
@@ -8,6 +7,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Threading.Channels;
 using Krizaljka.Domain;
 using Krizaljka.Domain.Solver;
 
@@ -20,7 +20,7 @@ const string templatesDir = @"C:\git\krizaljka\templates";
 TheKrizaljka? theKrizaljka = null;
 
 string? currentTemplateName = null;
-//var termsDb = TermsManager.LoadTerms();
+PojmoviJsonDb? pojmoviDb = null;
 
 var options1 = new JsonSerializerOptions
     { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), };
@@ -61,20 +61,20 @@ while (true)
         case "d":
            var numOfTerms = await PojmoviDbCreatorJson.CreateDatabaseAsync();
 
-           Console.WriteLine("Database Rebuilt!");
+            Console.WriteLine("Database Rebuilt!");
             Console.WriteLine($"Number of terms: {numOfTerms}");
             Console.WriteLine("continue...");
             Console.ReadKey();
             break;
 
         case "l":
-            var pojmoviDb = TermsManager.LoadTerms();
-            if (pojmoviDb is null)
+            pojmoviDb ??= PojmoviManager.LoadTerms();
+            if (pojmoviDb.Terms.Count == 0)
             {
-                Console.WriteLine("Pojmovi db is null");
-                return;
+                Console.WriteLine("Pojmovi database is empty...");
+                Console.ReadKey();
+                continue;
             }
-
 
             while (true)
             {
