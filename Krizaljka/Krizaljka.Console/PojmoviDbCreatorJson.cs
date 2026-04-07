@@ -19,12 +19,22 @@ public static class PojmoviDbCreatorJson
 
     public static async Task<long> CreateDatabaseAsync()
     {
-        var (validTerms, _, categories) = await new TermsLoader().LoadTermsAsync(PojmoviPath);
-
         if (!Directory.Exists(DbPath))
         {
             Directory.CreateDirectory(DbPath);
         }
+
+        var existingDbFiles = Directory
+            .GetFiles(DbPath)
+            .Where(x => Path.GetFileNameWithoutExtension(x).StartsWith(PojmoviDbNamePrefix))
+            .ToList();
+
+        foreach (var existingDbFile in existingDbFiles)
+        {
+            File.Delete(existingDbFile);
+        }
+
+        var (validTerms, _, categories) = await new TermsLoader().LoadTermsAsync(PojmoviPath);
 
         List<CategoryJsonDbItem> categoryItems = [];
         foreach (var kv in categories)
