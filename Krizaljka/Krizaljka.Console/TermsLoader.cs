@@ -1,32 +1,43 @@
 ﻿using System.Text.Json;
+using Krizaljka.Domain;
 using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.Console;
 
+public record TermsLoaderResult(
+    List<Term> ValidTerms, 
+    List<string> InvalidTerms, 
+    Dictionary<string, int> Categories);
+
 public class TermsLoader
 {
-    public async Task LoadTermsAsync(string path)
+    public async Task<(List<Term> ValidTerms, List<string> invalidTerms, Dictionary<string, int> Categories)> LoadTermsAsync(string path)
     {
         var termsFiles = Directory.GetFiles(path).Select(Path.GetFullPath).ToList();
-        var filesCategories = LoadCategories(termsFiles);
-        await LoadAndStructureTermsAsync(termsFiles, filesCategories);
+        var categoriesNameId = LoadCategories(termsFiles);
+        var (validTerms, invalidTerms) =  await LoadAndStructureTermsAsync(termsFiles, categoriesNameId);
 
+        return (validTerms, invalidTerms, categoriesNameId);
     }
 
-    private async Task LoadAndStructureTermsAsync(List<string> termsFiles, Dictionary<string, int> filesCategories)
+    private async Task<(List<Term> ValidTerms, List<string> invalidTerms)>
+        LoadAndStructureTermsAsync(List<string> termsFiles, Dictionary<string, int> categoriesNameId)
     {
+        List<Term> validTerms = [];
+        List<string> invalidTerms = [];
+
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         foreach (var termsFile in termsFiles)
         {
             try
             {
-                var templateJson =  await File.ReadAllTextAsync(termsFile);
+                var templateJson = await File.ReadAllTextAsync(termsFile);
                 if (string.IsNullOrWhiteSpace(templateJson))
                 {
                     System.Console.WriteLine($"{termsFile} is empty.");
                     continue;
                 }
-                
+
                 var parsedTermsFile = JsonSerializer.Deserialize<List<TermJson>>(templateJson, options);
 
                 if (parsedTermsFile is null)
@@ -35,8 +46,9 @@ public class TermsLoader
                     continue;
                 }
 
-                StructureTermsFromFile(parsedTermsFile, filesCategories[termsFile]);
-
+                var (valids, invalids) = StructureTermsFromFile(parsedTermsFile, categoriesNameId[Path.GetFileNameWithoutExtension(termsFile)]);
+                validTerms.AddRange(valids);
+                invalidTerms.AddRange(invalids);
             }
             catch
             {
@@ -44,38 +56,24 @@ public class TermsLoader
                 throw;
             }
         }
+
+        return (validTerms, invalidTerms);
     }
 
-    private void StructureTermsFromFile(List<TermJson> parsedTermsFile, int categoryId)
+    private (List<Term> ValidTerms, List<string> invalidTerms) StructureTermsFromFile(List<TermJson> parsedTermsFile,
+        int categoryId)
     {
+        List<Term> validTerms = [];
         List<string> invalidTerms = [];
 
         foreach (var rawTerm in parsedTermsFile)
         {
-            var term = StructureTermService.Invoke(TermLanguage.Croatian, rawTerm.Description, rawTerm.Term, categoryId);
+            var term = StructureTermService.Invoke(TermLanguage.Croatian, rawTerm.Description, rawTerm.Term,
+                categoryId);
 
             if (term is IValidTerm validTerm)
             {
-                if (InMemoryDatabase.TermsDb.TryGetValue(validTerm.RawValue, out var value))
-                {
-                    value.Add(validTerm);
-                }
-                else
-                {
-                    InMemoryDatabase.TermsDb.Add(validTerm.RawValue, [validTerm]);
-                }
-
-                var length = validTerm.Length;
-                if (InMemoryDatabase.LengthTermsDb.TryGetValue(length, out var list))
-                {
-                    list.Add(validTerm);
-                }
-                else
-                {
-                    InMemoryDatabase.LengthTermsDb.Add(length, [validTerm]);
-                }
-
-                continue;
+                validTerms.Add((Term)validTerm);
             }
 
             if (term is InvalidTerm invalidTerm)
@@ -88,16 +86,7 @@ public class TermsLoader
             }
         }
 
-        if (invalidTerms.Count > 0)
-        {
-            System.Console.WriteLine($"Invalid terms: {invalidTerms.Count}");
-            foreach (var invalidTerm in invalidTerms)
-            {
-                System.Console.WriteLine(invalidTerm);
-            }
-        }
-
-
+        return (validTerms, invalidTerms);
     }
 
     /// <summary>
@@ -107,29 +96,14 @@ public class TermsLoader
     /// <returns>termsFile, categoryId</returns>
     private Dictionary<string, int> LoadCategories(List<string> termsFiles)
     {
-        Dictionary<string, int> fileCategoryId = [];
+        Dictionary<string, int> nameCategoryId = [];
 
         foreach (var termsFile in termsFiles)
         {
             var categoryName = Path.GetFileNameWithoutExtension(termsFile);
-            int categoryId;
-
-            if (
-                InMemoryDatabase.CategoriesDb.TryGetValue(categoryName, out var existingId))
-            {
-                categoryId = existingId;
-            }
-            else
-            {
-                categoryId = InMemoryDatabase.CategoriesDb.Values.Count > 0
-                    ? InMemoryDatabase.CategoriesDb.Values.Max() + 1
-                    : 1;
-                InMemoryDatabase.CategoriesDb.Add(categoryName, categoryId);
-            }
-
-            fileCategoryId.Add(termsFile, categoryId);
+            nameCategoryId.Add(categoryName, CategoryIdGenerator.GetNextId());
         }
 
-        return fileCategoryId;
+        return nameCategoryId;
+        }
     }
-}

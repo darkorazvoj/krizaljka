@@ -11,3 +11,12 @@ public static class IdGenerator
         return Interlocked.Increment(ref _lastId);
     }
 }
+
+public static class CategoryIdGenerator
+{
+    private static int _lastId;
+    public static int GetNextId()
+    {
+        return Interlocked.Increment(ref _lastId);
+    }
+}
