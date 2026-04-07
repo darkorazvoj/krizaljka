@@ -20,7 +20,7 @@ const string templatesDir = @"C:\git\krizaljka\templates";
 TheKrizaljka? theKrizaljka = null;
 
 string? currentTemplateName = null;
-PojmoviJsonDb? pojmoviDb = null;
+var pojmoviDb = PojmoviManager.LoadTerms();
 
 var options1 = new JsonSerializerOptions
     { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), };
@@ -60,6 +60,7 @@ while (true)
 
         case "d":
            var numOfTerms = await PojmoviDbCreatorJson.CreateDatabaseAsync();
+           pojmoviDb = PojmoviManager.LoadTerms();
 
             Console.WriteLine("Database Rebuilt!");
             Console.WriteLine($"Number of terms: {numOfTerms}");
@@ -253,7 +254,6 @@ while (true)
             break;
 
         case "kp":
-
             pojmoviDb ??= PojmoviManager.LoadTerms();
             if (pojmoviDb.Terms.Count == 0)
             {
@@ -451,6 +451,7 @@ while (true)
 
             Console.WriteLine("SOLVED!!!!");
             PrintKrizaljka();
+            Console.ReadKey();
 
             break;
         case "k":
