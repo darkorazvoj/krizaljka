@@ -42,6 +42,7 @@
   { "id": 1295, "o": "sredstvo za higijenu", "w": "sapun" },
   { "id": 1296, "o": "sredstvo za kosu", "w": "šampon" },
   { "id": 1305, "o": "sportska obuća", "w": "tenisice" },
+   { "o": "narod iz Etiopije", "w": "adi" },
 
   { "o": "trpeza (mn.)", "w": "stolovi" },
   { "o": "sjedalica (mn.)", "w": "stolica" },
@@ -705,5 +706,7 @@
   { "o": "Slikovni prikaz brojki", "w": "GRAFIKON" },
   { "o": "Livadska krmna biljka", "w": "GRAHORKA" },
   { "o": "Skup jezičnih pravila", "w": "GRAMATIKA" },
-  { "o": "Urezivanje ukrasa u metal", "w": "GRAVIRANJE" }
+  { "o": "Urezivanje ukrasa u metal", "w": "GRAVIRANJE" },
+    { "o": "crna rudna smola", "w": "albertit" }
+
 ]

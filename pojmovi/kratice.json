@@ -115,6 +115,7 @@
   { "id": 2425, "o": "World DanceSport Federation", "w": "WDSF" },
   { "id": 2427, "o": "Fédération Internationale de Luge", "w": "FIL" },
   { "id": 2429, "o": "World Curling Federation", "w": "WCF" },
+    { "o": "kratica za izmjeničnu struju", "w": "ac" },
 
   { "id": 2432, "o": "World Health Organization", "w": "WHO" },
   { "id": 2434, "o": "United Nations Children's Fund", "w": "UNICEF" },

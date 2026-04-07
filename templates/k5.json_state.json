@@ -1,0 +1,38 @@
+{
+  "AssignedTermsBySlotId": {
+    "5": {
+      "SlotId": 5,
+      "TermId": 41546,
+      "Letters": [
+        "L",
+        "a",
+        "u",
+        "r",
+        "a"
+      ]
+    },
+    "20": {
+      "SlotId": 20,
+      "TermId": 172884,
+      "Letters": [
+        "L",
+        "e",
+        "a"
+      ]
+    }
+  },
+  "UsedTermsIds": [
+    41546,
+    172884
+  ],
+  "LettersByCell": {
+    "1_5": "L",
+    "5_5": "a",
+    "4_5": "r",
+    "3_5": "u",
+    "2_5": "a",
+    "9_5": "a",
+    "8_5": "e",
+    "7_5": "L"
+  }
+}
