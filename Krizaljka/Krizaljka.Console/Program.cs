@@ -1,4 +1,5 @@
-﻿using Krizaljka.Console;
+﻿using System.Diagnostics;
+using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
@@ -7,7 +8,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Threading.Channels;
 using Krizaljka.Domain;
 using Krizaljka.Domain.Solver;
 
@@ -178,10 +178,7 @@ while (true)
             break;
 
         case "lk":
-            //currentKrizaljkaTemplate = null;
             currentTemplateName = null;
-            //currentKrizaljkaTemplateAnalysis = null;
-            //currentKrizaljkaState = null;
             theKrizaljka = null;
 
             while (true)
@@ -257,106 +254,107 @@ while (true)
 
         case "kp":
 
-            //if (termsDb is null)
-            //{
-            //    Console.WriteLine("no terms database");
-            //    Console.ReadKey();
-            //    continue;
-            //}
+            pojmoviDb ??= PojmoviManager.LoadTerms();
+            if (pojmoviDb.Terms.Count == 0)
+            {
+                Console.WriteLine("Pojmovi database is empty...");
+                Console.ReadKey();
+                continue;
+            }
 
-            //if (theKrizaljka is null)
-            //{
-            //    Console.WriteLine("Krizaljka template not loaded.");
-            //    Console.ReadKey();
-            //    continue;
-            //}
+            if (theKrizaljka is null)
+            {
+                Console.WriteLine("Krizaljka template not loaded.");
+                Console.ReadKey();
+                continue;
+            }
 
-            //var exitKp = false;
-            //var slotIdInput = 0;
-            //var termIdInput = 0;
-            
-            //while (true)
-            //{
-            //    PrintKrizaljka();
-            //    Console.Write("Slot id (x for exit): ");
-            //    var slotIdInputString = Console.ReadLine();
-            //    if (slotIdInputString == "x")
-            //    {
-            //        exitKp = true;
-            //        break;
-            //    }
+            var exitKp = false;
+            var slotIdInput = 0;
+            var termIdInput = 0;
 
-            //    if (!int.TryParse(slotIdInputString, out slotIdInput))
-            //    {
-            //        continue;
-            //    }
+            while (true)
+            {
+                PrintKrizaljka();
+                Console.Write("Slot id (x for exit): ");
+                var slotIdInputString = Console.ReadLine();
+                if (slotIdInputString == "x")
+                {
+                    exitKp = true;
+                    break;
+                }
 
-            //    break;
-            //}
+                if (!int.TryParse(slotIdInputString, out slotIdInput))
+                {
+                    continue;
+                }
 
-            //if (exitKp)
-            //{
-            //    continue;
-            //}
+                break;
+            }
 
-            //while (true)
-            //{
-            //    Console.Write("Term id (x for exit): ");
-            //    var termIdInputString = Console.ReadLine();
-            //    if (termIdInputString == "x")
-            //    {
-            //        exitKp = true;
-            //        break;
-            //    }
+            if (exitKp)
+            {
+                continue;
+            }
 
-            //    if (!int.TryParse(termIdInputString, out termIdInput))
-            //    {
-            //        continue;
-            //    }
+            while (true)
+            {
+                Console.Write("Term id (x for exit): ");
+                var termIdInputString = Console.ReadLine();
+                if (termIdInputString == "x")
+                {
+                    exitKp = true;
+                    break;
+                }
 
-            //    break;
-            //}
+                if (!int.TryParse(termIdInputString, out termIdInput))
+                {
+                    continue;
+                }
 
-
-            //if (exitKp)
-            //{
-            //    continue;
-            //}
-
-            //if (slotIdInput <= 0 || termIdInput <= 0)
-            //{
-            //    Console.WriteLine("Term not assigned to a slot...");
-            //    Console.ReadKey();
-            //    continue;
-            //}
+                break;
+            }
 
 
-            //if (!new KrizaljkaCreator(theKrizaljka).TryPlaceAssignedTermManually(
-            //    termsDb.Terms,
-            //    slotIdInput,
-            //    termIdInput,
-            //     out var errorAssigningTermToSlot))
-            //{
-            //    Console.WriteLine(errorAssigningTermToSlot);
-            //    Console.ReadKey();
-            //}
-            //else
-            //{
-            //    try
-            //    {
-            //        var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options1);
-            //        File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName?? "no_name")), currentStateToWriteJson);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Console.WriteLine(e);
-            //    }
+            if (exitKp)
+            {
+                continue;
+            }
 
-            //    PrintKrizaljka();
-            //    Console.WriteLine("Term assigned to slot");
-            //    Console.ReadKey();
-            //}
+            if (slotIdInput <= 0 || termIdInput <= 0)
+            {
+                Console.WriteLine("Term not assigned to a slot...");
+                Console.ReadKey();
+                continue;
+            }
 
+
+            if (!new KrizaljkaCreator(theKrizaljka).TryPlaceAssignedTermManually(
+                pojmoviDb.Terms,
+                slotIdInput,
+                termIdInput,
+                 out var errorAssigningTermToSlot))
+            {
+                Console.WriteLine(errorAssigningTermToSlot);
+                Console.ReadKey();
+            }
+            else
+            {
+                try
+                {
+                    var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options1);
+                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName ?? "no_name")),
+                        currentStateToWriteJson);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                PrintKrizaljka();
+                Console.WriteLine("Term assigned to slot");
+                Console.ReadKey();
+            }
             break;
 
         case "kd":
@@ -426,33 +424,33 @@ while (true)
             break;
         case "kcr":
 
-            //if (theKrizaljka is null || termsDb is null)
-            //{
-            //    Console.WriteLine("Krizaljka template or other objects not loaded.");
-            //    Console.ReadKey();
-            //    continue;
-            //}
+            if (theKrizaljka is null || pojmoviDb is null)
+            {
+                Console.WriteLine("Krizaljka template or other objects not loaded.");
+                Console.ReadKey();
+                continue;
+            }
 
-            //var timer = Stopwatch.StartNew();
-            //Console.WriteLine($"Started: {DateTime.Now}");
-            //var createResult = new KrizaljkaCreator(theKrizaljka).TrySolve(termsDb.Terms);
+            var timer = Stopwatch.StartNew();
+            Console.WriteLine($"Started: {DateTime.Now}");
+            var createResult = new KrizaljkaCreator(theKrizaljka).TrySolve(pojmoviDb.Terms);
 
-            //timer.Stop();
-            //var ts = timer.Elapsed;
-            //var elapsed = $"{ts.Minutes:00}:{ts.Seconds:00}";
+            timer.Stop();
+            var ts = timer.Elapsed;
+            var elapsed = $"{ts.Minutes:00}:{ts.Seconds:00}";
 
-            //Console.WriteLine($"Total Time: {elapsed}");
-            //Console.WriteLine($"Word tried: {createResult.WordsTried}");
+            Console.WriteLine($"Total Time: {elapsed}");
+            Console.WriteLine($"Word tried: {createResult.WordsTried}");
 
-            //if (!createResult.IsCreated)
-            //{
-            //    Console.WriteLine("No solution found");
-            //    Console.ReadKey();
-            //    continue;
-            //}
+            if (!createResult.IsCreated)
+            {
+                Console.WriteLine("No solution found");
+                Console.ReadKey();
+                continue;
+            }
 
-            //Console.WriteLine("SOLVED!!!!");
-            //PrintKrizaljka();
+            Console.WriteLine("SOLVED!!!!");
+            PrintKrizaljka();
 
             break;
         case "k":
