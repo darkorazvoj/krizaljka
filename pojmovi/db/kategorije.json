@@ -2,167 +2,163 @@
   "Categories": [
     {
       "Name": "arhitektura",
-      "Id": 616
+      "Id": 1184
     },
     {
       "Name": "automobili",
-      "Id": 617
+      "Id": 1185
     },
     {
       "Name": "biologija",
-      "Id": 618
+      "Id": 1186
     },
     {
       "Name": "brojevi",
-      "Id": 619
+      "Id": 1187
     },
     {
       "Name": "cestice",
-      "Id": 620
+      "Id": 1188
     },
     {
       "Name": "dijalekt",
-      "Id": 621
+      "Id": 1189
     },
     {
       "Name": "ekonomija",
-      "Id": 622
+      "Id": 1190
     },
     {
       "Name": "enigmatskispecijaliteti",
-      "Id": 623
+      "Id": 1191
     },
     {
       "Name": "filozofija",
-      "Id": 624
+      "Id": 1192
     },
     {
       "Name": "fizika",
-      "Id": 625
+      "Id": 1193
     },
     {
       "Name": "fotografija",
-      "Id": 626
+      "Id": 1194
     },
     {
       "Name": "gastronomija",
-      "Id": 627
+      "Id": 1195
     },
     {
       "Name": "glagoli",
-      "Id": 628
-    },
-    {
-      "Name": "glagoli_gen",
-      "Id": 629
+      "Id": 1196
     },
     {
       "Name": "gramatika",
-      "Id": 630
+      "Id": 1197
     },
     {
       "Name": "imena",
-      "Id": 631
+      "Id": 1198
     },
     {
       "Name": "imenice",
-      "Id": 632
+      "Id": 1199
     },
     {
       "Name": "it",
-      "Id": 633
+      "Id": 1200
     },
     {
       "Name": "kemija",
-      "Id": 634
+      "Id": 1201
     },
     {
       "Name": "kiparstvo",
-      "Id": 635
+      "Id": 1202
     },
     {
       "Name": "kratice",
-      "Id": 636
+      "Id": 1203
     },
     {
       "Name": "kultura",
-      "Id": 637
+      "Id": 1204
     },
     {
       "Name": "matematika",
-      "Id": 638
+      "Id": 1205
     },
     {
       "Name": "medicina",
-      "Id": 639
+      "Id": 1206
     },
     {
       "Name": "mitologija",
-      "Id": 640
+      "Id": 1207
     },
     {
       "Name": "moda",
-      "Id": 641
+      "Id": 1208
     },
     {
       "Name": "nerazvrstano",
-      "Id": 642
+      "Id": 1209
     },
     {
       "Name": "opcipojmovi",
-      "Id": 643
+      "Id": 1210
     },
     {
       "Name": "politika",
-      "Id": 644
+      "Id": 1211
     },
     {
       "Name": "poslovice",
-      "Id": 645
+      "Id": 1212
     },
     {
       "Name": "povijest",
-      "Id": 646
+      "Id": 1213
     },
     {
       "Name": "prenesnoznacenje",
-      "Id": 647
+      "Id": 1214
     },
     {
       "Name": "pridjevi",
-      "Id": 648
+      "Id": 1215
     },
     {
       "Name": "prijedlozi",
-      "Id": 649
+      "Id": 1216
     },
     {
       "Name": "sport",
-      "Id": 650
+      "Id": 1217
     },
     {
       "Name": "stranerijeci",
-      "Id": 651
+      "Id": 1218
     },
     {
       "Name": "umjetnost",
-      "Id": 652
+      "Id": 1219
     },
     {
       "Name": "uzvici",
-      "Id": 653
+      "Id": 1220
     },
     {
       "Name": "veznici",
-      "Id": 654
+      "Id": 1221
     },
     {
       "Name": "zamjenice",
-      "Id": 655
+      "Id": 1222
     },
     {
       "Name": "zemljopis",
-      "Id": 656
+      "Id": 1223
     }
   ]
 }
