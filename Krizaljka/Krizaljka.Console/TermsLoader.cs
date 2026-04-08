@@ -52,8 +52,9 @@ public class TermsLoader
             }
             catch
             {
-                System.Console.WriteLine($"{termsFile} is not valid JSON format.");
-                throw;
+                System.Console.WriteLine("TERM NOT LOADED");
+                System.Console.WriteLine($"{termsFile} is not valid JSON format!!!!!!!!!!!!!!!!!!");
+                return ([], []);
             }
         }
 
