@@ -101,6 +101,12 @@ while (true)
 
         case "l":
             pojmoviDb ??= PojmoviManager.LoadTerms();
+            if (pojmoviDb.Terms is null)
+            {
+                Console.WriteLine("Pojmovi database is empty...");
+                Console.ReadKey();
+                continue;
+            }
             if (pojmoviDb.Terms.Count == 0)
             {
                 Console.WriteLine("Pojmovi database is empty...");
@@ -149,24 +155,27 @@ while (true)
                 }
 
                 var result = query.ToList();
-                var termsLoopCts = new CancellationTokenSource();
-                Console.WriteLine("Pojmovi (x for cancellation):");
+                Console.WriteLine($"Number of words: {result.Count}");
 
-                var termsLoopTask = Task.Run(() => { ListLookupTerms(result, termsLoopCts.Token); });
+                var subCounter = 0;
+                const int maxWordsPerPage = 50;
 
-                void ListLookupTerms(List<Term>? filteredTerms, CancellationToken listingFilteredTermsCt)
+                foreach (var validTerm in result)
                 {
-                    foreach (var validTerm in filteredTerms ?? [])
+                    subCounter++;
+                    Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}");
+
+                    if (subCounter >= maxWordsPerPage)
                     {
-                        if (listingFilteredTermsCt.IsCancellationRequested)
+                        subCounter = 0;
+                        Console.WriteLine("ENTER to continue or e(x)it?");
+                        var inp = Console.ReadLine();
+                        if (inp?.ToUpper() == "X")
                         {
                             break;
                         }
-                        Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}");
                     }
                 }
-
-                await termsLoopTask;
 
                 Console.Write("E(x)it or continue: ");
                 var anykey = Console.ReadLine();
