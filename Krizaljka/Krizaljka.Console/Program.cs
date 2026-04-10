@@ -30,6 +30,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("d -> Create database")
     .AppendLine("l -> lookup words")
     .AppendLine("kts -> show krizaljka templates list")
+    .AppendLine("wl -> Show words per length")
     .AppendLine("lk -> load krizaljka template")
     .AppendLine("k -> Show current krizaljka")
     .AppendLine("kp -> Assign pojam to krizaljka")
@@ -65,6 +66,36 @@ while (true)
             Console.WriteLine("Database Rebuilt!");
             Console.WriteLine($"Number of terms: {numOfTerms}");
             Console.WriteLine("continue...");
+            Console.ReadKey();
+            break;
+
+        case "wl":
+            if (pojmoviDb?.Terms is null)
+            {
+                Console.WriteLine("no database...");
+                Console.ReadKey();
+                continue;
+            }
+
+            var lengthNumOfWords = new SortedDictionary<int, int>();
+            foreach (var term in pojmoviDb.Terms)
+            {
+                if (lengthNumOfWords.TryGetValue(term.Length, out var numOfWords))
+                {
+                    lengthNumOfWords[term.Length] = numOfWords + 1;
+                }
+                else
+                {
+                    lengthNumOfWords.Add(term.Length, 1);
+                }
+            }
+
+            Console.WriteLine("Word length: Number of words");
+            foreach (var lengthNumOfWord in lengthNumOfWords)
+            {
+                Console.WriteLine($"{lengthNumOfWord.Key}: {lengthNumOfWord.Value}");
+            }
+
             Console.ReadKey();
             break;
 
