@@ -14,7 +14,7 @@ public static class PojmoviDbCreatorJson
     private const string JsonExtension = ".json";
     private const long MaxTermsPerFile = 100000;
 
-    private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions Options = new()
         { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) };
 
     public static async Task<long> CreateDatabaseAsync()

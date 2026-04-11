@@ -3,7 +3,6 @@ using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
-using Krizaljka.Domain.Terms;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -29,6 +28,7 @@ var sbMainMenu = new StringBuilder();
 var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("d -> Create database")
     .AppendLine("l -> lookup words")
+    .AppendLine("at => Add term")
     .AppendLine("kts -> show krizaljka templates list")
     .AppendLine("wl -> Show words per length")
     .AppendLine("lk -> load krizaljka template")
@@ -60,14 +60,74 @@ while (true)
             break;
 
         case "d":
-           var numOfTerms = await PojmoviDbCreatorJson.CreateDatabaseAsync();
-           pojmoviDb = PojmoviManager.LoadTerms();
+            var numOfTerms = await  RebuildDatabaseAsync();
 
             Console.WriteLine("Database Rebuilt!");
             Console.WriteLine($"Number of terms: {numOfTerms}");
             Console.WriteLine("continue...");
             Console.ReadKey();
             break;
+
+        case "at":
+            List<string> addedTerms = [];
+            Console.WriteLine("Add Term");
+            Console.WriteLine();
+            while (true)
+            {
+                Console.Write("Description (x for exit): ");
+                var description = Console.ReadLine();
+                if (IsExit(description))
+                {
+                    break;
+                }
+
+                Console.Write("Term (x for exit): ");
+                var termText = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(termText))
+                {
+                    Console.WriteLine("Missing term!");
+                    Console.ReadLine();
+                    continue;
+                }
+                if (IsExit(description))
+                {
+                    break;
+                }
+
+
+                var isAdded = await PojmoviManager.AddTermAsync(description ?? "", termText);
+                if (isAdded)
+                {
+                    addedTerms.Add(termText);
+                }
+            }
+
+            if (addedTerms.Count > 0)
+            {
+                await RebuildDatabaseAsync();
+                if (pojmoviDb?.Terms is null)
+                {
+                    Console.WriteLine("DB was not created!");
+                    continue;
+                }
+
+                foreach (var addedTerm in addedTerms)
+                {
+                    var t = pojmoviDb.Terms.Where(x => x.RawValue.Contains(addedTerm, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                    foreach (var term in t)
+                    {
+                        Console.WriteLine($"ID: {term.Id} ({term.RawValue})");
+                    }
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("continue...");
+            Console.ReadLine();
+
+            break;
+
+            static bool IsExit(string? s) => s is not null && s.ToUpper() == "X";
 
         case "wl":
             if (pojmoviDb?.Terms is null)
@@ -107,6 +167,7 @@ while (true)
                 Console.ReadKey();
                 continue;
             }
+
             if (pojmoviDb.Terms.Count == 0)
             {
                 Console.WriteLine("Pojmovi database is empty...");
@@ -163,7 +224,7 @@ while (true)
                 foreach (var validTerm in result)
                 {
                     subCounter++;
-                    Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}");
+                    Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}, ({validTerm.Description})");
 
                     if (subCounter >= maxWordsPerPage)
                     {
@@ -203,7 +264,7 @@ while (true)
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
 
-                    
+
                     if (parsedTemplate?.Id is not null)
                     {
                         Console.WriteLine(parsedTemplate.Id);
@@ -232,7 +293,7 @@ while (true)
                     break;
                 }
 
-                if(!int.TryParse(krizaljkaTemplateIdString, out var krizaljkaTemplateId))
+                if (!int.TryParse(krizaljkaTemplateIdString, out var krizaljkaTemplateId))
                 {
                     break;
                 }
@@ -262,7 +323,8 @@ while (true)
                                 {
                                     var currentKrizaljkaStateJson = await File.ReadAllTextAsync(templateStateFileName);
                                     existingState =
-                                        JsonSerializer.Deserialize<KrizaljkaSolveState>(currentKrizaljkaStateJson, options1);
+                                        JsonSerializer.Deserialize<KrizaljkaSolveState>(currentKrizaljkaStateJson,
+                                            options1);
                                 }
                                 catch (Exception e)
                                 {
@@ -295,6 +357,13 @@ while (true)
 
         case "kp":
             pojmoviDb ??= PojmoviManager.LoadTerms();
+            if (pojmoviDb?.Terms is null)
+            {
+                Console.WriteLine("Pojmovi database is empty...");
+                Console.ReadKey();
+                continue;
+            }
+            
             if (pojmoviDb.Terms.Count == 0)
             {
                 Console.WriteLine("Pojmovi database is empty...");
@@ -370,10 +439,10 @@ while (true)
 
 
             if (!new KrizaljkaCreator(theKrizaljka).TryPlaceAssignedTermManually(
-                pojmoviDb.Terms,
-                slotIdInput,
-                termIdInput,
-                 out var errorAssigningTermToSlot))
+                    pojmoviDb.Terms,
+                    slotIdInput,
+                    termIdInput,
+                    out var errorAssigningTermToSlot))
             {
                 Console.WriteLine(errorAssigningTermToSlot);
                 Console.ReadKey();
@@ -395,6 +464,7 @@ while (true)
                 Console.WriteLine("Term assigned to slot");
                 Console.ReadKey();
             }
+
             break;
 
         case "kd":
@@ -442,13 +512,15 @@ while (true)
                 try
                 {
                     var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options1);
-                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName?? "no_name")), currentStateToWriteJson);
+                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName ?? "no_name")),
+                        currentStateToWriteJson);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     continue;
                 }
+
                 Console.Clear();
                 PrintKrizaljka();
                 Console.WriteLine("DELETED");
@@ -464,7 +536,14 @@ while (true)
             break;
         case "kcr":
 
-            if (theKrizaljka is null || pojmoviDb is null)
+            if (theKrizaljka is null)
+            {
+                Console.WriteLine("Krizaljka template or other objects not loaded.");
+                Console.ReadKey();
+                continue;
+            }
+
+            if (pojmoviDb?.Terms is null)
             {
                 Console.WriteLine("Krizaljka template or other objects not loaded.");
                 Console.ReadKey();
@@ -498,8 +577,16 @@ while (true)
             PrintKrizaljka();
             Console.ReadKey();
             break;
+    }
 
-           
+    continue;
+
+    async Task<long> RebuildDatabaseAsync()
+    {
+        var numOfTerms = await PojmoviDbCreatorJson.CreateDatabaseAsync();
+        pojmoviDb = PojmoviManager.LoadTerms();
+
+        return numOfTerms;
     }
 }
 
