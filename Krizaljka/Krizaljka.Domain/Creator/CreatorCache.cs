@@ -1,6 +1,6 @@
 ﻿using Krizaljka.Domain.Terms;
 
-namespace Krizaljka.Domain.Solver;
+namespace Krizaljka.Domain.Creator;
 
 internal sealed class CreatorCache
 {

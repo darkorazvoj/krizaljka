@@ -1,8 +1,8 @@
-﻿using Krizaljka.Domain.Solver;
-using Krizaljka.Domain.Template;
+﻿using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using Krizaljka.Domain.Creator;
 
 namespace Krizaljka.Domain;
 

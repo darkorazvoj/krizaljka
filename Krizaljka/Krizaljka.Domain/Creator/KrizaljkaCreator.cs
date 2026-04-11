@@ -3,7 +3,7 @@ using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
 
-namespace Krizaljka.Domain.Solver;
+namespace Krizaljka.Domain.Creator;
 
 public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 {

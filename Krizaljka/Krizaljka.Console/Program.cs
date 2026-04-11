@@ -8,7 +8,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Krizaljka.Domain;
-using Krizaljka.Domain.Solver;
+using Krizaljka.Domain.Creator;
 
 Console.OutputEncoding = Encoding.UTF8;
 

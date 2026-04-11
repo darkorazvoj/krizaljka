@@ -1,5 +1,5 @@
 ﻿
-namespace Krizaljka.Domain.Solver;
+namespace Krizaljka.Domain.Creator;
 
 public record SlotFittingCount(
     int SlotId,

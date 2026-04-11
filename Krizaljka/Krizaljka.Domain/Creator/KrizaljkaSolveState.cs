@@ -1,8 +1,7 @@
-﻿
+﻿using System.Text.Json.Serialization;
 using Krizaljka.Domain.Extensions;
-using System.Text.Json.Serialization;
 
-namespace Krizaljka.Domain.Solver;
+namespace Krizaljka.Domain.Creator;
 
 public sealed class KrizaljkaSolveState
 {

@@ -1,5 +1,5 @@
 ﻿
-namespace Krizaljka.Domain.Solver;
+namespace Krizaljka.Domain.Creator;
 
 public record PlacementResult(
     IReadOnlyList<(int SlotId, long TermId)> AssignedSlots,
