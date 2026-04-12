@@ -1,5 +1,4 @@
 ﻿
-using System.ComponentModel.Design;
 using System.Text.Json;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.Terms;

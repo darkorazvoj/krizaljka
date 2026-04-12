@@ -63,7 +63,8 @@ while (true)
             var numOfTerms = await  RebuildDatabaseAsync();
 
             Console.WriteLine("Database Rebuilt!");
-            Console.WriteLine($"Number of terms: {numOfTerms}");
+            Console.WriteLine($"Number of terms: {numOfTerms.NumberOfTerms}");
+            Console.WriteLine($"Number of NEW terms: {numOfTerms.NumberOfNewTerms}");
             Console.WriteLine("continue...");
             Console.ReadKey();
             break;
@@ -104,7 +105,8 @@ while (true)
 
             if (addedTerms.Count > 0)
             {
-                await RebuildDatabaseAsync();
+                var termsCount = await RebuildDatabaseAsync();
+                Console.WriteLine($"Number of NEW terms: {termsCount.NumberOfNewTerms}");
                 if (pojmoviDb?.Terms is null)
                 {
                     Console.WriteLine("DB was not created!");
@@ -581,7 +583,7 @@ while (true)
 
     continue;
 
-    async Task<long> RebuildDatabaseAsync()
+    async Task<(long NumberOfTerms, long NumberOfNewTerms)> RebuildDatabaseAsync()
     {
         var numOfTerms = await PojmoviDbCreatorJson.CreateDatabaseAsync();
         pojmoviDb = PojmoviManager.LoadTerms();

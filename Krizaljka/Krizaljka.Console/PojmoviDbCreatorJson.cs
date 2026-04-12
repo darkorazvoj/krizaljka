@@ -17,22 +17,35 @@ public static class PojmoviDbCreatorJson
     private static readonly JsonSerializerOptions Options = new()
         { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) };
 
-    public static async Task<long> CreateDatabaseAsync()
+    public static async Task<(long NumberOfTerms, long NumberOfNewTerms)> CreateDatabaseAsync()
     {
         if (!Directory.Exists(DbPath))
         {
             Directory.CreateDirectory(DbPath);
         }
-
-        var existingDbFiles = Directory
-            .GetFiles(DbPath)
-            .Where(x => Path.GetFileNameWithoutExtension(x).StartsWith(PojmoviDbNamePrefix))
+        var director = new DirectoryInfo(DbPath);
+        var existingDbFiles = director.GetFiles($"{PojmoviDbNamePrefix}_*.json");
+        var existingDbFilesFullPaths = existingDbFiles.Select(x => x.FullName)
             .ToList();
 
-        foreach (var existingDbFile in existingDbFiles)
-        {
-            File.Delete(existingDbFile);
-        }
+        var maxFileId = existingDbFiles
+            .Select(f =>
+            {
+                var fileName = Path.GetFileNameWithoutExtension(f.Name);
+
+                var parts = fileName.Split(new[] { '_', '.' });
+                if (parts.Length >= 2 && int.TryParse(parts[1], out var fileId))
+                {
+                    return fileId;
+                }
+
+                return 0;
+            })
+            .DefaultIfEmpty(0)
+            .Max();
+
+
+        var existingDenseTerms = GetExistingDenseTerms(existingDbFilesFullPaths);
 
         var (validTerms, _, categories) = await new TermsLoader().LoadTermsAsync(PojmoviPath);
 
@@ -55,11 +68,18 @@ public static class PojmoviDbCreatorJson
 
         List<Term> validTermsBatch = [];
         var currentBatchSize = 0;
-        var currentBatchId = 1;
+        var currentBatchId = maxFileId + 1;
+        var newTerms = 0;
 
         foreach (var validTerm in validTerms)
         {
+            if (existingDenseTerms.Contains(validTerm.DenseValue))
+            {
+                continue;
+            }
+
             validTermsBatch.Add(validTerm);
+            newTerms++;
             currentBatchSize++;
 
             if (currentBatchSize >= MaxTermsPerFile)
@@ -77,7 +97,43 @@ public static class PojmoviDbCreatorJson
             await SaveDbFileAsync(validTermsBatch, currentBatchId);
         }
 
-        return validTerms.Count;
+        return (validTerms.Count, newTerms);
+    }
+
+    private static HashSet<string> GetExistingDenseTerms(List<string> existingDbFiles)
+    {
+        var terms =
+            new HashSet<string>(StringComparer.Create(new System.Globalization.CultureInfo("hr-HR"), true));
+
+        foreach (var dbFile in existingDbFiles)
+        {
+            var pojmoviDbJson = File.ReadAllText(dbFile);
+            if (string.IsNullOrWhiteSpace(pojmoviDbJson))
+            {
+                continue;
+            }
+
+            try
+            {
+                var pojmoviDb = JsonSerializer.Deserialize<PojmoviJsonDb>(pojmoviDbJson, Options);
+                if (pojmoviDb?.Terms is null)
+                {
+                    continue;
+                }
+
+                foreach (var term in pojmoviDb.Terms)
+                {
+                    terms.Add(term.DenseValue);
+                }
+
+            }
+            catch
+            {
+                System.Console.WriteLine($"DB file: {dbFile} is corrupted!");
+            }
+        }
+
+        return terms;
     }
 
     private static async Task SaveDbFileAsync(List<Term> batch, int batchId)
