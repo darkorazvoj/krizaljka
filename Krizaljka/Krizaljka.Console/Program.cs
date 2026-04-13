@@ -29,6 +29,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("d -> Create database")
     .AppendLine("l -> lookup words")
     .AppendLine("at => Add term")
+    .AppendLine("td -> Create/Update templates database")
     .AppendLine("kts -> show krizaljka templates list")
     .AppendLine("wl -> Show words per length")
     .AppendLine("lk -> load krizaljka template")
@@ -250,33 +251,46 @@ while (true)
 
             break;
 
+        case "td":
+
+            var (numOfExisting, numOfNew) = await KrizaljkaTemplatesManager.CreateTemplateDatabaseAsync();
+
+            Console.WriteLine($"Number of existing templates: {numOfExisting}");
+            Console.WriteLine($"Number of new templates: {numOfNew}");
+
+            Console.ReadKey();
+
+            break;
+
         case "kts":
-            var templateNamesForShow = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
-            Console.WriteLine("Template IDs:");
-            foreach (var templateName in templateNamesForShow)
-            {
-                try
-                {
-                    var templateJson = await File.ReadAllTextAsync(templateName);
-                    if (string.IsNullOrWhiteSpace(templateJson))
-                    {
-                        continue;
-                    }
+           
 
-                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
+            //var templateNamesForShow = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
+            //Console.WriteLine("Template IDs:");
+            //foreach (var templateName in templateNamesForShow)
+            //{
+            //    try
+            //    {
+            //        var templateJson = await File.ReadAllTextAsync(templateName);
+            //        if (string.IsNullOrWhiteSpace(templateJson))
+            //        {
+            //            continue;
+            //        }
+
+            //        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            //        var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
 
 
-                    if (parsedTemplate?.Id is not null)
-                    {
-                        Console.WriteLine(parsedTemplate.Id);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
+            //        if (parsedTemplate?.Id is not null)
+            //        {
+            //            Console.WriteLine(parsedTemplate.Id);
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Console.WriteLine(e.Message);
+            //    }
+            //}
 
             Console.ReadKey();
             break;
