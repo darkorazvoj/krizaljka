@@ -30,7 +30,7 @@ public static class KrizaljkaTemplatesManager
             Directory.CreateDirectory(TemplatesDbPath);
         }
 
-        var existingTemplates = await LoadTemplatesAsync();
+        var existingTemplates = await LoadAllTemplatesAsync();
         var (newTemplates, newTemplatesFileNames) = await GetNewTemplatesAsync();
 
         var numOfNew = 0;
@@ -41,6 +41,12 @@ public static class KrizaljkaTemplatesManager
         }
 
         return (existingTemplates.Count, numOfNew);
+    }
+
+    public static async Task<KrizaljkaTemplatesDb> LoadTemplatesAsync()
+    {
+        var list = await LoadAllTemplatesAsync();
+        return new KrizaljkaTemplatesDb(list);
     }
 
     private static void MoveProcessedFiles(List<string> newTemplatesFileNames)
@@ -180,7 +186,7 @@ public static class KrizaljkaTemplatesManager
         return currentMaxId + 1;
     }
 
-    public static async Task<List<KrizaljkaTemplate>> LoadTemplatesAsync()
+    private static async Task<List<KrizaljkaTemplate>> LoadAllTemplatesAsync()
     {
         List<KrizaljkaTemplate> templates = [];
 

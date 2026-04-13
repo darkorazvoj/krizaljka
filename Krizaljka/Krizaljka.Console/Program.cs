@@ -20,6 +20,8 @@ TheKrizaljka? theKrizaljka = null;
 
 string? currentTemplateName = null;
 var pojmoviDb = PojmoviManager.LoadTerms();
+var templatesDb = await KrizaljkaTemplatesManager.LoadTemplatesAsync();
+
 
 var options1 = new JsonSerializerOptions
     { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), };
@@ -254,6 +256,7 @@ while (true)
         case "td":
 
             var (numOfExisting, numOfNew) = await KrizaljkaTemplatesManager.CreateTemplateDatabaseAsync();
+            templatesDb = await KrizaljkaTemplatesManager.LoadTemplatesAsync();
 
             Console.WriteLine($"Number of existing templates: {numOfExisting}");
             Console.WriteLine($"Number of new templates: {numOfNew}");
@@ -263,35 +266,12 @@ while (true)
             break;
 
         case "kts":
-           
-
-            //var templateNamesForShow = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
-            //Console.WriteLine("Template IDs:");
-            //foreach (var templateName in templateNamesForShow)
-            //{
-            //    try
-            //    {
-            //        var templateJson = await File.ReadAllTextAsync(templateName);
-            //        if (string.IsNullOrWhiteSpace(templateJson))
-            //        {
-            //            continue;
-            //        }
-
-            //        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            //        var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
-
-
-            //        if (parsedTemplate?.Id is not null)
-            //        {
-            //            Console.WriteLine(parsedTemplate.Id);
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Console.WriteLine(e.Message);
-            //    }
-            //}
-
+            Console.WriteLine("Template IDs:");
+            foreach (var template in templatesDb.Templates)
+            {
+                Console.WriteLine(
+                    $"ID: {template.Id}, Name: {template.Name}, {template.Rows.Length}x{(template.Rows.Length > 0 ? template.Rows[0].Length:0)}");
+            }
             Console.ReadKey();
             break;
 
