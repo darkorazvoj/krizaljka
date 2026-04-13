@@ -123,25 +123,25 @@ public static class KrizaljkaTemplatesManager
     }
 
     private static bool AreTemplatesEqual(
-        KrizaljkaTemplate existingTemplate, 
-        KrizaljkaTemplate newTemplate)
+        KrizaljkaTemplate first, 
+        KrizaljkaTemplate second)
     {
-        if (existingTemplate.Rows.Length != newTemplate.Rows.Length)
+        if (first.Rows.Length != second.Rows.Length)
         {
             return false;
 
         }
 
-        for (var r = 0; r < existingTemplate.Rows.Length; r++)
+        for (var r = 0; r < first.Rows.Length; r++)
         {
-            if (existingTemplate.Rows[r].Length != newTemplate.Rows[r].Length)
+            if (first.Rows[r].Length != second.Rows[r].Length)
             {
                 return false;
             }
 
-            for (var c = 0; c < existingTemplate.Rows[r].Length; c++)
+            for (var c = 0; c < first.Rows[r].Length; c++)
             {
-                if (existingTemplate.Rows[r][c] != newTemplate.Rows[r][c])
+                if (first.Rows[r][c] != second.Rows[r][c])
                 {
                     return false;
                 }
@@ -153,8 +153,8 @@ public static class KrizaljkaTemplatesManager
 
     private static async Task SaveDbFileAsync(List<KrizaljkaTemplate> batch, int batchId)
     {
-        var pojmoviDbJsonToWrite = JsonSerializer.Serialize(new KrizaljkaTemplatesDb(batch), Options);
-        await File.WriteAllTextAsync(Path.Combine(TemplatesDbPath, $"{TemplatesDbNamePrefix}_{batchId:00000}.json"), pojmoviDbJsonToWrite);
+        var templatesDbJsonToWrite = JsonSerializer.Serialize(new KrizaljkaTemplatesDb(batch), Options);
+        await File.WriteAllTextAsync(Path.Combine(TemplatesDbPath, $"{TemplatesDbNamePrefix}_{batchId:00000}.json"), templatesDbJsonToWrite);
     
     }
 
@@ -247,8 +247,27 @@ public static class KrizaljkaTemplatesManager
                     continue;
                 }
 
+                var isDuplicate = false;
+                if (templates.Count > 0)
+                {
+                    foreach (var existingTemplate in templates)
+                    {
+                        if (AreTemplatesEqual(existingTemplate, template))
+                        {
+                            isDuplicate = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isDuplicate)
+                {
+                    continue;
+                }
+
                 templates.Add(template);
-                templatesFileNames.Add(templateName);
+                    templatesFileNames.Add(templateName);
+
             }
             catch
             {
@@ -262,3 +281,5 @@ public static class KrizaljkaTemplatesManager
     private static List<string> GetNewTemplateFiles() =>
         !Directory.Exists(TemplatesBasePath) ? [] : Directory.GetFiles(TemplatesBasePath).ToList();
 }
+
+
