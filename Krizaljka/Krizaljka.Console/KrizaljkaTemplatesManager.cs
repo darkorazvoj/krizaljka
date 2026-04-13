@@ -260,14 +260,14 @@ public static class KrizaljkaTemplatesManager
                     }
                 }
 
+                templatesFileNames.Add(templateName);
+
                 if (isDuplicate)
                 {
                     continue;
                 }
 
                 templates.Add(template);
-                    templatesFileNames.Add(templateName);
-
             }
             catch
             {
