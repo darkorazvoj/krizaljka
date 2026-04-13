@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
-using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -14,23 +13,23 @@ Console.OutputEncoding = Encoding.UTF8;
 
 
 const string dbPath = @"C:\git\krizaljka\pojmovi\db";
-const string templatesDir = @"C:\git\krizaljka\templates";
+const string templatesStatesDir = @"C:\git\krizaljka\templates\states";
 
 TheKrizaljka? theKrizaljka = null;
 
-string? currentTemplateName = null;
+
 var pojmoviDb = PojmoviManager.LoadTerms();
 var templatesDb = await KrizaljkaTemplatesManager.LoadTemplatesAsync();
 
 
-var options1 = new JsonSerializerOptions
-    { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), };
+var options = new JsonSerializerOptions
+    { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),PropertyNameCaseInsensitive = true };
 
 var sbMainMenu = new StringBuilder();
 var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("d -> Create database")
     .AppendLine("l -> lookup words")
-    .AppendLine("at => Add term")
+    .AppendLine("at -> Add term")
     .AppendLine("td -> Create/Update templates database")
     .AppendLine("kts -> show krizaljka templates list")
     .AppendLine("wl -> Show words per length")
@@ -276,7 +275,6 @@ while (true)
             break;
 
         case "lk":
-            currentTemplateName = null;
             theKrizaljka = null;
 
             while (true)
@@ -291,12 +289,32 @@ while (true)
 
                 if (!int.TryParse(krizaljkaTemplateIdString, out var krizaljkaTemplateId))
                 {
-                    break;
+                    continue;
                 }
 
-                var templateNamesForLoadOne = Directory.GetFiles(templatesDir).Select(Path.GetFullPath).ToList();
-                foreach (var templateName in templateNamesForLoadOne)
+                var template = templatesDb.Templates.FirstOrDefault(x => x.Id == krizaljkaTemplateId);
+                if (template is null)
                 {
+                    Console.WriteLine($"No template with ID {krizaljkaTemplateId}");
+                    Console.ReadKey();
+                    continue;
+                }
+                KrizaljkaSolveState? existingState = null;
+
+                // Load state if exists.
+                if (Directory.Exists(templatesStatesDir))
+                {
+                    var templateName = Directory
+                        .GetFiles(templatesStatesDir)
+                        .Where(x => string.Equals(Path.GetFileName(x), GetTemplateStateFileName(template.Id), StringComparison.CurrentCultureIgnoreCase))
+                        .Select(Path.GetFullPath)
+                        .FirstOrDefault();
+
+                    if (string.IsNullOrWhiteSpace(templateName))
+                    {
+                        continue;
+                    }
+
                     try
                     {
                         var templateJson = await File.ReadAllTextAsync(templateName);
@@ -305,46 +323,17 @@ while (true)
                             continue;
                         }
 
-                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                        var parsedTemplate = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJson, options);
-
-                        if (parsedTemplate?.Id == krizaljkaTemplateId)
-                        {
-                            currentTemplateName = templateName;
-                            var templateStateFileName = GetTemplateStateFileName(currentTemplateName);
-                            KrizaljkaSolveState? existingState = null;
-                            if (File.Exists(templateStateFileName))
-                            {
-                                try
-                                {
-                                    var currentKrizaljkaStateJson = await File.ReadAllTextAsync(templateStateFileName);
-                                    existingState =
-                                        JsonSerializer.Deserialize<KrizaljkaSolveState>(currentKrizaljkaStateJson,
-                                            options1);
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                }
-                            }
-
-                            existingState ??= new KrizaljkaSolveState();
-
-                            theKrizaljka = TheKrizaljka.Create(parsedTemplate, existingState);
-                            Console.WriteLine("Template loaded...");
-                            PrintKrizaljka();
-                            Console.ReadKey();
-
-                            break;
-                        }
+                        existingState = JsonSerializer.Deserialize<KrizaljkaSolveState>(templateJson, options);
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine("Template loading FAILED!");
-                        Console.ReadKey();
+                        Console.WriteLine("State failed to load...");
                     }
                 }
+                
+                theKrizaljka = TheKrizaljka.Create(template, existingState ?? new KrizaljkaSolveState());
+                PrintKrizaljka();
+                Console.ReadKey();
 
                 break;
             }
@@ -447,8 +436,14 @@ while (true)
             {
                 try
                 {
-                    var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options1);
-                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName ?? "no_name")),
+                    if (!Directory.Exists(templatesStatesDir))
+                    {
+                        Directory.CreateDirectory(templatesStatesDir);
+                    }
+
+                    var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options);
+                    File.WriteAllText(
+                        Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.Template.Id)),
                         currentStateToWriteJson);
                 }
                 catch (Exception e)
@@ -507,8 +502,8 @@ while (true)
             {
                 try
                 {
-                    var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options1);
-                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(currentTemplateName ?? "no_name")),
+                    var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options);
+                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(theKrizaljka.Template.Id)),
                         currentStateToWriteJson);
                 }
                 catch (Exception e)
@@ -588,7 +583,7 @@ while (true)
 
 Console.WriteLine("THE END");
 
-static string GetTemplateStateFileName(string templateName) => $"{templateName}_state.json";
+static string GetTemplateStateFileName(long templateId) => $"template_{templateId}_state.json";
 
 
 void PrintKrizaljka()
