@@ -35,6 +35,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("wl -> Show words per length")
     .AppendLine("lk -> load krizaljka template")
     .AppendLine("k -> Show current krizaljka")
+    .AppendLine("kss -> Load solved state for current krizaljka")
     .AppendLine("kp -> Assign pojam to krizaljka")
     .AppendLine("kd -> Delete pojam from krizaljka")
     .AppendLine("kcr -> Run krizaljka creator")
@@ -354,6 +355,57 @@ while (true)
                 Console.ReadKey();
 
                 break;
+            }
+
+            break;
+
+        case "kss":
+            if (theKrizaljka is null)
+            {
+                Console.WriteLine("No krizaljka loaded...");
+                Console.ReadKey();
+                continue;
+            }
+            var solvedStates = KrizaljkaStateManager.GetSolvedStates(theKrizaljka.Template.Id);
+            if (solvedStates.Count == 0)
+            {
+                Console.WriteLine("No solved states :(");
+                Console.ReadKey();
+                continue;
+            }
+
+            foreach (var kvp in solvedStates)
+            {
+                Console.WriteLine($"{kvp.Key} - {kvp.Value.Date}");
+            }
+
+            Console.WriteLine();
+            while (true)
+            {
+                Console.Write("Select solved state (x for exit): ");
+                var selectedSolvedStateString = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(selectedSolvedStateString))
+                {
+                    continue;
+                }
+
+                if (selectedSolvedStateString.ToUpper() == "X")
+                {
+                    break;
+                }
+
+                if (!int.TryParse(selectedSolvedStateString, out var selectedSolvedState))
+                {
+                    continue;
+                }
+
+                if (solvedStates.TryGetValue(selectedSolvedState, out var state))
+                {
+                    theKrizaljka = TheKrizaljka.Create(theKrizaljka.Template, state.State);
+                    PrintKrizaljka();
+                    Console.ReadKey();
+                    break;
+                }
             }
 
             break;

@@ -22,12 +22,58 @@ public static class KrizaljkaStateManager
 
             var currentStateToWriteJson = JsonSerializer.Serialize(state, Options);
             File.WriteAllText(
-                Path.Combine(SolvedTemplatesStatesDir, $"template_{templateId}_solved_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.json"),
+                Path.Combine(SolvedTemplatesStatesDir, $"template_{templateId}_solved_{DateTime.Now.ToString("yyyyMMddTHHmmss")}.json"),
                 currentStateToWriteJson);
         }
         catch (Exception e)
         {
             System.Console.WriteLine($"Saving solved state failed. Error: {e.Message} ");
         }
+    }
+
+    public static Dictionary<int, (KrizaljkaSolveState State, string Date)> GetSolvedStates(long templateId)
+    {
+        Dictionary<int, (KrizaljkaSolveState State, string Date)> states = [];
+
+        if (!Directory.Exists(SolvedTemplatesStatesDir))
+        {
+            return states;
+        }
+
+        var dbDirectory = new DirectoryInfo(SolvedTemplatesStatesDir);
+        var solvedStatesFiles = dbDirectory.GetFiles($"template_{templateId}_solved_*.json");
+
+        var currentKey = 1;
+        foreach (var file in solvedStatesFiles)
+        {
+            try
+            {
+                var stateJsonString = File.ReadAllText(file.FullName);
+                if (string.IsNullOrWhiteSpace(stateJsonString))
+                {
+                    continue;
+                }
+
+                var state = JsonSerializer.Deserialize<KrizaljkaSolveState>(stateJsonString);
+                if (state is not null)
+                {
+                    var suffix = "solved";
+                    var fileNameParts = file.Name.Split('_');
+                    if (fileNameParts.Length == 4)
+                    {
+                        suffix = fileNameParts[3];
+                    }
+
+                    states.Add(currentKey, (state, suffix));
+                    currentKey++;
+                }
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine($"Invalid solved state file: {file.Name}");
+            }
+        }
+
+        return states;
     }
 }
