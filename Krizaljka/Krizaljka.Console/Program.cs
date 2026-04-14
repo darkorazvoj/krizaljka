@@ -573,7 +573,7 @@ while (true)
                 try
                 {
                     var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options);
-                    File.WriteAllText(Path.Combine(dbPath, GetTemplateStateFileName(theKrizaljka.Template.Id)),
+                    File.WriteAllText(Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.Template.Id)),
                         currentStateToWriteJson);
                 }
                 catch (Exception e)
