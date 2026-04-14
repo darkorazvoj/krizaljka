@@ -1,4 +1,5 @@
-﻿using Krizaljka.Domain.Caches;
+﻿using System.Collections;
+using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
@@ -7,15 +8,21 @@ namespace Krizaljka.Domain.Creator;
 
 public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 {
-    private CreatorCache _cache = new();
+   //private CreatorCache _cache = new();
     private int _wordsPlacedDuringIterations;
     private IReadOnlyList<Term> _normalizedTerms = [];
-    private Dictionary<int, IReadOnlyList<Term>> _currentDomainsBySlotId = [];
+    private Dictionary<int, SlotDomain> _currentDomainsBySlotId = [];
+    private Dictionary<int, IReadOnlyList<TermGroup>> _termGroupsByLength = [];
+    private Dictionary<long, (int Length, int GroupIndex)> _termGroupLocationById = [];
+    private IReadOnlyDictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, BitArray>>> _termGroupBitsetsByLengthPositionLetter
+        = new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, BitArray>>>();
+
+
 
     public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms)
     {
         _wordsPlacedDuringIterations = 0;
-        _cache = new CreatorCache();
+        //_cache = new CreatorCache();
 
         _normalizedTerms = GetNormalizedTerms(terms);
         EnsureTermsCaches(_normalizedTerms);
@@ -59,48 +66,98 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             .ToList()
             .AsReadOnly();
 
-    private void EnsureTermsCaches(IReadOnlyList<Term> normalizedTerms)
+   private void EnsureTermsCaches(IReadOnlyList<Term> normalizedTerms)
+{
+    if (GlobalCaches.TermsByLength.Count == 0)
     {
-        if (GlobalCaches.TermsByLength.Count == 0)
-        {
-            GlobalCaches.TermsByLength = normalizedTerms
-                .GroupBy(x => x.Length)
-                .ToDictionary(
-                    x => x.Key,
-                    x => (IReadOnlyList<Term>)x.OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
-                        .ToList());
-        }
-
-        if (_cache.TermsByLengthPositionLetter.Count == 0)
-        {
-            var result =
-                new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
-
-            foreach (var lengthGroup in normalizedTerms.GroupBy(x => x.Length))
-            {
-                var positionMap = new Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>();
-
-                for (var i = 0; i < lengthGroup.Key; i++)
-                {
-                    var letterMap = lengthGroup
-                        .GroupBy(term => term.Letters[i])
-                        .ToDictionary(
-                            x => x.Key,
-                            x => (IReadOnlyList<Term>)x
-                                .OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
-                                .ToList());
-
-                    positionMap.Add(i, letterMap);
-                }
-
-                result.Add(lengthGroup.Key, positionMap);
-            }
-
-            _cache.TermsByLengthPositionLetter = result;
-        }
+        GlobalCaches.TermsByLength = normalizedTerms
+            .GroupBy(x => x.Length)
+            .ToDictionary(
+                x => x.Key,
+                x => (IReadOnlyList<Term>)x
+                    .OrderBy(t => t.DenseValue, StringComparer.Ordinal)
+                    .ThenBy(t => t.Id)
+                    .ToList());
     }
 
-    private bool TryPlaceAssignedTerm(
+    if (_termGroupsByLength.Count == 0 ||
+        _termGroupLocationById.Count == 0 ||
+        _termGroupBitsetsByLengthPositionLetter.Count == 0)
+    {
+        var groupsByLength = new Dictionary<int, IReadOnlyList<TermGroup>>();
+        var groupLocationById = new Dictionary<long, (int Length, int GroupIndex)>();
+        var bitsetsByLength = new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, BitArray>>>();
+
+        foreach (var lengthEntry in GlobalCaches.TermsByLength)
+        {
+            var length = lengthEntry.Key;
+            var allTerms = lengthEntry.Value;
+
+            var groups = allTerms
+                .GroupBy(term => CreateLettersKey(term.Letters))
+                .Select(group =>
+                {
+                    var orderedTerms = group
+                        .OrderBy(t => t.DenseValue, StringComparer.Ordinal)
+                        .ThenBy(t => t.Id)
+                        .ToList();
+
+                    var representative = orderedTerms[0];
+                    var termIds = orderedTerms
+                        .Select(t => t.Id)
+                        .ToList()
+                        .AsReadOnly();
+
+                    return new TermGroup(representative, termIds);
+                })
+                .OrderBy(g => g.Representative.DenseValue, StringComparer.Ordinal)
+                .ThenBy(g => g.Representative.Id)
+                .ToList();
+
+            groupsByLength[length] = groups;
+
+            for (var groupIndex = 0; groupIndex < groups.Count; groupIndex++)
+            {
+                foreach (var termId in groups[groupIndex].TermIds)
+                {
+                    groupLocationById[termId] = (length, groupIndex);
+                }
+            }
+
+            var positionMap = new Dictionary<int, IReadOnlyDictionary<string, BitArray>>();
+
+            for (var position = 0; position < length; position++)
+            {
+                var letterMap = new Dictionary<string, BitArray>(StringComparer.Ordinal);
+
+                for (var groupIndex = 0; groupIndex < groups.Count; groupIndex++)
+                {
+                    var letter = groups[groupIndex].Representative.Letters[position];
+
+                    if (!letterMap.TryGetValue(letter, out var bitset))
+                    {
+                        bitset = new BitArray(groups.Count);
+                        letterMap[letter] = bitset;
+                    }
+
+                    bitset[groupIndex] = true;
+                }
+
+                positionMap[position] = letterMap;
+            }
+
+            bitsetsByLength[length] = positionMap;
+        }
+
+        _termGroupsByLength = groupsByLength;
+        _termGroupLocationById = groupLocationById;
+        _termGroupBitsetsByLengthPositionLetter = bitsetsByLength;
+    }
+}
+
+private static string CreateLettersKey(IReadOnlyList<string> letters) => string.Join("|", letters);
+
+private bool TryPlaceAssignedTerm(
         IReadOnlyList<Term> terms,
         int slotId,
         long termId,
@@ -183,7 +240,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         PlacementResult initialPlacement,
         out PlacementResult fullPlacement)
     {
-        List<(int SliotId, long TermId)> assignedSlots = initialPlacement.AssignedSlots.ToList();
+        List<(int SlotId, long TermId)> assignedSlots = initialPlacement.AssignedSlots.ToList();
         List<(int Row, int Col)> newCells = initialPlacement.NewCells.ToList();
 
         if (!UpdateDomainsAfterPlacement(initialPlacement))
@@ -201,13 +258,11 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 return true;
             }
 
-            if (!_currentDomainsBySlotId.TryGetValue(singletonSlot.Id, out var domain) || domain.Count != 1)
+            if (!TryGetSingleCandidateTermFromDomain(singletonSlot, out var onlyTerm))
             {
                 fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
                 return false;
             }
-
-            var onlyTerm = domain[0];
 
             if (!Fits(singletonSlot, onlyTerm))
             {
@@ -226,6 +281,23 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 return false;
             }
         }
+    }
+
+    private bool TryGetSingleCandidateTermFromDomain(KrizaljkaSlot slot, out Term term)
+    {
+        term = null!;
+
+        if (!_currentDomainsBySlotId.TryGetValue(slot.Id, out var domain) || domain.Count != 1)
+        {
+            return false;
+        }
+
+        foreach (var groupIndex in EnumerateSetBits(domain.Candidates))
+        {
+            return TryCreateAvailableTermFromGroup(slot.Length, groupIndex, out term);
+        }
+
+        return false;
     }
 
     private KrizaljkaSlot? FindSingletonUnassignedSlot()
@@ -303,9 +375,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            var domain = GetIndexedMatchingTerms(slot)
-                .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
-                .ToList();
+            var domain = BuildDomain(slot);
 
             if (domain.Count == 0)
             {
@@ -318,78 +388,130 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return true;
     }
 
-    private Dictionary<int, IReadOnlyList<Term>> CloneDomains() =>
-        _currentDomainsBySlotId.ToDictionary(x => x.Key, x => x.Value);
-
-    private bool UpdateDomainsAfterPlacement(PlacementResult placement)
+    private SlotDomain BuildDomain(KrizaljkaSlot slot)
     {
-        var newlyUsedTermIds = placement.AssignedSlots
-            .Select(x => x.TermId)
-            .ToHashSet();
+        var candidates = BuildMatchingMaskForSlot(slot);
 
-        HashSet<int> affectedSlotIds = [];
-
-        foreach (var (assignedSlotIt, _) in placement.AssignedSlots)
+        if (candidates.Length == 0)
         {
-            _currentDomainsBySlotId.Remove(assignedSlotIt);
-            if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(assignedSlotIt, out var intersections))
+            return new SlotDomain(candidates, 0);
+        }
+
+        for (var groupIndex = 0; groupIndex < candidates.Length; groupIndex++)
+        {
+            if (!candidates[groupIndex])
             {
                 continue;
             }
 
-            foreach (var intersection in intersections)
+            if (!HasAvailableUnusedTermId(slot.Length, groupIndex))
             {
-                var neighborSlotId = intersection.FirstSlotId == assignedSlotIt
-                    ? intersection.SecondSlotId
-                    : intersection.FirstSlotId;
+                candidates[groupIndex] = false;
+            }
+        }
 
-                if (!theKrizaljka.State.IsAssigned(neighborSlotId))
+        var count = CountBits(candidates);
+        return new SlotDomain(candidates, count);
+    }
+
+    private bool HasAvailableUnusedTermId(int length, int groupIndex)
+    {
+        if (!_termGroupsByLength.TryGetValue(length, out var groups))
+        {
+            return false;
+        }
+
+        if (groupIndex < 0 || groupIndex >= groups.Count)
+        {
+            return false;
+        }
+
+        foreach (var termId in groups[groupIndex].TermIds)
+        {
+            if (!theKrizaljka.State.UsedTermsIds.Contains(termId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Dictionary<int, SlotDomain> CloneDomains() =>
+        _currentDomainsBySlotId.ToDictionary(x => x.Key, x => x.Value.Clone());
+
+    private bool UpdateDomainsAfterPlacement(PlacementResult placement)
+{
+    HashSet<int> affectedSlotIds = [];
+
+    foreach (var (assignedSlotId, termId) in placement.AssignedSlots)
+    {
+        _currentDomainsBySlotId.Remove(assignedSlotId);
+
+        if (_termGroupLocationById.TryGetValue(termId, out var groupLocation) &&
+            !HasAvailableUnusedTermId(groupLocation.Length, groupLocation.GroupIndex))
+        {
+            foreach (var domainEntry in _currentDomainsBySlotId)
+            {
+                if (!theKrizaljka.SlotsById.TryGetValue(domainEntry.Key, out var currentSlot))
                 {
-                    affectedSlotIds.Add(neighborSlotId);
+                    return false;
+                }
+
+                if (currentSlot.Length != groupLocation.Length)
+                {
+                    continue;
+                }
+
+                if (domainEntry.Value.Candidates[groupLocation.GroupIndex])
+                {
+                    domainEntry.Value.Candidates[groupLocation.GroupIndex] = false;
+                    domainEntry.Value.Count--;
                 }
             }
         }
 
-        foreach (var slotId in _currentDomainsBySlotId.Keys.ToList())
+        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(assignedSlotId, out var intersections))
         {
-            var filtered = _currentDomainsBySlotId[slotId]
-                .Where(x => !newlyUsedTermIds.Contains(x.Id))
-                .ToList();
-
-            _currentDomainsBySlotId[slotId] = filtered;
+            continue;
         }
 
-        foreach (var slotId in affectedSlotIds)
+        foreach (var intersection in intersections)
         {
-            if (!theKrizaljka.SlotsById.TryGetValue(slotId, out var slot))
+            var neighborSlotId = intersection.FirstSlotId == assignedSlotId
+                ? intersection.SecondSlotId
+                : intersection.FirstSlotId;
+
+            if (!theKrizaljka.State.IsAssigned(neighborSlotId))
             {
-                return false;
-            }
-
-            var domain = GetIndexedMatchingTerms(slot)
-                .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
-                .ToList();
-
-            _currentDomainsBySlotId[slotId] = domain;
-        }
-
-        foreach (var slot in theKrizaljka.Slots)
-        {
-            if (theKrizaljka.State.IsAssigned(slot.Id))
-            {
-                continue;
-            }
-
-            if (!_currentDomainsBySlotId.TryGetValue(slot.Id, out var domain) || domain.Count == 0)
-            {
-                return false;
+                affectedSlotIds.Add(neighborSlotId);
             }
         }
-
-        return true;
     }
 
-    private void RestoreDomains(Dictionary<int, IReadOnlyList<Term>> snapshot) => _currentDomainsBySlotId = snapshot;
+    foreach (var slotId in affectedSlotIds)
+    {
+        if (!theKrizaljka.SlotsById.TryGetValue(slotId, out var slot))
+        {
+            return false;
+        }
+
+        var domain = BuildDomain(slot);
+        _currentDomainsBySlotId[slotId] = domain;
+    }
+
+    foreach (var domainEntry in _currentDomainsBySlotId)
+    {
+        if (domainEntry.Value.Count == 0)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+    private void RestoreDomains(Dictionary<int, SlotDomain> snapshot) => _currentDomainsBySlotId = snapshot;
 
     private int GetUnassignedNeighborCount(KrizaljkaSlot slot)
     {
@@ -489,10 +611,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                var matchingTerm = GetIndexedMatchingTerms(neighborSlot)
-                    .FirstOrDefault(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id));
-
-                if (matchingTerm is null)
+                if (!TryGetFirstUnusedMatchingTerm(neighborSlot, out var matchingTerm))
                 {
                     continue;
                 }
@@ -559,298 +678,255 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         }
     }
 
-    private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
+    //private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot) => GetIndexedMatchingTermsCore(slot);
+
+    //private string GetSlotPattern(KrizaljkaSlot slot)
+    //{
+    //    var state = theKrizaljka.State;
+    //    var parts = new string[slot.Cells.Count];
+
+
+    //    for (var i = 0; i < slot.Cells.Count; i++)
+    //    {
+
+    //        if (state.LettersByCell.TryGetValue(slot.CellKeys[i], out var letter) &&
+    //            !string.IsNullOrWhiteSpace(letter))
+    //        {
+    //            parts[i] = letter.NormalizeLetters();
+    //        }
+    //        else
+    //        {
+    //            parts[i] = "_";
+    //        }
+    //    }
+
+    //    return string.Join('|', parts);
+    //}
+
+    //private IReadOnlyList<Term> GetIndexedMatchingTermsCore(KrizaljkaSlot slot)
+    //{
+    //    if (!_termGroupsByLength.TryGetValue(slot.Length, out _))
+    //    {
+    //        return [];
+    //    }
+
+    //    var candidates = BuildMatchingMaskForSlot(slot);
+    //    List<Term> result = [];
+
+    //    foreach (var groupIndex in EnumerateSetBits(candidates))
+    //    {
+    //        if (TryCreateAvailableTermFromGroup(slot.Length, groupIndex, out var term))
+    //        {
+    //            result.Add(term);
+    //        }
+    //    }
+
+    //    return result;
+    //}
+    
+    private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
     {
-        var pattern = GetSlotPattern(slot);
-        var cacheKey = (slot.Id, pattern);
-
-        if (_cache.MatchingTermsCache.TryGetValue(cacheKey, out var cached))
-        {
-            return cached;
-        }
-
-        var result = GetIndexedMatchingTermsCore(slot);
-        _cache.MatchingTermsCache[cacheKey] = result;
-
-        return result;
-    }
-
-    private string GetSlotPattern(KrizaljkaSlot slot)
-    {
-        var state = theKrizaljka.State;
-        var parts = new string[slot.Cells.Count];
-
-
-        for (var i = 0; i < slot.Cells.Count; i++)
-        {
-
-            if (state.LettersByCell.TryGetValue(slot.CellKeys[i], out var letter) &&
-                !string.IsNullOrWhiteSpace(letter))
-            {
-                parts[i] = letter.NormalizeLetters();
-            }
-            else
-            {
-                parts[i] = "_";
-            }
-        }
-
-        return string.Join('|', parts);
-    }
-
-    private IReadOnlyList<Term> GetIndexedMatchingTermsCore(KrizaljkaSlot slot)
-    {
-        if (!GlobalCaches.TermsByLength.TryGetValue(slot.Length, out var allTerms))
+        if (!_currentDomainsBySlotId.TryGetValue(slot.Id, out var domain))
         {
             return [];
         }
 
-        if (!_cache.TermsByLengthPositionLetter.TryGetValue(slot.Length, out var byPosition))
-        {
-            return allTerms;
-        }
-
-        List<IReadOnlyList<Term>> constrainedLists = [];
-
-        for (var i = 0; i < slot.Cells.Count; i++)
-        {
-            if (!theKrizaljka.State.LettersByCell.TryGetValue(slot.CellKeys[i], out var existingLetter))
-            {
-                continue;
-            }
-
-            if (!byPosition.TryGetValue(i, out var byLetter))
-            {
-                return [];
-            }
-
-            var normalizedExistingLetter = existingLetter.NormalizeLetters();
-
-            if (!byLetter.TryGetValue(normalizedExistingLetter, out var matchingTerms))
-            {
-                return [];
-            }
-
-            constrainedLists.Add(matchingTerms);
-        }
-
-        if (constrainedLists.Count == 0)
-        {
-            return allTerms;
-        }
-
-        var smallest = constrainedLists
-            .OrderBy(x => x.Count)
-            .First();
-
         List<Term> result = [];
 
-        foreach (var term in smallest)
+        foreach (var groupIndex in EnumerateSetBits(domain.Candidates))
         {
-            var matches = true;
-
-            for (var i = 0; i < slot.Cells.Count; i++)
+            if (TryCreateAvailableTermFromGroup(slot.Length, groupIndex, out var candidate))
             {
-                if (theKrizaljka.State.LettersByCell.TryGetValue(slot.CellKeys[i], out var existingLetter) &&
-                    !string.Equals(term.Letters[i], existingLetter.NormalizeLetters(), StringComparison.Ordinal))
-                {
-                    matches = false;
-                    break;
-                }
-            }
-
-            if (matches)
-            {
-                result.Add(term);
+                result.Add(candidate);
             }
         }
 
         return result;
     }
-    
-    private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
-    {
-        List<(Term Term, int Score)> scored = [];
 
-        foreach (var term in GetIndexedMatchingTerms(slot))
-        {
-            if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-            {
-                continue;
-            }
+    //private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
+    //{
+    //    List<(Term Term, int Score)> scored = [];
 
-            var score = ScoreCandidateTerm(slot, term);
+    //    foreach (var term in GetIndexedMatchingTerms(slot))
+    //    {
+    //        if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
+    //        {
+    //            continue;
+    //        }
 
-            if (score < 0)
-            {
-                continue;
-            }
+    //        var score = ScoreCandidateTerm(slot, term);
 
-            scored.Add((term, score));
-        }
+    //        if (score < 0)
+    //        {
+    //            continue;
+    //        }
 
-        return scored
-            .OrderByDescending(x => x.Score)
-            .ThenBy(x => x.Term.DenseValue, StringComparer.Ordinal)
-            .Select(x => x.Term)
-            .ToList();
-    }
+    //        scored.Add((term, score));
+    //    }
 
-    private int ScoreCandidateTerm(KrizaljkaSlot slot, Term term)
-    {
-        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(slot.Id, out var intersections))
-        {
-            return 0;
-        }
+    //    return scored
+    //        .OrderByDescending(x => x.Score)
+    //        .ThenBy(x => x.Term.DenseValue, StringComparer.Ordinal)
+    //        .Select(x => x.Term)
+    //        .ToList();
+    //}
 
-        var totalScore = 0;
+    //private int ScoreCandidateTerm(KrizaljkaSlot slot, Term term)
+    //{
+    //    if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(slot.Id, out var intersections))
+    //    {
+    //        return 0;
+    //    }
 
-        foreach (var intersection in intersections)
-        {
-            var neighborSlotId = intersection.FirstSlotId == slot.Id
-                ? intersection.SecondSlotId
-                : intersection.FirstSlotId;
+    //    var totalScore = 0;
 
-            if (theKrizaljka.State.IsAssigned(neighborSlotId))
-            {
-                continue;
-            }
+    //    foreach (var intersection in intersections)
+    //    {
+    //        var neighborSlotId = intersection.FirstSlotId == slot.Id
+    //            ? intersection.SecondSlotId
+    //            : intersection.FirstSlotId;
 
-            if (!theKrizaljka.SlotsById.TryGetValue(neighborSlotId, out var neighborSlot))
-            {
-                return -1;
-            }
+    //        if (theKrizaljka.State.IsAssigned(neighborSlotId))
+    //        {
+    //            continue;
+    //        }
 
-            var count = CountNeighborCandidatesAfterPlacingTerm(slot, term, neighborSlot);
+    //        if (!theKrizaljka.SlotsById.TryGetValue(neighborSlotId, out var neighborSlot))
+    //        {
+    //            return -1;
+    //        }
 
-            if (count == 0)
-            {
-                return -1;
-            }
+    //        var count = CountNeighborCandidatesAfterPlacingTerm(slot, term, neighborSlot);
 
-            totalScore += Math.Min(count, 1000);
-        }
+    //        if (count == 0)
+    //        {
+    //            return -1;
+    //        }
 
-        return totalScore;
-    }
+    //        totalScore += Math.Min(count, 1000);
+    //    }
 
-    private int CountNeighborCandidatesAfterPlacingTerm(
-        KrizaljkaSlot sourceSlot,
-        Term sourceTerm,
-        KrizaljkaSlot neighborSlot)
-    {
-        if (!GlobalCaches.TermsByLength.TryGetValue(neighborSlot.Length, out var allTerms))
-        {
-            return 0;
-        }
+    //    return totalScore;
+    //}
 
-        if (!_cache.TermsByLengthPositionLetter.TryGetValue(neighborSlot.Length, out var byPosition))
-        {
-            var countWithoutIndex = 0;
+    //private int CountNeighborCandidatesAfterPlacingTerm(
+    //    KrizaljkaSlot sourceSlot,
+    //    Term sourceTerm,
+    //    KrizaljkaSlot neighborSlot)
+    //{
+    //    if (!GlobalCaches.TermsByLength.TryGetValue(neighborSlot.Length, out var allTerms))
+    //    {
+    //        return 0;
+    //    }
 
-            foreach (var term in allTerms)
-            {
-                if (theKrizaljka.State.UsedTermsIds.Contains(term.Id) || term.Id == sourceTerm.Id)
-                {
-                    continue;
-                }
+    //    if (!_cache.TermsByLengthPositionLetter.TryGetValue(neighborSlot.Length, out var byPosition))
+    //    {
+    //        var countWithoutIndex = 0;
 
-                countWithoutIndex++;
-            }
+    //        foreach (var term in allTerms)
+    //        {
+    //            if (theKrizaljka.State.UsedTermsIds.Contains(term.Id) || term.Id == sourceTerm.Id)
+    //            {
+    //                continue;
+    //            }
 
-            return countWithoutIndex;
-        }
+    //            countWithoutIndex++;
+    //        }
 
-        List<IReadOnlyList<Term>> constrainedLists = [];
+    //        return countWithoutIndex;
+    //    }
 
-        for (var i = 0; i < neighborSlot.Cells.Count; i++)
-        {
-            var effectiveLetter = GetEffectiveLetterForNeighborCell(sourceSlot, sourceTerm, neighborSlot.CellKeys[i]);
+    //    List<IReadOnlyList<Term>> constrainedLists = [];
 
-            if (effectiveLetter is null)
-            {
-                continue;
-            }
+    //    for (var i = 0; i < neighborSlot.Cells.Count; i++)
+    //    {
+    //        var effectiveLetter = GetEffectiveLetterForNeighborCell(sourceSlot, sourceTerm, neighborSlot.CellKeys[i]);
 
-            if (!byPosition.TryGetValue(i, out var byLetter))
-            {
-                return 0;
-            }
+    //        if (effectiveLetter is null)
+    //        {
+    //            continue;
+    //        }
 
-            if (!byLetter.TryGetValue(effectiveLetter, out var matchingTerms))
-            {
-                return 0;
-            }
+    //        if (!byPosition.TryGetValue(i, out var byLetter))
+    //        {
+    //            return 0;
+    //        }
 
-            constrainedLists.Add(matchingTerms);
-        }
+    //        if (!byLetter.TryGetValue(effectiveLetter, out var matchingTerms))
+    //        {
+    //            return 0;
+    //        }
 
-        IReadOnlyList<Term> baseList;
+    //        constrainedLists.Add(matchingTerms);
+    //    }
 
-        if (constrainedLists.Count == 0)
-        {
-            baseList = allTerms;
-        }
-        else
-        {
-            baseList = constrainedLists
-                .OrderBy(x => x.Count)
-                .First();
-        }
+    //    IReadOnlyList<Term> baseList;
 
-        var count = 0;
+    //    if (constrainedLists.Count == 0)
+    //    {
+    //        baseList = allTerms;
+    //    }
+    //    else
+    //    {
+    //        baseList = constrainedLists
+    //            .OrderBy(x => x.Count)
+    //            .First();
+    //    }
 
-        foreach (var term in baseList)
-        {
-            if (theKrizaljka.State.UsedTermsIds.Contains(term.Id) || term.Id == sourceTerm.Id)
-            {
-                continue;
-            }
+    //    var count = 0;
 
-            var matches = true;
+    //    foreach (var term in baseList)
+    //    {
+    //        if (theKrizaljka.State.UsedTermsIds.Contains(term.Id) || term.Id == sourceTerm.Id)
+    //        {
+    //            continue;
+    //        }
 
-            for (var i = 0; i < neighborSlot.Cells.Count; i++)
-            {
-                var effectiveLetter =
-                    GetEffectiveLetterForNeighborCell(sourceSlot, sourceTerm, neighborSlot.CellKeys[i]);
+    //        var matches = true;
 
-                if (effectiveLetter is not null &&
-                    !string.Equals(term.Letters[i], effectiveLetter, StringComparison.Ordinal))
-                {
-                    matches = false;
-                    break;
-                }
-            }
+    //        for (var i = 0; i < neighborSlot.Cells.Count; i++)
+    //        {
+    //            var effectiveLetter =
+    //                GetEffectiveLetterForNeighborCell(sourceSlot, sourceTerm, neighborSlot.CellKeys[i]);
 
-            if (matches)
-            {
-                count++;
-            }
-        }
+    //            if (effectiveLetter is not null &&
+    //                !string.Equals(term.Letters[i], effectiveLetter, StringComparison.Ordinal))
+    //            {
+    //                matches = false;
+    //                break;
+    //            }
+    //        }
 
-        return count;
-    }
+    //        if (matches)
+    //        {
+    //            count++;
+    //        }
+    //    }
 
-    private string? GetEffectiveLetterForNeighborCell(
-        KrizaljkaSlot sourceSlot,
-        Term sourceTerm,
-        (int Row, int Col) neighborCellKey)
-    {
-        if (theKrizaljka.State.LettersByCell.TryGetValue(neighborCellKey, out var existingLetter))
-        {
-            return existingLetter.NormalizeLetters();
-        }
+    //    return count;
+    //}
 
-        for (var i = 0; i < sourceSlot.CellKeys.Count; i++)
-        {
-            if (sourceSlot.CellKeys[i] == neighborCellKey)
-            {
-                return sourceTerm.Letters[i];
-            }
-        }
+    //private string? GetEffectiveLetterForNeighborCell(
+    //    KrizaljkaSlot sourceSlot,
+    //    Term sourceTerm,
+    //    (int Row, int Col) neighborCellKey)
+    //{
+    //    if (theKrizaljka.State.LettersByCell.TryGetValue(neighborCellKey, out var existingLetter))
+    //    {
+    //        return existingLetter.NormalizeLetters();
+    //    }
 
-        return null;
-    }
+    //    for (var i = 0; i < sourceSlot.CellKeys.Count; i++)
+    //    {
+    //        if (sourceSlot.CellKeys[i] == neighborCellKey)
+    //        {
+    //            return sourceTerm.Letters[i];
+    //        }
+    //    }
+
+    //    return null;
+    //}
 
     private void FinalizeFullyFilledUnassignedSlots()
     {
@@ -871,10 +947,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                var matchingTerm = GetIndexedMatchingTerms(slot)
-                    .FirstOrDefault(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id));
-
-                if (matchingTerm is null)
+                if (!TryGetFirstUnusedMatchingTerm(slot, out var matchingTerm))
                 {
                     continue;
                 }
@@ -883,6 +956,115 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 changed = true;
             }
         }
+    }
 
+    private bool TryGetFirstUnusedMatchingTerm(KrizaljkaSlot slot, out Term term)
+    {
+        term = null!;
+
+        var candidates = BuildMatchingMaskForSlot(slot);
+
+        foreach (var groupIndex in EnumerateSetBits(candidates))
+        {
+            if (TryCreateAvailableTermFromGroup(slot.Length, groupIndex, out term))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private BitArray BuildMatchingMaskForSlot(KrizaljkaSlot slot)
+    {
+        if (!_termGroupsByLength.TryGetValue(slot.Length, out var groups))
+        {
+            return new BitArray(0);
+        }
+
+        var result = new BitArray(groups.Count, true);
+
+        if (!_termGroupBitsetsByLengthPositionLetter.TryGetValue(slot.Length, out var byPosition))
+        {
+            return result;
+        }
+
+        for (var i = 0; i < slot.Cells.Count; i++)
+        {
+            if (!theKrizaljka.State.LettersByCell.TryGetValue(slot.CellKeys[i], out var existingLetter))
+            {
+                continue;
+            }
+
+            var normalizedExistingLetter = existingLetter.NormalizeLetters();
+
+            if (!byPosition.TryGetValue(i, out var byLetter))
+            {
+                return new BitArray(groups.Count, false);
+            }
+
+            if (!byLetter.TryGetValue(normalizedExistingLetter, out var matchingBitset))
+            {
+                return new BitArray(groups.Count, false);
+            }
+
+            result.And(matchingBitset);
+        }
+
+        return result;
+    }
+
+    private bool TryCreateAvailableTermFromGroup(int length, int groupIndex, out Term term)
+    {
+        term = null!;
+
+        if (!_termGroupsByLength.TryGetValue(length, out var groups))
+        {
+            return false;
+        }
+
+        if (groupIndex < 0 || groupIndex >= groups.Count)
+        {
+            return false;
+        }
+
+        var group = groups[groupIndex];
+
+        foreach (var termId in group.TermIds)
+        {
+            if (!theKrizaljka.State.UsedTermsIds.Contains(termId))
+            {
+                term = group.Representative with { Id = termId };
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static IEnumerable<int> EnumerateSetBits(BitArray bits)
+    {
+        for (var i = 0; i < bits.Length; i++)
+        {
+            if (bits[i])
+            {
+                yield return i;
+            }
+        }
+    }
+
+    private static int CountBits(BitArray bits)
+    {
+        var count = 0;
+
+        for (var i = 0; i < bits.Length; i++)
+        {
+            if (bits[i])
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 }
