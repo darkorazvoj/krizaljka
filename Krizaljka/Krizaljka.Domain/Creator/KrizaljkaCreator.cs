@@ -158,25 +158,108 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             }
 
             var domainSnapshot = CloneDomains();
-            var placement = Place(nextSlot, term);
+            var initialPlacement = Place(nextSlot, term);
 
-            if (!UpdateDomainsAfterPlacement(placement))
+            if (!TryPropagateSingletonDomainsAfterPlacement(initialPlacement, out var fullPlacement))
             {
-                Undo(placement);
+                Undo(fullPlacement);
                 RestoreDomains(domainSnapshot);
                 continue;
             }
+
+            //var placement = Place(nextSlot, term);
+
+            //if (!UpdateDomainsAfterPlacement(placement))
+            //{
+            //    Undo(placement);
+            //    RestoreDomains(domainSnapshot);
+            //    continue;
+            //}
 
             if (Solve(slots))
             {
                 return true;
             }
 
-            Undo(placement);
+            Undo(fullPlacement);
             RestoreDomains(domainSnapshot);
         }
 
         return false;
+    }
+
+    private bool TryPropagateSingletonDomainsAfterPlacement(
+        PlacementResult initialPlacement,
+        out PlacementResult fullPlacement)
+    {
+        List<(int SliotId, long TermId)> assignedSlots = initialPlacement.AssignedSlots.ToList();
+        List<(int Row, int Col)> newCells = initialPlacement.NewCells.ToList();
+
+        if (!UpdateDomainsAfterPlacement(initialPlacement))
+        {
+            fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
+            return false;
+        }
+
+        while (true)
+        {
+            var singletonSlot = FindSingletonUnassignedSlot();
+            if (singletonSlot is null)
+            {
+                fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
+                return true;
+            }
+
+            if (!_currentDomainsBySlotId.TryGetValue(singletonSlot.Id, out var domain) || domain.Count != 1)
+            {
+                fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
+                return false;
+            }
+
+            var onlyTerm = domain[0];
+
+            if (!Fits(singletonSlot, onlyTerm))
+            {
+                fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
+                return false;
+            }
+
+            var singletonPlacement = Place(singletonSlot, onlyTerm);
+
+            assignedSlots.AddRange(singletonPlacement.AssignedSlots);
+            newCells.AddRange(singletonPlacement.NewCells);
+
+            if (!UpdateDomainsAfterPlacement(singletonPlacement))
+            {
+                fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
+                return false;
+            }
+        }
+    }
+
+    private KrizaljkaSlot? FindSingletonUnassignedSlot()
+    {
+        foreach (var kvp in _currentDomainsBySlotId)
+        {
+            if (kvp.Value.Count != 1)
+            {
+                continue;
+            }
+
+            if (!theKrizaljka.SlotsById.TryGetValue(kvp.Key, out var slot))
+            {
+                continue;
+            }
+
+            if (theKrizaljka.State.IsAssigned(slot.Id))
+            {
+                continue;
+            }
+
+            return slot;
+        }
+
+        return null;
     }
 
     private bool TryGetBestNextSlot(

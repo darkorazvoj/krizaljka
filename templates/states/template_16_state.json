@@ -1,0 +1,21 @@
+{
+  "AssignedTermsBySlotId": {
+    "19": {
+      "SlotId": 19,
+      "TermId": 43038,
+      "Letters": [
+        "L",
+        "E",
+        "A"
+      ]
+    }
+  },
+  "UsedTermsIds": [
+    43038
+  ],
+  "LettersByCell": {
+    "5_2": "L",
+    "6_2": "E",
+    "7_2": "A"
+  }
+}
