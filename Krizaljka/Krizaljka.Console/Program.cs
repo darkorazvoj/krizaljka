@@ -221,35 +221,23 @@ while (true)
                             break;
                         }
                     }
-                    else if (searchType.ToUpper() == "let")
+                    else if (searchType.ToUpper() == "LET")
                     {
+                        query = query.Where(x => x.Length == length);
 
+                        for (var i = 0; i < length; i++)
+                        {
+                            var letterIndex = i;
+                            Console.Write($"Letter {i+1}: ");
+                            var let = Console.ReadLine();
+
+                            if (!string.IsNullOrWhiteSpace(let))
+                            {
+                                query = query.Where(x => x.Letters[letterIndex].ToUpper() == let.ToUpper());
+                            }
+                        }
                     }
                 }
-
-
-                //Console.Write("Search term (x for exit): ");
-                //var searchTerm = Console.ReadLine();
-
-                //if (searchTerm == "x")
-                //{
-                //    break;
-                //}
-
-
-
-                //var denseSearchTerm =
-                //    string.IsNullOrWhiteSpace(searchTerm)
-                //        ? searchTerm
-                //        : searchTerm.RemoveWhiteSpaces().ToUpperInvariant();
-
-                //var query = pojmoviDb.Terms
-                //    .Where(x => x.Length == length);
-
-                //if (!string.IsNullOrWhiteSpace(denseSearchTerm))
-                //{
-                //    query = query.Where(x => x.DenseValue.Contains(denseSearchTerm));
-                //}
 
                 var result = query.OrderBy(x => x.DenseValue).ToList();
                 Console.WriteLine($"Number of words: {result.Count}");
