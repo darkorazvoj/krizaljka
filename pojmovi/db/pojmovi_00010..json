@@ -1,0 +1,21 @@
+{
+  "Terms": [
+    {
+      "Id": 309397,
+      "Language": 1,
+      "Description": "CoffeeScript Object Notation",
+      "RawValue": "CSON",
+      "DenseValue": "CSON",
+      "Letters": [
+        "C",
+        "S",
+        "O",
+        "N"
+      ],
+      "CategoryId": 49,
+      "SpaceIndexes": [],
+      "DashIndexes": [],
+      "Length": 4
+    }
+  ]
+}
