@@ -219,7 +219,7 @@ while (true)
                     query = query.Where(x => x.DenseValue.Contains(denseSearchTerm));
                 }
 
-                var result = query.ToList();
+                var result = query.OrderBy(x => x.DenseValue).ToList();
                 Console.WriteLine($"Number of words: {result.Count}");
 
                 var subCounter = 0;
