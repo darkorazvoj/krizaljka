@@ -167,15 +167,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            //var placement = Place(nextSlot, term);
-
-            //if (!UpdateDomainsAfterPlacement(placement))
-            //{
-            //    Undo(placement);
-            //    RestoreDomains(domainSnapshot);
-            //    continue;
-            //}
-
             if (Solve(slots))
             {
                 return true;
