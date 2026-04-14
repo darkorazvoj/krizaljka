@@ -577,6 +577,8 @@ while (true)
                 continue;
             }
 
+            // TODO save state
+            KrizaljkaStateManager.SaveSolvedState(createResult.State, theKrizaljka.Template.Id);
             Console.WriteLine("SOLVED!!!!");
             PrintKrizaljka();
             Console.ReadKey();
