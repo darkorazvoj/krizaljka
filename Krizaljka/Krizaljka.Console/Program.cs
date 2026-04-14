@@ -310,24 +310,22 @@ while (true)
                         .Select(Path.GetFullPath)
                         .FirstOrDefault();
 
-                    if (string.IsNullOrWhiteSpace(templateName))
+                    if (!string.IsNullOrWhiteSpace(templateName))
                     {
-                        continue;
-                    }
-
-                    try
-                    {
-                        var templateJson = await File.ReadAllTextAsync(templateName);
-                        if (string.IsNullOrWhiteSpace(templateJson))
+                        try
                         {
-                            continue;
-                        }
+                            var templateJson = await File.ReadAllTextAsync(templateName);
+                            if (string.IsNullOrWhiteSpace(templateJson))
+                            {
+                                continue;
+                            }
 
-                        existingState = JsonSerializer.Deserialize<KrizaljkaSolveState>(templateJson, options);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("State failed to load...");
+                            existingState = JsonSerializer.Deserialize<KrizaljkaSolveState>(templateJson, options);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("State failed to load...");
+                        }
                     }
                 }
                 

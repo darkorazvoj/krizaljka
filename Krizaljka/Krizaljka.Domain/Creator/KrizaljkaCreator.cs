@@ -19,6 +19,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _normalizedTerms = GetNormalizedTerms(terms);
         EnsureTermsCaches(_normalizedTerms);
 
+        FinalizeFullyFilledUnassignedSlots();
+
         var solved = Solve(theKrizaljka.Slots);
         return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
     }
@@ -312,16 +314,15 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                var matchingTerms = GetIndexedMatchingTerms(neighborSlot)
-                    .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
-                    .ToList();
+                var matchingTerm = GetIndexedMatchingTerms(neighborSlot)
+                    .FirstOrDefault(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id));
 
-                if (matchingTerms.Count != 1)
+                if (matchingTerm is null)
                 {
                     continue;
                 }
 
-                AssignSlot(neighborSlot, matchingTerms[0], newCells, assignedSlots);
+                AssignSlot(neighborSlot, matchingTerm, newCells, assignedSlots);
                 queue.Enqueue(neighborSlotId);
             }
         }
@@ -734,5 +735,39 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         }
 
         return null;
+    }
+
+    private void FinalizeFullyFilledUnassignedSlots()
+    {
+        var changed = true;
+        while (changed)
+        {
+            changed = false;
+
+            foreach (var slot in theKrizaljka.Slots)
+            {
+                if (theKrizaljka.State.IsAssigned(slot.Id))
+                {
+                    continue;
+                }
+
+                if (!IsFullyFilled(slot))
+                {
+                    continue;
+                }
+
+                var matchingTerm = GetIndexedMatchingTerms(slot)
+                    .FirstOrDefault(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id));
+
+                if (matchingTerm is null)
+                {
+                    continue;
+                }
+
+                Place(slot, matchingTerm);
+                changed = true;
+            }
+        }
+
     }
 }
