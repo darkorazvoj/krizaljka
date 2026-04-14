@@ -198,26 +198,58 @@ while (true)
                     continue;
                 }
 
-                Console.Write("Search term (x for exit): ");
-                var searchTerm = Console.ReadLine();
-
-                if (searchTerm == "x")
-                {
-                    break;
-                }
-
-                var denseSearchTerm =
-                    string.IsNullOrWhiteSpace(searchTerm)
-                        ? searchTerm
-                        : searchTerm.RemoveWhiteSpaces().ToUpperInvariant();
+                Console.Write("Search type (default -> no search term, sw -> starts with, let -> by letters):");
+                var searchType = Console.ReadLine();
 
                 var query = pojmoviDb.Terms
                     .Where(x => x.Length == length);
 
-                if (!string.IsNullOrWhiteSpace(denseSearchTerm))
+                if (!string.IsNullOrWhiteSpace(searchType))
                 {
-                    query = query.Where(x => x.DenseValue.Contains(denseSearchTerm));
+                    if (searchType.ToUpper() == "SW")
+                    {
+                        while (true)
+                        {
+                            Console.Write("Starts with: ");
+                            var startsWith = Console.ReadLine();
+
+                            if (string.IsNullOrWhiteSpace(startsWith))
+                            {
+                                continue;
+                            }
+                            query = query.Where(x => x.DenseValue.StartsWith(startsWith.RemoveWhiteSpaces(), StringComparison.InvariantCultureIgnoreCase));
+                            break;
+                        }
+                    }
+                    else if (searchType.ToUpper() == "let")
+                    {
+
+                    }
                 }
+
+
+                //Console.Write("Search term (x for exit): ");
+                //var searchTerm = Console.ReadLine();
+
+                //if (searchTerm == "x")
+                //{
+                //    break;
+                //}
+
+
+
+                //var denseSearchTerm =
+                //    string.IsNullOrWhiteSpace(searchTerm)
+                //        ? searchTerm
+                //        : searchTerm.RemoveWhiteSpaces().ToUpperInvariant();
+
+                //var query = pojmoviDb.Terms
+                //    .Where(x => x.Length == length);
+
+                //if (!string.IsNullOrWhiteSpace(denseSearchTerm))
+                //{
+                //    query = query.Where(x => x.DenseValue.Contains(denseSearchTerm));
+                //}
 
                 var result = query.OrderBy(x => x.DenseValue).ToList();
                 Console.WriteLine($"Number of words: {result.Count}");
