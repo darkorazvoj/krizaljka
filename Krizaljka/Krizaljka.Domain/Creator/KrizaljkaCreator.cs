@@ -10,6 +10,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private CreatorCache _cache = new();
     private int _wordsPlacedDuringIterations;
     private IReadOnlyList<Term> _normalizedTerms = [];
+    private Dictionary<int, IReadOnlyList<Term>> _currentDomainsBySlotId = [];
 
     public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms)
     {
@@ -20,6 +21,11 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         EnsureTermsCaches(_normalizedTerms);
 
         FinalizeFullyFilledUnassignedSlots();
+
+        if (!TryInitializeDomains())
+        {
+            return new KrizaljkaCreateResult(false, theKrizaljka.State, _wordsPlacedDuringIterations);
+        }
 
         var solved = Solve(theKrizaljka.Slots);
         return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
@@ -146,21 +152,18 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         foreach (var term in GetOrderedTerms(nextSlot))
         {
-            if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-            {
-                continue;
-            }
-
             if (!Fits(nextSlot, term))
             {
                 continue;
             }
 
+            var domainSnapshot = CloneDomains();
             var placement = Place(nextSlot, term);
 
-            if (!PassesForwardCheck(nextSlot))
+            if (!UpdateDomainsAfterPlacement(placement))
             {
                 Undo(placement);
+                RestoreDomains(domainSnapshot);
                 continue;
             }
 
@@ -170,6 +173,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             }
 
             Undo(placement);
+            RestoreDomains(domainSnapshot);
         }
 
         return false;
@@ -190,13 +194,12 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            var fittingCount = GetFittingCount(slot);
-
-            if (fittingCount == 0)
+            if (!_currentDomainsBySlotId.TryGetValue(slot.Id, out var domain) || domain.Count == 0)
             {
                 return false;
             }
 
+            var fittingCount = domain.Count;
             var unassignedNeighborCount = GetUnassignedNeighborCount(slot);
 
             if (fittingCount < bestCount ||
@@ -215,6 +218,104 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return true;
     }
+
+    private bool TryInitializeDomains()
+    {
+        _currentDomainsBySlotId = [];
+        foreach (var slot in theKrizaljka.Slots)
+        {
+            if (theKrizaljka.State.IsAssigned(slot.Id))
+            {
+                continue;
+            }
+
+            var domain = GetIndexedMatchingTerms(slot)
+                .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
+                .ToList();
+
+            if (domain.Count == 0)
+            {
+                return false;
+            }
+
+            _currentDomainsBySlotId[slot.Id] = domain;
+        }
+
+        return true;
+    }
+
+    private Dictionary<int, IReadOnlyList<Term>> CloneDomains() =>
+        _currentDomainsBySlotId.ToDictionary(x => x.Key, x => x.Value);
+
+    private bool UpdateDomainsAfterPlacement(PlacementResult placement)
+    {
+        var newlyUsedTermIds = placement.AssignedSlots
+            .Select(x => x.TermId)
+            .ToHashSet();
+
+        HashSet<int> affectedSlotIds = [];
+
+        foreach (var (assignedSlotIt, _) in placement.AssignedSlots)
+        {
+            _currentDomainsBySlotId.Remove(assignedSlotIt);
+            if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(assignedSlotIt, out var intersections))
+            {
+                continue;
+            }
+
+            foreach (var intersection in intersections)
+            {
+                var neighborSlotId = intersection.FirstSlotId == assignedSlotIt
+                    ? intersection.SecondSlotId
+                    : intersection.FirstSlotId;
+
+                if (!theKrizaljka.State.IsAssigned(neighborSlotId))
+                {
+                    affectedSlotIds.Add(neighborSlotId);
+                }
+            }
+        }
+
+        foreach (var slotId in _currentDomainsBySlotId.Keys.ToList())
+        {
+            var filtered = _currentDomainsBySlotId[slotId]
+                .Where(x => !newlyUsedTermIds.Contains(x.Id))
+                .ToList();
+
+            _currentDomainsBySlotId[slotId] = filtered;
+        }
+
+        foreach (var slotId in affectedSlotIds)
+        {
+            if (!theKrizaljka.SlotsById.TryGetValue(slotId, out var slot))
+            {
+                return false;
+            }
+
+            var domain = GetIndexedMatchingTerms(slot)
+                .Where(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id))
+                .ToList();
+
+            _currentDomainsBySlotId[slotId] = domain;
+        }
+
+        foreach (var slot in theKrizaljka.Slots)
+        {
+            if (theKrizaljka.State.IsAssigned(slot.Id))
+            {
+                continue;
+            }
+
+            if (!_currentDomainsBySlotId.TryGetValue(slot.Id, out var domain) || domain.Count == 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void RestoreDomains(Dictionary<int, IReadOnlyList<Term>> snapshot) => _currentDomainsBySlotId = snapshot;
 
     private int GetUnassignedNeighborCount(KrizaljkaSlot slot)
     {
@@ -403,7 +504,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private string GetSlotPattern(KrizaljkaSlot slot)
     {
         var state = theKrizaljka.State;
-        //var chars = new char[slot.Cells.Count];
         var parts = new string[slot.Cells.Count];
 
 
@@ -493,66 +593,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return result;
     }
-
-    private bool PassesForwardCheck(KrizaljkaSlot placedSlot)
-    {
-        if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(placedSlot.Id, out var intersections))
-        {
-            return true;
-        }
-
-        foreach (var intersection in intersections)
-        {
-            var neighborSlotId = intersection.FirstSlotId == placedSlot.Id
-                ? intersection.SecondSlotId
-                : intersection.FirstSlotId;
-
-            if (theKrizaljka.State.IsAssigned(neighborSlotId))
-            {
-                continue;
-            }
-
-            if (!theKrizaljka.SlotsById.TryGetValue(neighborSlotId, out var neighborSlot))
-            {
-                return false;
-            }
-
-            var hasAnythingFitting = false;
-
-            foreach (var term in GetIndexedMatchingTerms(neighborSlot))
-            {
-                if (theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-                {
-                    continue;
-                }
-
-                hasAnythingFitting = true;
-                break;
-            }
-
-            if (!hasAnythingFitting)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private int GetFittingCount(KrizaljkaSlot slot)
-    {
-        var count = 0;
-        foreach (var term in GetIndexedMatchingTerms(slot))
-        {
-            if (!theKrizaljka.State.UsedTermsIds.Contains(term.Id))
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
+    
     private List<Term> GetOrderedTerms(KrizaljkaSlot slot)
     {
         List<(Term Term, int Score)> scored = [];
