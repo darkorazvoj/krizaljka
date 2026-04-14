@@ -610,17 +610,24 @@ while (true)
                 Console.ReadKey();
                 continue;
             }
-
-            var timer = Stopwatch.StartNew();
             Console.WriteLine($"Started: {DateTime.Now}");
             var createResult = new KrizaljkaCreator(theKrizaljka).TrySolve(pojmoviDb.Terms);
+            
+            var ts = TimeSpan.FromMilliseconds(createResult.Stats.ElapsedMilliseconds);
+            var elapsed = $"{ts.Hours}h {ts.Minutes}m {ts.Seconds}s";
 
-            timer.Stop();
-            var ts = timer.Elapsed;
-            var elapsed = $"{ts.Minutes:00}:{ts.Seconds:00}";
 
+            Console.WriteLine($"RecursiveCalls: {createResult.Stats.RecursiveCalls}");
+            Console.WriteLine($"CandidateTries: {createResult.Stats.CandidateTries}");
+            Console.WriteLine($"Backtracks: {createResult.Stats.Backtracks}");
+            Console.WriteLine($"DeadEnds: {createResult.Stats.DeadEnds}");
+            Console.WriteLine($"FullyFilledAutoAssignments: {createResult.Stats.FullyFilledAutoAssignments}");
+            Console.WriteLine($"SingletonAutoAssignments: {createResult.Stats.SingletonAutoAssignments}");
+            Console.WriteLine($"MaxAssignedSlotsReached: {createResult.Stats.MaxAssignedSlotsReached}");
+            Console.WriteLine($"FinalAssignedSlots: {createResult.Stats.FinalAssignedSlots}");
+
+            Console.WriteLine();
             Console.WriteLine($"Total Time: {elapsed}");
-            Console.WriteLine($"Word tried: {createResult.WordsTried}");
 
             if (!createResult.IsCreated)
             {

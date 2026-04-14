@@ -1,4 +1,5 @@
-﻿using Krizaljka.Domain.Caches;
+﻿using System.Diagnostics;
+using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
@@ -8,27 +9,54 @@ namespace Krizaljka.Domain.Creator;
 public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 {
     private CreatorCache _cache = new();
-    private int _wordsPlacedDuringIterations;
     private IReadOnlyList<Term> _normalizedTerms = [];
     private Dictionary<int, IReadOnlyList<Term>> _currentDomainsBySlotId = [];
 
+    private readonly Stopwatch _stopwatch = new();
+    private long _recursiveCalls;
+    private long _candidateTries;
+    private long _backtracks;
+    private long _deadEnds;
+    private long _fullyFilledAutoAssignments;
+    private long _singletonAutoAssignments;
+    private int _maxAssignedSlotsReached;
+
+    public bool EnableProgressLogging { get; set; } = true;
+    public int ProgressLogIntervalMs { get; set; } = 1000;
+
+    public KrizaljkaSolveStats LastSolveStats { get; private set; } = new();
+
     public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms)
     {
-        _wordsPlacedDuringIterations = 0;
+        ResetStats();
         _cache = new CreatorCache();
 
         _normalizedTerms = GetNormalizedTerms(terms);
         EnsureTermsCaches(_normalizedTerms);
 
-        FinalizeFullyFilledUnassignedSlots();
-
-        if (!TryInitializeDomains())
+        _stopwatch.Start();
+        try
         {
-            return new KrizaljkaCreateResult(false, theKrizaljka.State, _wordsPlacedDuringIterations);
-        }
+            FinalizeFullyFilledUnassignedSlots();
 
-        var solved = Solve(theKrizaljka.Slots);
-        return new KrizaljkaCreateResult(solved, theKrizaljka.State, _wordsPlacedDuringIterations);
+            if (!TryInitializeDomains())
+            {   
+                return new KrizaljkaCreateResult(
+                    false,
+                    theKrizaljka.State,
+                    BuildSolveStats(false));
+            }
+
+            var solved = Solve(theKrizaljka.Slots);
+            return new KrizaljkaCreateResult(
+                solved,
+                theKrizaljka.State,
+                BuildSolveStats(solved));
+        }
+        finally
+        {
+            _stopwatch.Stop();
+        }
     }
 
     public bool TryPlaceAssignedTermManually(
@@ -140,8 +168,12 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
     private bool Solve(IReadOnlyList<KrizaljkaSlot> slots)
     {
+        _recursiveCalls++;
+        UpdateMaxAssignedSlotsReached();
+
         if (!TryGetBestNextSlot(slots, out var nextSlot))
         {
+            _deadEnds++;
             return false;
         }
 
@@ -152,6 +184,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         foreach (var term in GetOrderedTerms(nextSlot))
         {
+            _candidateTries++;
+
             if (!Fits(nextSlot, term))
             {
                 continue;
@@ -162,6 +196,9 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
             if (!TryPropagateSingletonDomainsAfterPlacement(initialPlacement, out var fullPlacement))
             {
+                _backtracks++;
+                _deadEnds++;
+
                 Undo(fullPlacement);
                 RestoreDomains(domainSnapshot);
                 continue;
@@ -171,6 +208,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             {
                 return true;
             }
+
+            _backtracks++;
 
             Undo(fullPlacement);
             RestoreDomains(domainSnapshot);
@@ -214,6 +253,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
                 return false;
             }
+
+            _singletonAutoAssignments++;
 
             var singletonPlacement = Place(singletonSlot, onlyTerm);
 
@@ -497,6 +538,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
+                _fullyFilledAutoAssignments++;
+
                 AssignSlot(neighborSlot, matchingTerm, newCells, assignedSlots);
                 queue.Enqueue(neighborSlotId);
             }
@@ -524,7 +567,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         List<(int Row, int Col)> newCells,
         List<(int SlotId, long TermId)> assignedSlots)
     {
-        _wordsPlacedDuringIterations++;
         theKrizaljka.State.AssignedTermsBySlotId.Add(
             slot.Id,
             new AssignedTerm(slot.Id, term.Id, term.Letters));
@@ -879,10 +921,51 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
+                _fullyFilledAutoAssignments++;
+
                 Place(slot, matchingTerm);
                 changed = true;
             }
         }
+    }
 
+    private void ResetStats()
+    {
+        _recursiveCalls = 0;
+        _candidateTries = 0;
+        _backtracks = 0;
+        _deadEnds = 0;
+        _fullyFilledAutoAssignments = 0;
+        _singletonAutoAssignments = 0;
+        _maxAssignedSlotsReached = theKrizaljka.State.AssignedTermsBySlotId.Count;
+
+        _stopwatch.Reset();
+    }
+
+    private void UpdateMaxAssignedSlotsReached()
+    {
+        var assignedCount = theKrizaljka.State.AssignedTermsBySlotId.Count;
+
+        if (assignedCount > _maxAssignedSlotsReached)
+        {
+            _maxAssignedSlotsReached = assignedCount;
+        }
+    }
+
+    private KrizaljkaSolveStats BuildSolveStats(bool solved)
+    {
+        return new KrizaljkaSolveStats
+        {
+            Solved = solved,
+            ElapsedMilliseconds = _stopwatch.ElapsedMilliseconds,
+            RecursiveCalls = _recursiveCalls,
+            CandidateTries = _candidateTries,
+            Backtracks = _backtracks,
+            DeadEnds = _deadEnds,
+            FullyFilledAutoAssignments = _fullyFilledAutoAssignments,
+            SingletonAutoAssignments = _singletonAutoAssignments,
+            MaxAssignedSlotsReached = _maxAssignedSlotsReached,
+            FinalAssignedSlots = theKrizaljka.State.AssignedTermsBySlotId.Count,
+        };
     }
 }
