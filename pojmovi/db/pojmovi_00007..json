@@ -1,0 +1,23 @@
+{
+  "Terms": [
+    {
+      "Id": 309389,
+      "Language": 1,
+      "Description": "dvoslozna pjesnicka stopa, jamb (lat.)",
+      "RawValue": "IAMBUS",
+      "DenseValue": "IAMBUS",
+      "Letters": [
+        "i",
+        "a",
+        "m",
+        "b",
+        "u",
+        "s"
+      ],
+      "CategoryId": 49,
+      "SpaceIndexes": [],
+      "DashIndexes": [],
+      "Length": 6
+    }
+  ]
+}
