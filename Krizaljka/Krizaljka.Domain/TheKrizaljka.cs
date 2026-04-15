@@ -20,8 +20,7 @@ public sealed class TheKrizaljka
         ImmutableDictionary<int, IReadOnlyList<int>>.Empty;
     public ReadOnlyDictionary<(int, int), List<SlotUsage>> CellSlots { get; private set; } =
         new(new Dictionary<(int, int), List<SlotUsage>>());
-    public IReadOnlyList<(int Row, int Col)> CellKeys { get; init; } = [];
-
+    
     public KrizaljkaTemplate Template { get; }
     public KrizaljkaSolveState State { get; }
 
