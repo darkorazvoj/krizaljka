@@ -21,11 +21,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private long _singletonAutoAssignments;
     private int _maxAssignedSlotsReached;
 
-    public bool EnableProgressLogging { get; set; } = true;
-    public int ProgressLogIntervalMs { get; set; } = 1000;
-
-    public KrizaljkaSolveStats LastSolveStats { get; private set; } = new();
-
     public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms)
     {
         ResetStats();
@@ -37,15 +32,24 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _stopwatch.Start();
         try
         {
-            FinalizeFullyFilledUnassignedSlots();
 
-            if (!TryInitializeDomains())
-            {   
+            if (!TryFinalizeForcedPreSolveAssignments())
+            {
                 return new KrizaljkaCreateResult(
                     false,
                     theKrizaljka.State,
                     BuildSolveStats(false));
             }
+
+            //FinalizeFullyFilledUnassignedSlots();
+
+            //if (!TryInitializeDomains())
+            //{   
+            //    return new KrizaljkaCreateResult(
+            //        false,
+            //        theKrizaljka.State,
+            //        BuildSolveStats(false));
+            //}
 
             var solved = Solve(theKrizaljka.Slots);
             return new KrizaljkaCreateResult(
@@ -76,6 +80,93 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             slotId,
             termId,
             out error);
+    }
+
+    private bool TryFinalizeForcedPreSolveAssignments()
+    {
+        while (true)
+        {
+            if (!TryInitializeDomains())
+            {
+                return false;
+            }
+
+            if (!TryGetForcedPreSolveAssignment(
+                    out var forcedSlot,
+                    out var forcedTerm,
+                    out var isSingletonAssignment))
+            {
+                return true;
+            }
+
+            if (!Fits(forcedSlot!, forcedTerm!))
+            {
+                return false;
+            }
+
+            if (isSingletonAssignment)
+            {
+                _singletonAutoAssignments++;
+            }
+            else
+            {
+                _fullyFilledAutoAssignments++;
+            }
+
+            Place(forcedSlot!, forcedTerm!);
+        }
+    }
+
+    private bool TryGetForcedPreSolveAssignment(
+        out KrizaljkaSlot? forcedSlot,
+        out Term? forcedTerm,
+        out bool isSingletonAssignment)
+    {
+        forcedSlot = null;
+        forcedTerm = null;
+        isSingletonAssignment = false;
+
+        foreach (var slot in theKrizaljka.Slots)
+        {
+            if (theKrizaljka.State.IsAssigned(slot.Id))
+            {
+                continue;
+            }
+
+            if (!IsFullyFilled(slot))
+            {
+                continue;
+            }
+
+            var matchingTerm = GetIndexedMatchingTerms(slot)
+                .FirstOrDefault(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id));
+
+            if (matchingTerm is null)
+            {
+                continue;
+            }
+
+            forcedSlot = slot;
+            forcedTerm = matchingTerm;
+            isSingletonAssignment = false;
+            return true;
+        }
+
+        var singletonSlot = FindSingletonUnassignedSlot();
+        if (singletonSlot is null)
+        {
+            return false;
+        }
+
+        if (!_currentDomainsBySlotId.TryGetValue(singletonSlot.Id, out var domain) || domain.Count != 1)
+        {
+            return false;
+        }
+
+        forcedSlot = singletonSlot;
+        forcedTerm = domain[0];
+        isSingletonAssignment = true;
+        return true;
     }
 
     private static IReadOnlyList<Term> GetNormalizedTerms(IReadOnlyList<Term> terms) =>
@@ -892,41 +983,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         }
 
         return null;
-    }
-
-    private void FinalizeFullyFilledUnassignedSlots()
-    {
-        var changed = true;
-        while (changed)
-        {
-            changed = false;
-
-            foreach (var slot in theKrizaljka.Slots)
-            {
-                if (theKrizaljka.State.IsAssigned(slot.Id))
-                {
-                    continue;
-                }
-
-                if (!IsFullyFilled(slot))
-                {
-                    continue;
-                }
-
-                var matchingTerm = GetIndexedMatchingTerms(slot)
-                    .FirstOrDefault(x => !theKrizaljka.State.UsedTermsIds.Contains(x.Id));
-
-                if (matchingTerm is null)
-                {
-                    continue;
-                }
-
-                _fullyFilledAutoAssignments++;
-
-                Place(slot, matchingTerm);
-                changed = true;
-            }
-        }
     }
 
     private void ResetStats()
