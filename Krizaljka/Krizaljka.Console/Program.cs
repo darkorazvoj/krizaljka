@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Krizaljka.Console;
+﻿using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
 using System.Text;
@@ -12,7 +11,6 @@ using Krizaljka.Domain.Creator;
 Console.OutputEncoding = Encoding.UTF8;
 
 
-const string dbPath = @"C:\git\krizaljka\pojmovi\db";
 const string templatesStatesDir = @"C:\git\krizaljka\templates\states";
 
 TheKrizaljka? theKrizaljka = null;
