@@ -24,6 +24,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private int _maxAssignedSlotsReached;
     private long? _maxSolveElapsedMilliseconds;
     private bool _timedOut;
+    private KrizaljkaSolveState? _bestStateSnapshot;
 
     public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms, int maxMinutes)
     {
@@ -37,6 +38,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             ? (long)(maxMinutes * 60_000d)
             : null;
 
+        CaptureBestStateIfNeeded();
+
         _stopwatch.Start();
         try
         {
@@ -45,6 +48,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 return new KrizaljkaCreateResult(
                     false,
                     theKrizaljka.State,
+                    GetBestStateSnapshot(),
                     BuildSolveStats(false));
             }
 
@@ -54,14 +58,16 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 return new KrizaljkaCreateResult(
                     false,
                     theKrizaljka.State,
+                    GetBestStateSnapshot(),
                     BuildSolveStats(false));
             }
 
             var solved = Solve(theKrizaljka.Slots);
             return new KrizaljkaCreateResult(
-                solved,
+                solved && !_timedOut,
                 theKrizaljka.State,
-                BuildSolveStats(solved));
+                GetBestStateSnapshot(),
+                BuildSolveStats(solved && !_timedOut));
         }
         finally
         {
@@ -294,7 +300,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         }
 
         _recursiveCalls++;
-        UpdateMaxAssignedSlotsReached();
+        CaptureBestStateIfNeeded();
 
         if (!TryGetBestNextSlot(slots, out var nextSlot))
         {
@@ -706,6 +712,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 newCells.Add(key);
             }
         }
+        CaptureBestStateIfNeeded();
     }
 
     private void Undo(PlacementResult placement)
@@ -1032,18 +1039,56 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _maxAssignedSlotsReached = theKrizaljka.State.AssignedTermsBySlotId.Count;
         _maxSolveElapsedMilliseconds = null;
         _timedOut = false;
+        _bestStateSnapshot = CloneState(theKrizaljka.State);
 
         _stopwatch.Reset();
     }
 
-    private void UpdateMaxAssignedSlotsReached()
+    private void CaptureBestStateIfNeeded()
     {
         var assignedCount = theKrizaljka.State.AssignedTermsBySlotId.Count;
 
-        if (assignedCount > _maxAssignedSlotsReached)
+        if (_bestStateSnapshot is null || assignedCount > _maxAssignedSlotsReached)
         {
             _maxAssignedSlotsReached = assignedCount;
+            _bestStateSnapshot = CloneState(theKrizaljka.State);
         }
+    }
+
+    private KrizaljkaSolveState GetBestStateSnapshot()
+    {
+        return _bestStateSnapshot is not null
+            ? CloneState(_bestStateSnapshot)
+            : CloneState(theKrizaljka.State);
+    }
+
+    private static KrizaljkaSolveState CloneState(KrizaljkaSolveState source)
+    {
+        var clone = new KrizaljkaSolveState();
+
+        foreach (var kvp in source.AssignedTermsBySlotId)
+        {
+            var assigned = kvp.Value;
+
+            clone.AssignedTermsBySlotId.Add(
+                kvp.Key,
+                new AssignedTerm(
+                    assigned.SlotId,
+                    assigned.TermId,
+                    assigned.Letters.ToArray()));
+        }
+
+        foreach (var termId in source.UsedTermsIds)
+        {
+            clone.UsedTermsIds.Add(termId);
+        }
+
+        foreach (var kvp in source.LettersByCell)
+        {
+            clone.LettersByCell.Add(kvp.Key, kvp.Value);
+        }
+
+        return clone;
     }
 
     private KrizaljkaSolveStats BuildSolveStats(bool solved)
