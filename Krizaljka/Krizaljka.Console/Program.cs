@@ -609,7 +609,7 @@ while (true)
                 continue;
             }
             Console.WriteLine($"Started: {DateTime.Now}");
-            var createResult = new KrizaljkaCreator(theKrizaljka).TrySolve(pojmoviDb.Terms, 2);
+            var createResult = new KrizaljkaCreator(theKrizaljka).TrySolve(pojmoviDb.Terms, 3);
             
             var ts = TimeSpan.FromMilliseconds(createResult.Stats.ElapsedMilliseconds);
             var elapsed = $"{ts.Hours}h {ts.Minutes}m {ts.Seconds}s";
@@ -632,7 +632,7 @@ while (true)
             if (!createResult.IsCreated)
             {
                 Console.WriteLine("No solution found");
-                PrintKrizaljka();
+                theKrizaljka.ReplaceState(createResult.BestState);
                 Console.ReadKey();
                 continue;
             }

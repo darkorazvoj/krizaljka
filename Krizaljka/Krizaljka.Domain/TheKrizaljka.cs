@@ -22,7 +22,7 @@ public sealed class TheKrizaljka
         new(new Dictionary<(int, int), List<SlotUsage>>());
     
     public KrizaljkaTemplate Template { get; }
-    public KrizaljkaSolveState State { get; }
+    public KrizaljkaSolveState State { get; private set; }
 
     public IReadOnlyList<AssignedTerm> AssignedTerms => State.AssignedTermsBySlotId.Values.ToList().AsReadOnly();
     
@@ -100,4 +100,6 @@ public sealed class TheKrizaljka
 
         return true;
     }
+
+    public void ReplaceState(KrizaljkaSolveState state) => State = state;
 }
