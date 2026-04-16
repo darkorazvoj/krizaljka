@@ -43,16 +43,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     BuildSolveStats(false));
             }
 
-            //FinalizeFullyFilledUnassignedSlots();
-
-            //if (!TryInitializeDomains())
-            //{   
-            //    return new KrizaljkaCreateResult(
-            //        false,
-            //        theKrizaljka.State,
-            //        BuildSolveStats(false));
-            //}
-
             var solved = Solve(theKrizaljka.Slots);
             return new KrizaljkaCreateResult(
                 solved,
