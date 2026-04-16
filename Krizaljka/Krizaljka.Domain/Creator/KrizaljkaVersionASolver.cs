@@ -62,7 +62,7 @@ public sealed class KrizaljkaVersionASolver
                     continue;
                 }
 
-                var solveResult = creator.TrySolve(request.Terms);
+                var solveResult = creator.TrySolve(request.Terms, request.MaxSolveMinutesPerLayout);
 
                 if (solveResult.IsCreated)
                 {

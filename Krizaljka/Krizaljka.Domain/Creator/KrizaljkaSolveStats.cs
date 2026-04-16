@@ -3,6 +3,7 @@
 public sealed class KrizaljkaSolveStats
 {
     public bool Solved { get; init; }
+    public bool TimedOut { get; init; }
     public long ElapsedMilliseconds { get; init; }
     public long RecursiveCalls { get; init; }
     public long CandidateTries { get; init; }
