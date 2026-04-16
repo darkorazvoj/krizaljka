@@ -633,6 +633,7 @@ while (true)
             {
                 Console.WriteLine("No solution found");
                 theKrizaljka.ReplaceState(createResult.BestState);
+                PrintKrizaljka();
                 Console.ReadKey();
                 continue;
             }
