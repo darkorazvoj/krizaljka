@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Text.Unicode;
 using Krizaljka.Domain;
 using Krizaljka.Domain.Creator;
+using Krizaljka.Domain.Template;
+using Krizaljka.Domain.Terms;
 
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -37,6 +39,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("kp -> Assign pojam to krizaljka")
     .AppendLine("kd -> Delete pojam from krizaljka")
     .AppendLine("kcr -> Run krizaljka creator")
+    .AppendLine("kmts -> Run krizaljka template finder and creator for theme words")
     .ToString();
 
 
@@ -642,6 +645,104 @@ while (true)
             KrizaljkaStateManager.SaveSolvedState(createResult.State, theKrizaljka.Template.Id);
             Console.WriteLine("SOLVED!!!!");
             PrintKrizaljka();
+            Console.ReadKey();
+
+            break;
+
+        case "kmts":
+            if (pojmoviDb?.Terms is null)
+            {
+                Console.WriteLine("Terms database doesn't exist");
+                Console.ReadKey();
+                return;
+            }
+            List<KrizaljkaTemplate> templates = [];
+            List<Term> themeTerms = [];
+            while (true)
+            {
+                Console.Clear();
+                Console.Write("(A)ll templates or (s)elected? (x for exit): ");
+                var templateSelection = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(templateSelection))
+                {
+                    continue;
+                }
+
+                var templateSelectionUpper = templateSelection.ToUpper();
+
+               
+                if (templateSelectionUpper == "A")
+                {
+                    templates.AddRange( templatesDb.Templates);
+                }
+                else if (templateSelectionUpper == "S")
+                {
+                    while (true)
+                    {
+                        Console.Write("Template ID (d for DONE): ");
+                        var templateIdString = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(templateIdString))
+                        {
+                            continue;
+                        }
+
+                        var templateIdUpper = templateIdString.ToUpper();
+                        if (templateIdUpper == "D")
+                        {
+                            break;
+                        } 
+                        
+                        if (int.TryParse(templateIdUpper, out var templateId))
+                        {
+                            KrizaljkaTemplate? template = templatesDb.Templates.FirstOrDefault(x => x.Id == templateId);
+                            if (template is null)
+                            {
+                                continue;
+                            }
+
+                            templates.Add(template);
+                        }
+                    }
+                }
+               
+
+                while (true)
+                {
+                    Console.WriteLine("Term IDs (id1, id2, id2...)");
+                    var termIdListString = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(termIdListString))
+                    {
+                        continue;
+                    }
+
+                    var termIdList = termIdListString.Split(',', StringSplitOptions.TrimEntries);
+                    foreach (var termIdString in termIdList)
+                    {
+                        if (!int.TryParse(termIdString, out var termId))
+                        {
+                            continue;
+                        }
+                        var tlista = pojmoviDb.Terms.Where(x => x.Id == termId).ToList();
+                        var term = pojmoviDb.Terms.FirstOrDefault(x => x.Id == termId);
+                        if (term != null)
+                        {
+                            themeTerms.Add(term);
+                        }
+                    }
+
+                    break;
+                }
+
+                break;
+            }
+
+            Console.WriteLine($"Number of selected templates: {templates.Count}");
+            Console.WriteLine("Theme terms:");
+            foreach (var themeTerm in themeTerms)
+            {
+                Console.WriteLine($"ID: {themeTerm.Id}, '{themeTerm.DenseValue}', ('{themeTerm.DenseValue}') ");
+            }
+
             Console.ReadKey();
 
             break;
