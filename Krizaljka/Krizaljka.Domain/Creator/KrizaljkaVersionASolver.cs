@@ -1,11 +1,14 @@
-﻿using Krizaljka.Domain.TemplateAnalysis;
+﻿using Krizaljka.Domain.Template;
+using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.Domain.Creator;
 
 public sealed class KrizaljkaVersionASolver
 {
-    public KrizaljkaVersionAResult TrySolve(KrizaljkaVersionARequest request)
+    private record KrizaljkaVersionAWorkItem(KrizaljkaTemplate Template, KrizaljkaThemeLayout Layout);
+
+    public async Task<KrizaljkaVersionAResult> TrySolveAsync(KrizaljkaVersionARequest request)
     {
         var termsById = request.Terms.ToDictionary(x => x.Id);
 
@@ -22,8 +25,8 @@ public sealed class KrizaljkaVersionASolver
             .Take(request.MaxTemplatesToTry)
             .ToList();
 
-        KrizaljkaVersionAResult? bestPartial = null;
-
+        //KrizaljkaVersionAResult? bestPartial = null;
+        List<KrizaljkaVersionAWorkItem> workItems = [];
         foreach (var templateEntry in orderedTemplates)
         {
             var template = templateEntry.Template;
@@ -36,67 +39,160 @@ public sealed class KrizaljkaVersionASolver
 
             foreach (var layout in layouts)
             {
-                var freshKrizaljka = TheKrizaljka.Create(template, new KrizaljkaSolveState());
-                var creator = new KrizaljkaCreator(freshKrizaljka);
-
-                var placedAllThemes = true;
-                List<KrizaljkaThemePlacement> placedThemes = [];
-
-                foreach (var placement in layout.Placements)
-                {
-                    if (!creator.TryPlaceAssignedTermManually(
-                            request.Terms,
-                            placement.SlotId,
-                            placement.TermId,
-                            out _))
-                    {
-                        placedAllThemes = false;
-                        break;
-                    }
-
-                    placedThemes.Add(placement);
-                }
-
-                if (!placedAllThemes)
-                {
-                    continue;
-                }
-
-                var solveResult = creator.TrySolve(request.Terms, request.MaxSolveMinutesPerLayout);
-
-                if (solveResult.IsCreated)
-                {
-                    return new KrizaljkaVersionAResult(
-                        true,
-                        template,
-                        placedThemes,
-                        solveResult);
-                }
-
-                if (bestPartial is null)
-                {
-                    bestPartial = new KrizaljkaVersionAResult(
-                        false,
-                        template,
-                        placedThemes,
-                        solveResult);
-
-                    continue;
-                }
-
-                if (solveResult.Stats.MaxAssignedSlotsReached >
-                    bestPartial.CreateResult!.Stats.MaxAssignedSlotsReached)
-                {
-                    bestPartial = new KrizaljkaVersionAResult(
-                        false,
-                        template,
-                        placedThemes,
-                        solveResult);
-                }
+                workItems.Add(new KrizaljkaVersionAWorkItem(template, layout));
             }
         }
 
-        return bestPartial ?? new KrizaljkaVersionAResult(false, null, [], null);
+        KrizaljkaVersionAResult? bestPartial = null;
+        const int batchSize = 5;
+
+        for (var i = 0; i < workItems.Count; i++)
+        {
+            var batch = workItems
+                .Skip(i)
+                .Take(batchSize)
+                .ToList();
+
+            using var cts = new CancellationTokenSource();
+
+            var tasks = batch
+                .Select(wi => Task.Run(() => SolveWorkItem(wi, request, cts.Token), CancellationToken.None))
+                .ToList();
+
+            var results = await Task.WhenAll(tasks);
+            var solved = results.FirstOrDefault(x => x.Solved);
+            if (solved is not null)
+            {
+                await cts.CancelAsync();
+                return solved;
+            }
+
+            var bestInBatch = results
+                .Where(x => x.CreateResult is not null)
+                .OrderByDescending(x => x.CreateResult!.Stats.MaxAssignedSlotsReached)
+                .FirstOrDefault();
+
+            if (bestInBatch is not null &&
+                (bestPartial is null ||
+                 bestInBatch.CreateResult!.Stats.MaxAssignedSlotsReached >
+                 bestPartial.CreateResult!.Stats.MaxAssignedSlotsReached))
+            {
+                bestPartial = bestInBatch;
+            }
+        }
+
+        return bestPartial ?? new KrizaljkaVersionAResult(
+            false,
+            null,
+            [],
+            null);
+
+
+
+        //var freshKrizaljka = TheKrizaljka.Create(template, new KrizaljkaSolveState());
+        //    var creator = new KrizaljkaCreator(freshKrizaljka);
+
+        //    var placedAllThemes = true;
+        //    List<KrizaljkaThemePlacement> placedThemes = [];
+
+        //    foreach (var placement in layout.Placements)
+        //    {
+        //        if (!creator.TryPlaceAssignedTermManually(
+        //                request.Terms,
+        //                placement.SlotId,
+        //                placement.TermId,
+        //                out _))
+        //        {
+        //            placedAllThemes = false;
+        //            break;
+        //        }
+
+        //        placedThemes.Add(placement);
+        //    }
+
+        //    if (!placedAllThemes)
+        //    {
+        //        continue;
+        //    }
+
+        //    var solveResult = creator.TrySolve(request.Terms, request.MaxSolveMinutesPerLayout);
+
+        //    if (solveResult.IsCreated)
+        //    {
+        //        return new KrizaljkaVersionAResult(
+        //            true,
+        //            template,
+        //            placedThemes,
+        //            solveResult);
+        //    }
+
+        //    if (bestPartial is null)
+        //    {
+        //        bestPartial = new KrizaljkaVersionAResult(
+        //            false,
+        //            template,
+        //            placedThemes,
+        //            solveResult);
+
+        //        continue;
+        //    }
+
+        //    if (solveResult.Stats.MaxAssignedSlotsReached >
+        //        bestPartial.CreateResult!.Stats.MaxAssignedSlotsReached)
+        //    {
+        //        bestPartial = new KrizaljkaVersionAResult(
+        //            false,
+        //            template,
+        //            placedThemes,
+        //            solveResult);
+        //    }
+
+
+
+        //return bestPartial ?? new KrizaljkaVersionAResult(false, null, [], null);
+    }
+
+    private KrizaljkaVersionAResult SolveWorkItem(
+        KrizaljkaVersionAWorkItem workItem,
+        KrizaljkaVersionARequest request,
+        CancellationToken stopToken)
+    {
+        var freshKrizaljka = TheKrizaljka.Create(workItem.Template, new KrizaljkaSolveState());
+        var creator = new KrizaljkaCreator(freshKrizaljka);
+
+        var placedAllThemes = true;
+        List<KrizaljkaThemePlacement> placedThemes = [];
+
+        foreach (var placement in workItem.Layout.Placements)
+        {
+            if (!creator.TryPlaceAssignedTermManually(
+                    request.Terms,
+                    placement.SlotId,
+                    placement.TermId,
+                    out _))
+            {
+                placedAllThemes = false;
+                break;
+            }
+
+            placedThemes.Add(placement);
+        }
+
+        if (!placedAllThemes)
+        {
+            return new KrizaljkaVersionAResult(false, workItem.Template, placedThemes, null);
+        }
+
+        var solveResult = creator.TrySolve(
+            request.Terms,
+            request.MaxSolveMinutesPerLayout,
+            stopToken);
+
+        return new KrizaljkaVersionAResult(
+            solveResult.IsCreated,
+            workItem.Template,
+            placedThemes,
+            solveResult);
     }
 
     private static int ScoreTemplate(

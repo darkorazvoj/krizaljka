@@ -611,14 +611,15 @@ while (true)
                 Console.ReadKey();
                 continue;
             }
+
             Console.WriteLine($"Started: {DateTime.Now}");
-            var createResult = new KrizaljkaCreator(theKrizaljka).TrySolve(pojmoviDb.Terms, 3);
-            
+            var createResult = new KrizaljkaCreator(theKrizaljka)
+                .TrySolve(pojmoviDb.Terms, 3, CancellationToken.None);
+
             var ts = TimeSpan.FromMilliseconds(createResult.Stats.ElapsedMilliseconds);
             var elapsed = $"{ts.Hours}h {ts.Minutes}m {ts.Seconds}s";
 
-
-            Console.WriteLine($"Timed out?: {(createResult.Stats.TimedOut ? "YEP": "no")}");
+            Console.WriteLine($"Timed out?: {(createResult.Stats.TimedOut ? "YEP" : "no")}");
             Console.WriteLine($"RecursiveCalls: {createResult.Stats.RecursiveCalls}");
             Console.WriteLine($"CandidateTries: {createResult.Stats.CandidateTries}");
             Console.WriteLine($"Backtracks: {createResult.Stats.Backtracks}");
@@ -627,7 +628,6 @@ while (true)
             Console.WriteLine($"SingletonAutoAssignments: {createResult.Stats.SingletonAutoAssignments}");
             Console.WriteLine($"MaxAssignedSlotsReached: {createResult.Stats.MaxAssignedSlotsReached}");
             Console.WriteLine($"FinalAssignedSlots: {createResult.Stats.FinalAssignedSlots}");
-            
 
             Console.WriteLine();
             Console.WriteLine($"Total Time: {elapsed}");
@@ -646,7 +646,6 @@ while (true)
             Console.WriteLine("SOLVED!!!!");
             PrintKrizaljka();
             Console.ReadKey();
-
             break;
 
         case "kmts":
@@ -722,7 +721,7 @@ while (true)
                         {
                             continue;
                         }
-                        var tlista = pojmoviDb.Terms.Where(x => x.Id == termId).ToList();
+                        
                         var term = pojmoviDb.Terms.FirstOrDefault(x => x.Id == termId);
                         if (term != null)
                         {
@@ -743,6 +742,7 @@ while (true)
                 Console.WriteLine($"ID: {themeTerm.Id}, '{themeTerm.DenseValue}', ('{themeTerm.DenseValue}') ");
             }
 
+            Console.WriteLine("");
             Console.ReadKey();
 
             break;

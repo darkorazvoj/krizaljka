@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Xml;
 using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
@@ -13,6 +14,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private Dictionary<long, Term> _normalizedTermsById = [];
     private Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<long>>> _termIdsByLengthAndLettersKey = [];
     private Dictionary<int, IReadOnlyList<Term>> _currentDomainsBySlotId = [];
+    private CancellationToken _stopToken;
 
     private readonly Stopwatch _stopwatch = new();
     private long _recursiveCalls;
@@ -26,10 +28,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private bool _timedOut;
     private KrizaljkaSolveState? _bestStateSnapshot;
 
-    public KrizaljkaCreateResult TrySolve(IReadOnlyList<Term> terms, int maxMinutes)
+    public KrizaljkaCreateResult TrySolve(
+        IReadOnlyList<Term> terms, 
+        int maxMinutes, 
+        CancellationToken stopToken)
     {
         ResetStats();
         _cache = new CreatorCache();
+        _stopToken = stopToken;
 
         _normalizedTerms = GetNormalizedTerms(terms);
         EnsureTermsCaches(_normalizedTerms);
@@ -98,6 +104,11 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     {
         while (true)
         {
+            if (HasTimedOut())
+            {
+                return false;
+            }
+
             if (!TryInitializeDomains())
             {
                 return false;
@@ -1039,6 +1050,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _maxAssignedSlotsReached = theKrizaljka.State.AssignedTermsBySlotId.Count;
         _maxSolveElapsedMilliseconds = null;
         _timedOut = false;
+        _stopToken = CancellationToken.None;
         _bestStateSnapshot = CloneState(theKrizaljka.State);
 
         _stopwatch.Reset();
@@ -1199,6 +1211,12 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     {
         if (_timedOut)
         {
+            return true;
+        }
+
+        if (_stopToken.IsCancellationRequested)
+        {
+            _timedOut = true;
             return true;
         }
 
