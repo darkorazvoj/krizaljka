@@ -1,5 +1,4 @@
-﻿using System.Net.WebSockets;
-using Krizaljka.Console;
+﻿using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
 using System.Text;
@@ -694,7 +693,7 @@ while (true)
                         
                         if (int.TryParse(templateIdUpper, out var templateId))
                         {
-                            KrizaljkaTemplate? template = templatesDb.Templates.FirstOrDefault(x => x.Id == templateId);
+                            var template = templatesDb.Templates.FirstOrDefault(x => x.Id == templateId);
                             if (template is null)
                             {
                                 continue;
@@ -750,7 +749,8 @@ while (true)
                 continue;
             }
 
-            var solverResult = await new KrizaljkaVersionASolver().TrySolveAsync(
+            Console.WriteLine($"Started at {DateTime.Now}...");
+            var (solved, krizaljkaTemplate, krizaljkaThemePlacements, createResult1) = await new KrizaljkaVersionASolver().TrySolveAsync(
                 new KrizaljkaVersionARequest(
                     templates,
                     pojmoviDb.Terms,
@@ -761,18 +761,15 @@ while (true)
                     12,
                     10));
 
-
-            if (solverResult.Solved)
+            if (solved)
             {
                 Console.WriteLine();
                 Console.WriteLine("SOLVED");
             }
 
-            if (solverResult.CreateResult is not null)
+            if (createResult1 is not null)
             {
-                var createResult1 = solverResult.CreateResult;
-
-                var ts1 = TimeSpan.FromMilliseconds(solverResult.CreateResult.Stats.ElapsedMilliseconds);
+                var ts1 = TimeSpan.FromMilliseconds(createResult1.Stats.ElapsedMilliseconds);
                 var elapsed1 = $"{ts1.Hours}h {ts1.Minutes}m {ts1.Seconds}s";
 
                 Console.WriteLine($"Timed out?: {(createResult1.Stats.TimedOut ? "YEP" : "no")}");
@@ -794,9 +791,9 @@ while (true)
                 Console.WriteLine();
             }
 
-            if (solverResult.Template is not null)
+            if (krizaljkaTemplate is not null)
             {
-                var template = templatesDb.Templates.FirstOrDefault(t => t.Id == solverResult.Template.Id);
+                var template = templatesDb.Templates.FirstOrDefault(t => t.Id == krizaljkaTemplate.Id);
                 if (template is null)
                 {
                     Console.WriteLine("Template disappeared");
@@ -804,16 +801,16 @@ while (true)
                     continue;
                 }
 
-                if (solverResult.CreateResult is null)
+                if (createResult1 is null)
                 {
                     Console.WriteLine("CreateResult disappeared");
                     Console.ReadKey();
                     continue;
                 }
 
-                if (solverResult.Solved)
+                if (solved)
                 {
-                    var solvedState = solverResult.CreateResult?.State;
+                    var solvedState = createResult1?.State;
                     if (solvedState is null)
                     {
                         Console.WriteLine("Solved state disappeared...");
@@ -825,19 +822,21 @@ while (true)
                 }
                 else
                 {
-                    var bestState = solverResult.CreateResult.BestState;
+                    var bestState = createResult1.BestState;
                     theKrizaljka = TheKrizaljka.Create(template, bestState);
                 }
 
                 PrintKrizaljka();
             }
 
-            foreach (var themePlacement in solverResult.ThemePlacements)
+            foreach (var themePlacement in krizaljkaThemePlacements)
             {
                 var term = pojmoviDb.Terms.FirstOrDefault(t => t.Id == themePlacement.TermId);
                 var termText = term is null ? string.Empty : $"o: {term.Description}, w: {term.DenseValue}";
                 Console.Write($"SlotId: {themePlacement.SlotId}, term: ID: {themePlacement.TermId} ({termText})");
             }
+
+            Console.ReadKey();
 
             // TODO save state(s)
 
