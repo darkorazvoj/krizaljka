@@ -24,8 +24,7 @@ public sealed class KrizaljkaVersionASolver
             .OrderByDescending(x => x.Score)
             .Take(request.MaxTemplatesToTry)
             .ToList();
-
-        //KrizaljkaVersionAResult? bestPartial = null;
+        
         List<KrizaljkaVersionAWorkItem> workItems = [];
         foreach (var templateEntry in orderedTemplates)
         {
@@ -86,70 +85,6 @@ public sealed class KrizaljkaVersionASolver
             null,
             [],
             null);
-
-
-
-        //var freshKrizaljka = TheKrizaljka.Create(template, new KrizaljkaSolveState());
-        //    var creator = new KrizaljkaCreator(freshKrizaljka);
-
-        //    var placedAllThemes = true;
-        //    List<KrizaljkaThemePlacement> placedThemes = [];
-
-        //    foreach (var placement in layout.Placements)
-        //    {
-        //        if (!creator.TryPlaceAssignedTermManually(
-        //                request.Terms,
-        //                placement.SlotId,
-        //                placement.TermId,
-        //                out _))
-        //        {
-        //            placedAllThemes = false;
-        //            break;
-        //        }
-
-        //        placedThemes.Add(placement);
-        //    }
-
-        //    if (!placedAllThemes)
-        //    {
-        //        continue;
-        //    }
-
-        //    var solveResult = creator.TrySolve(request.Terms, request.MaxSolveMinutesPerLayout);
-
-        //    if (solveResult.IsCreated)
-        //    {
-        //        return new KrizaljkaVersionAResult(
-        //            true,
-        //            template,
-        //            placedThemes,
-        //            solveResult);
-        //    }
-
-        //    if (bestPartial is null)
-        //    {
-        //        bestPartial = new KrizaljkaVersionAResult(
-        //            false,
-        //            template,
-        //            placedThemes,
-        //            solveResult);
-
-        //        continue;
-        //    }
-
-        //    if (solveResult.Stats.MaxAssignedSlotsReached >
-        //        bestPartial.CreateResult!.Stats.MaxAssignedSlotsReached)
-        //    {
-        //        bestPartial = new KrizaljkaVersionAResult(
-        //            false,
-        //            template,
-        //            placedThemes,
-        //            solveResult);
-        //    }
-
-
-
-        //return bestPartial ?? new KrizaljkaVersionAResult(false, null, [], null);
     }
 
     private KrizaljkaVersionAResult SolveWorkItem(
