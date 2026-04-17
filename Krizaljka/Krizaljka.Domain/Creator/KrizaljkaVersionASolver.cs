@@ -1,139 +1,453 @@
 ﻿using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+using System.Threading.Channels;
 
 namespace Krizaljka.Domain.Creator;
 
 public sealed class KrizaljkaVersionASolver
 {
-    private record KrizaljkaVersionAWorkItem(KrizaljkaTemplate Template, KrizaljkaThemeLayout Layout);
+    private const string ProcessedTemplatesStatesDir = @"C:\git\krizaljka\templates\states\processed";
+    private static readonly JsonSerializerOptions Options = new()
+        { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true  };
+    private readonly Channel<SolveAttemptMessage> _channel;
 
-    public async Task<KrizaljkaVersionAResult> TrySolveAsync(KrizaljkaVersionARequest request)
+    public KrizaljkaVersionASolver(int workerCount = 5)
     {
+        _channel = Channel.CreateUnbounded<SolveAttemptMessage>(
+            new UnboundedChannelOptions
+            {
+                SingleReader = false,
+                SingleWriter = false
+            });
+
+        for (var i = 0; i < workerCount; i++)
+        {
+            _ = Task.Run(ProcessQueueAsync);
+        }
+    }
+
+    public Guid? QueueSolveAttempt(KrizaljkaVersionARequest request)
+    {
+        var processId = Guid.NewGuid();
+
+        var message = new SolveAttemptMessage(processId, request);
+
+        if (!_channel.Writer.TryWrite(message))
+        {
+            return null;
+        }
+
+        return processId;
+    }
+
+    private async Task ProcessQueueAsync()
+    {
+        await foreach (var message in _channel.Reader.ReadAllAsync())
+        {
+            try
+            {
+                await ProcessSolveAttemptAsync(message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Some error while processing solve attempt: {e.Message}");
+            }
+        }
+    }
+
+    private async Task ProcessSolveAttemptAsync(SolveAttemptMessage message)
+    {
+        var request = message.Request;
         var termsById = request.Terms.ToDictionary(x => x.Id);
 
         var orderedTemplates = request.Templates
             .Select(template =>
             {
-                var krizaljka = TheKrizaljka.Create(template, new KrizaljkaSolveState());
+                var krizaljka = TheKrizaljka.Create(template);
                 var score = ScoreTemplate(krizaljka, request.ThemeTermIds, termsById);
 
-                return new { Template = template, Score = score, Krizaljka = krizaljka };
+                return new
+                {
+                    Template = template,
+                    Score = score
+                };
             })
             .Where(x => x.Score > int.MinValue)
             .OrderByDescending(x => x.Score)
             .Take(request.MaxTemplatesToTry)
             .ToList();
-        
-        List<KrizaljkaVersionAWorkItem> workItems = [];
-        foreach (var templateEntry in orderedTemplates)
+
+        var batchSize = Math.Max(1, request.MaxLayoutsPerTemplate);
+
+        for (var i = 0; i < orderedTemplates.Count; i++)
         {
-            var template = templateEntry.Template;
-            var analyzedKrizaljka = templateEntry.Krizaljka;
-
-            var layouts = BuildThemeLayouts(
-                analyzedKrizaljka,
-                request,
-                termsById);
-
-            foreach (var layout in layouts)
-            {
-                workItems.Add(new KrizaljkaVersionAWorkItem(template, layout));
-            }
-        }
-
-        KrizaljkaVersionAResult? bestPartial = null;
-        const int batchSize = 5;
-
-        for (var i = 0; i < workItems.Count; i++)
-        {
-            var batch = workItems
+            var batch = orderedTemplates
                 .Skip(i)
                 .Take(batchSize)
                 .ToList();
 
-            using var cts = new CancellationTokenSource();
-
-            var tasks = batch
-                .Select(wi => Task.Run(() => SolveWorkItem(wi, request, cts.Token), CancellationToken.None))
+            var runningTasks = batch
+                .Select(templateEntry => ProcessTemplateAsync(
+                    templateEntry.Template,
+                    request,
+                    termsById))
                 .ToList();
 
-            var results = await Task.WhenAll(tasks);
-            var solved = results.FirstOrDefault(x => x.Solved);
-            if (solved is not null)
-            {
-                await cts.CancelAsync();
-                return solved;
-            }
 
-            var bestInBatch = results
-                .Where(x => x.CreateResult is not null)
-                .OrderByDescending(x => x.CreateResult!.Stats.MaxAssignedSlotsReached)
-                .FirstOrDefault();
-
-            if (bestInBatch is not null &&
-                (bestPartial is null ||
-                 bestInBatch.CreateResult!.Stats.MaxAssignedSlotsReached >
-                 bestPartial.CreateResult!.Stats.MaxAssignedSlotsReached))
+            while (runningTasks.Count > 0)
             {
-                bestPartial = bestInBatch;
+                var finishedTask = await Task.WhenAny(runningTasks);
+                runningTasks.Remove(finishedTask);
+
+                var processedTemplate = await finishedTask;
+
+                await SaveProcessedTemplateAsync(
+                    message.ProcessId,
+                    processedTemplate);
             }
         }
 
-        return bestPartial ?? new KrizaljkaVersionAResult(
-            false,
-            null,
-            [],
-            null);
     }
 
-    private KrizaljkaVersionAResult SolveWorkItem(
-        KrizaljkaVersionAWorkItem workItem,
-        KrizaljkaVersionARequest request,
-        CancellationToken stopToken)
+    private static async Task SaveProcessedTemplateAsync(Guid processId, ProcessedTemplate processedTemplate)
     {
-        var freshKrizaljka = TheKrizaljka.Create(workItem.Template, new KrizaljkaSolveState());
-        var creator = new KrizaljkaCreator(freshKrizaljka);
-
-        var placedAllThemes = true;
-        List<KrizaljkaThemePlacement> placedThemes = [];
-
-        foreach (var placement in workItem.Layout.Placements)
+        try
         {
-            if (!creator.TryPlaceAssignedTermManually(
-                    request.Terms,
-                    placement.SlotId,
-                    placement.TermId,
-                    out _))
+            var currentSolveFolder = Path.Combine(ProcessedTemplatesStatesDir, processId.ToString());
+
+            if (!Directory.Exists(currentSolveFolder))
             {
-                placedAllThemes = false;
-                break;
+                Directory.CreateDirectory(currentSolveFolder);
             }
 
-            placedThemes.Add(placement);
-        }
+            var isSolvedText = processedTemplate.IsSolved ? "SOLVED" : "NOT_solved";
+            var fileName = $"template_{processedTemplate.TemplateId}_{isSolvedText}.json";
 
-        if (!placedAllThemes)
+
+            var processedTemplateJsonString = JsonSerializer.Serialize(processedTemplate, Options);
+            await File.WriteAllTextAsync(Path.Combine(currentSolveFolder, fileName),
+                processedTemplateJsonString);
+        }
+        catch (Exception e)
         {
-            return new KrizaljkaVersionAResult(false, workItem.Template, placedThemes, null);
+            Console.WriteLine(
+                $"SAVE FAILED: TemplateId: {processedTemplate.TemplateId}, isSolved: {processedTemplate.IsSolved}");
+        }
+    }
+
+    private Task<ProcessedTemplate> ProcessTemplateAsync(
+        KrizaljkaTemplate template,
+        KrizaljkaVersionARequest request,
+        Dictionary<long, Term> termsById) => Task.Run(() => ProcessTemplate(template, request, termsById));
+
+    private ProcessedTemplate ProcessTemplate(
+        KrizaljkaTemplate template,
+        KrizaljkaVersionARequest request,
+        IReadOnlyDictionary<long, Term> termsById)
+    {
+        var analyzedKrizaljka = TheKrizaljka.Create(template);
+
+        var layouts = BuildThemeLayouts(
+            analyzedKrizaljka,
+            request,
+            termsById);
+
+        var bestState = analyzedKrizaljka.State;
+        var bestAssignedCount = analyzedKrizaljka.State.AssignedTermsBySlotId.Count;
+
+        foreach (var layout in layouts)
+        {
+            var freshKrizaljka = TheKrizaljka.Create(template);
+            var creator = new KrizaljkaCreator(freshKrizaljka);
+
+            var placedAllThemes = true;
+
+            foreach (var placement in layout.Placements)
+            {
+                if (!creator.TryPlaceAssignedTermManually(
+                        request.Terms,
+                        placement.SlotId,
+                        placement.TermId,
+                        out _))
+                {
+                    placedAllThemes = false;
+                    break;
+                }
+            }
+
+            if (!placedAllThemes)
+            {
+                continue;
+            }
+
+            var solveResult = creator.TrySolve(
+                request.Terms,
+                request.MaxSolveMinutesPerTemplate,
+                CancellationToken.None);
+
+            if (solveResult.IsCreated)
+            {
+                return new ProcessedTemplate(
+                    template.Id,
+                    true,
+                    solveResult.CurrentState);
+            }
+
+            var assignedCount = solveResult.BestState.AssignedTermsBySlotId.Count;
+
+            if (assignedCount > bestAssignedCount)
+            {
+                bestAssignedCount = assignedCount;
+                bestState = solveResult.BestState;
+            }
         }
 
-        var solveResult = creator.TrySolve(
-            request.Terms,
-            request.MaxSolveMinutesPerLayout,
-            stopToken);
+        return new ProcessedTemplate(
+            template.Id,
+            false,
+            bestState);
+    }
 
-        return new KrizaljkaVersionAResult(
-            solveResult.IsCreated,
-            workItem.Template,
-            placedThemes,
-            solveResult);
+    private List<KrizaljkaThemeLayout> BuildThemeLayouts(
+        TheKrizaljka krizaljka,
+        KrizaljkaVersionARequest request,
+        IReadOnlyDictionary<long, Term> termsById)
+    {
+        var themeTerms = request.ThemeTermIds
+            .Select(id => termsById[id])
+            .ToList();
+
+        var candidateSlotsByTermId = new Dictionary<long, List<KrizaljkaSlot>>();
+
+        foreach (var term in themeTerms)
+        {
+            var candidateSlots = krizaljka.Slots
+                .Where(slot => slot.Length == term.Length)
+                .OrderByDescending(slot => ScoreSlot(krizaljka, slot))
+                .Take(request.MaxSlotsPerThemeTerm)
+                .ToList();
+
+            if (candidateSlots.Count == 0)
+            {
+                return [];
+            }
+
+            candidateSlotsByTermId[term.Id] = candidateSlots;
+        }
+
+        var orderedThemeTerms = themeTerms
+            .OrderBy(term => candidateSlotsByTermId[term.Id].Count)
+            .ThenByDescending(term => term.Length)
+            .ThenBy(term => term.Id)
+            .ToList();
+
+        List<KrizaljkaThemeLayout> layouts = [];
+        List<KrizaljkaThemePlacement> currentPlacements = [];
+        HashSet<int> usedSlotIds = [];
+
+        BuildThemeLayoutsRecursive(
+            krizaljka,
+            orderedThemeTerms,
+            candidateSlotsByTermId,
+            currentPlacements,
+            usedSlotIds,
+            layouts,
+            request.MaxLayoutsPerTemplate);
+
+        return layouts
+            .OrderByDescending(x => x.Score)
+            .ToList();
+    }
+
+    private void BuildThemeLayoutsRecursive(
+        TheKrizaljka krizaljka,
+        IReadOnlyList<Term> orderedThemeTerms,
+        IReadOnlyDictionary<long, List<KrizaljkaSlot>> candidateSlotsByTermId,
+        List<KrizaljkaThemePlacement> currentPlacements,
+        HashSet<int> usedSlotIds,
+        List<KrizaljkaThemeLayout> layouts,
+        int maxLayoutsPerTemplate)
+    {
+        if (layouts.Count >= maxLayoutsPerTemplate)
+        {
+            return;
+        }
+
+        if (currentPlacements.Count == orderedThemeTerms.Count)
+        {
+            var score = ScoreLayout(krizaljka, currentPlacements, orderedThemeTerms);
+            layouts.Add(new KrizaljkaThemeLayout(currentPlacements.ToList(), score));
+            return;
+        }
+
+        var term = orderedThemeTerms[currentPlacements.Count];
+        var candidateSlots = candidateSlotsByTermId[term.Id];
+
+        foreach (var slot in candidateSlots)
+        {
+            if (usedSlotIds.Contains(slot.Id))
+            {
+                continue;
+            }
+
+            if (!IsCompatibleWithExistingPlacements(
+                    krizaljka,
+                    slot,
+                    term,
+                    currentPlacements,
+                    orderedThemeTerms))
+            {
+                continue;
+            }
+
+            currentPlacements.Add(new KrizaljkaThemePlacement(slot.Id, term.Id));
+            usedSlotIds.Add(slot.Id);
+
+            BuildThemeLayoutsRecursive(
+                krizaljka,
+                orderedThemeTerms,
+                candidateSlotsByTermId,
+                currentPlacements,
+                usedSlotIds,
+                layouts,
+                maxLayoutsPerTemplate);
+
+            usedSlotIds.Remove(slot.Id);
+            currentPlacements.RemoveAt(currentPlacements.Count - 1);
+
+            if (layouts.Count >= maxLayoutsPerTemplate)
+            {
+                return;
+            }
+        }
+    }
+
+    private bool IsCompatibleWithExistingPlacements(
+        TheKrizaljka krizaljka,
+        KrizaljkaSlot candidateSlot,
+        Term candidateTerm,
+        IReadOnlyList<KrizaljkaThemePlacement> currentPlacements,
+        IReadOnlyList<Term> allThemeTerms)
+    {
+        foreach (var existingPlacement in currentPlacements)
+        {
+            if (!krizaljka.SlotsById.TryGetValue(existingPlacement.SlotId, out var existingSlot))
+            {
+                return false;
+            }
+
+            var existingTerm = allThemeTerms.First(x => x.Id == existingPlacement.TermId);
+
+            if (!AreSlotsCompatible(candidateSlot, candidateTerm, existingSlot, existingTerm))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool AreSlotsCompatible(
+        KrizaljkaSlot firstSlot,
+        Term firstTerm,
+        KrizaljkaSlot secondSlot,
+        Term secondTerm)
+    {
+        for (var i = 0; i < firstSlot.CellKeys.Count; i++)
+        {
+            for (var j = 0; j < secondSlot.CellKeys.Count; j++)
+            {
+                if (firstSlot.CellKeys[i] != secondSlot.CellKeys[j])
+                {
+                    continue;
+                }
+
+                if (!string.Equals(
+                        firstTerm.Letters[i],
+                        secondTerm.Letters[j],
+                        StringComparison.Ordinal))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private int ScoreLayout(
+        TheKrizaljka krizaljka,
+        IReadOnlyList<KrizaljkaThemePlacement> placements,
+        IReadOnlyList<Term> allThemeTerms)
+    {
+        var total = 0;
+
+        foreach (var placement in placements)
+        {
+            if (!krizaljka.SlotsById.TryGetValue(placement.SlotId, out var slot))
+            {
+                continue;
+            }
+
+            total += ScoreSlot(krizaljka, slot);
+        }
+
+        for (var i = 0; i < placements.Count; i++)
+        {
+            for (var j = i + 1; j < placements.Count; j++)
+            {
+                if (!krizaljka.SlotsById.TryGetValue(placements[i].SlotId, out var firstSlot))
+                {
+                    continue;
+                }
+
+                if (!krizaljka.SlotsById.TryGetValue(placements[j].SlotId, out var secondSlot))
+                {
+                    continue;
+                }
+
+                if (!DoSlotsIntersect(firstSlot, secondSlot))
+                {
+                    continue;
+                }
+
+                var firstTerm = allThemeTerms.First(x => x.Id == placements[i].TermId);
+                var secondTerm = allThemeTerms.First(x => x.Id == placements[j].TermId);
+
+                if (AreSlotsCompatible(firstSlot, firstTerm, secondSlot, secondTerm))
+                {
+                    total += 500;
+                }
+            }
+        }
+
+        return total;
+    }
+
+    private bool DoSlotsIntersect(KrizaljkaSlot firstSlot, KrizaljkaSlot secondSlot)
+    {
+        for (var i = 0; i < firstSlot.CellKeys.Count; i++)
+        {
+            for (var j = 0; j < secondSlot.CellKeys.Count; j++)
+            {
+                if (firstSlot.CellKeys[i] == secondSlot.CellKeys[j])
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static int ScoreTemplate(
-        TheKrizaljka krizaljka,
-        IReadOnlyList<long> themeTermIds,
-        Dictionary<long, Term> termsById)
+    TheKrizaljka krizaljka,
+    IReadOnlyList<long> themeTermIds,
+    Dictionary<long, Term> termsById)
     {
         var total = 0;
 
@@ -165,239 +479,7 @@ public sealed class KrizaljkaVersionASolver
     }
 
     private static int ScoreSlot(TheKrizaljka krizaljka, KrizaljkaSlot slot) =>
-        krizaljka.IntersectionsBySlotId.TryGetValue(slot.Id, out var intersections)
-            ? intersections.Count
-            : 0;
-
-    private List<KrizaljkaThemeLayout> BuildThemeLayouts(
-        TheKrizaljka krizaljka,
-        KrizaljkaVersionARequest request,
-        Dictionary<long, Term> termsById)
-    {
-        var themeTerms = request.ThemeTermIds
-            .Select(id => termsById[id])
-            .ToList();
-
-        var candidateSlotsByTermId = new Dictionary<long, List<KrizaljkaSlot>>();
-
-        foreach (var term in themeTerms)
-        {
-            var candidateSlots = krizaljka.Slots
-                .Where(slot => slot.Length == term.Length)
-                .OrderByDescending(slot => ScoreSlot(krizaljka, slot))
-                .Take(request.MaxSlotPerThemeTerm)
-                .ToList();
-
-            if (candidateSlots.Count == 0)
-            {
-                return [];
-            }
-
-            candidateSlotsByTermId[term.Id] = candidateSlots;
-        }
-
-        var orderedThemeTerms = themeTerms
-            .OrderBy(term => candidateSlotsByTermId[term.Id].Count)
-            .ThenByDescending(term => term.Length)
-            .ThenBy(term => term.Id)
-            .ToList();
-
-        List<KrizaljkaThemeLayout> layouts = [];
-        List<KrizaljkaThemePlacement> currentPlacements = [];
-        HashSet<int> usedSlotsId = [];
-
-        BuildThemeLayoutsRecursive(
-            krizaljka,
-            orderedThemeTerms,
-            candidateSlotsByTermId,
-            currentPlacements,
-            usedSlotsId,
-            layouts,
-            request.MaxLayoutsPerTemplate);
-
-        return layouts
-            .OrderByDescending(x => x.Score)
-            .ToList();
-    }
-
-    private static void BuildThemeLayoutsRecursive(
-        TheKrizaljka krizaljka,
-        IReadOnlyList<Term> orderedThemeTerms,
-        IReadOnlyDictionary<long, List<KrizaljkaSlot>> candidateSlotsByTermId,
-        List<KrizaljkaThemePlacement> currentPlacement,
-        HashSet<int> usedSlotIds,
-        List<KrizaljkaThemeLayout> layouts,
-        int maxLayoutsPerTemplate)
-    {
-        if (layouts.Count >= maxLayoutsPerTemplate)
-        {
-            return;
-        }
-
-        if (currentPlacement.Count == orderedThemeTerms.Count)
-        {
-            var score = ScoreLayout(krizaljka, currentPlacement, orderedThemeTerms);
-            layouts.Add(new KrizaljkaThemeLayout(currentPlacement.ToList(), score));
-            return;
-        }
-
-        var term = orderedThemeTerms[currentPlacement.Count];
-        var candidateSlots = candidateSlotsByTermId[term.Id];
-
-        foreach (var slot in candidateSlots)
-        {
-            if (usedSlotIds.Contains(slot.Id))
-            {
-                continue;
-            }
-
-            if (!IsCompatibleWithExistingPlacement(
-                    krizaljka,
-                    slot,
-                    term,
-                    currentPlacement,
-                    orderedThemeTerms))
-            {
-                continue;
-            }
-
-            currentPlacement.Add(new KrizaljkaThemePlacement(slot.Id, term.Id));
-            usedSlotIds.Add(slot.Id);
-
-            BuildThemeLayoutsRecursive(
-                krizaljka,
-                orderedThemeTerms,
-                candidateSlotsByTermId,
-                currentPlacement,
-                usedSlotIds,
-                layouts,
-                maxLayoutsPerTemplate);
-
-            usedSlotIds.Remove(slot.Id);
-            currentPlacement.RemoveAt(currentPlacement.Count - 1);
-
-            if (layouts.Count >= maxLayoutsPerTemplate)
-            {
-                return;
-            }
-        }
-    }
-
-    private static bool IsCompatibleWithExistingPlacement(
-        TheKrizaljka krizaljka,
-        KrizaljkaSlot candidateSlot,
-        Term candiTerm,
-        IReadOnlyList<KrizaljkaThemePlacement> currentPlacements,
-        IReadOnlyList<Term> allThemeTerms)
-    {
-        foreach (var existingPlacement in currentPlacements)
-        {
-            if (!krizaljka.SlotsById.TryGetValue(existingPlacement.SlotId, out var existingSlot))
-            {
-                return false;
-            }
-
-            var existingTerm = allThemeTerms.First(x => x.Id == existingPlacement.TermId);
-
-            if (!AreSlotsCompatible(candidateSlot, candiTerm, existingSlot, existingTerm))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool AreSlotsCompatible(
-        KrizaljkaSlot firstSlot,
-        Term firstTerm,
-        KrizaljkaSlot secondSlot,
-        Term secondTerm)
-    {
-        for (var i = 0; i < firstSlot.CellKeys.Count; i++)
-        {
-            for (var j = 0; j < secondSlot.CellKeys.Count; j++)
-            {
-                if (firstSlot.CellKeys[i] != secondSlot.CellKeys[j])
-                {
-                    continue;
-                }
-
-                if (!string.Equals(
-                        firstTerm.Letters[i],
-                        secondTerm.Letters[j],
-                        StringComparison.Ordinal))
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private static int ScoreLayout(
-        TheKrizaljka krizaljka,
-        IReadOnlyList<KrizaljkaThemePlacement> placements,
-        IReadOnlyList<Term> allThemeTerms)
-    {
-        var total = 0;
-
-        foreach (var placement in placements)
-        {
-            if (!krizaljka.SlotsById.TryGetValue(placement.SlotId, out var slot))
-            {
-                continue;
-            }
-
-            total += ScoreSlot(krizaljka, slot);
-        }
-
-        for (var i = 0; i < placements.Count; i++)
-        {
-            for (var j = 0; j < placements.Count; j++)
-            {
-                if(!krizaljka.SlotsById.TryGetValue(placements[i].SlotId, out var firstSlot))
-                {
-                    continue;
-                }
-
-                if (!krizaljka.SlotsById.TryGetValue(placements[j].SlotId, out var secondSlot))
-                {
-                    continue;
-                }
-
-                if (!DoSlotsIntersect(firstSlot, secondSlot))
-                {
-                    continue;
-                }
-
-                var firstTerm = allThemeTerms.First(x => x.Id == placements[i].TermId);
-                var secondTerm = allThemeTerms.First(x => x.Id == placements[j].TermId);
-
-                if (AreSlotsCompatible(firstSlot, firstTerm, secondSlot, secondTerm))
-                {
-                    total += 500;
-                }
-            }
-        }
-
-        return total;
-    }
-
-    private static bool DoSlotsIntersect(KrizaljkaSlot firstSlot, KrizaljkaSlot secondSlot)
-    {
-        for (var i = 0; i < firstSlot.CellKeys.Count; i++)
-        {
-            for (var j = 0; j < secondSlot.CellKeys.Count; j++)
-            {
-                if (firstSlot.CellKeys[i] == secondSlot.CellKeys[j])
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
+    krizaljka.IntersectionsBySlotId.TryGetValue(slot.Id, out var intersections)
+        ? intersections.Count
+        : 0;
 }

@@ -3,6 +3,6 @@ namespace Krizaljka.Domain.Creator;
 
 public record KrizaljkaCreateResult(
     bool IsCreated,
-    KrizaljkaSolveState State,
+    KrizaljkaSolveState CurrentState,
     KrizaljkaSolveState BestState,
     KrizaljkaSolveStats Stats);

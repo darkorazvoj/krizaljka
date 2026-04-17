@@ -29,10 +29,10 @@ public sealed class TheKrizaljka
 
     private TheKrizaljka(
         KrizaljkaTemplate template,
-        KrizaljkaSolveState? state)
+        KrizaljkaSolveState state)
     {
         Template = template;
-        State = state ?? new KrizaljkaSolveState();
+        State = state;
     }
 
     private void Init()
@@ -48,9 +48,10 @@ public sealed class TheKrizaljka
 
     public static TheKrizaljka Create(
         KrizaljkaTemplate template,
-        KrizaljkaSolveState? state)
+        KrizaljkaSolveState? state = null)
     {
-        var krizaljka = new TheKrizaljka(template, state);
+
+        var krizaljka = new TheKrizaljka(template, state ?? new KrizaljkaSolveState());
         krizaljka.Init();
         return krizaljka;
     }

@@ -40,6 +40,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("kd -> Delete pojam from krizaljka")
     .AppendLine("kcr -> Run krizaljka creator")
     .AppendLine("kmts -> Run krizaljka template finder and creator for theme words")
+    .AppendLine("st => Check processed templates")
     .ToString();
 
 
@@ -642,7 +643,7 @@ while (true)
             }
 
             // TODO save state
-            KrizaljkaStateManager.SaveSolvedState(createResult.State, theKrizaljka.Template.Id);
+            //KrizaljkaStateManager.SaveSolvedState(createResult.State, theKrizaljka.Template.Id);
             Console.WriteLine("SOLVED!!!!");
             PrintKrizaljka();
             Console.ReadKey();
@@ -750,7 +751,7 @@ while (true)
             }
 
             Console.WriteLine($"Started at {DateTime.Now}...");
-            var (solved, krizaljkaTemplate, krizaljkaThemePlacements, createResult1) = await new KrizaljkaVersionASolver().TrySolveAsync(
+            var processId =  new KrizaljkaVersionASolver().QueueSolveAttempt(
                 new KrizaljkaVersionARequest(
                     templates,
                     pojmoviDb.Terms,
@@ -759,86 +760,96 @@ while (true)
                     20,
                     20,
                     12,
-                    10));
+                    10,
+                    5));
 
-            if (solved)
+            if (!processId.HasValue)
             {
-                Console.WriteLine();
-                Console.WriteLine("SOLVED");
+                Console.WriteLine("ERROR....");
+                Console.ReadKey();
+                continue;
             }
 
-            if (createResult1 is not null)
-            {
-                var ts1 = TimeSpan.FromMilliseconds(createResult1.Stats.ElapsedMilliseconds);
-                var elapsed1 = $"{ts1.Hours}h {ts1.Minutes}m {ts1.Seconds}s";
+            Console.WriteLine($"Process ID: {processId}");
+            Console.ReadKey();
+            
 
-                Console.WriteLine($"Timed out?: {(createResult1.Stats.TimedOut ? "YEP" : "no")}");
-                Console.WriteLine($"RecursiveCalls: {createResult1.Stats.RecursiveCalls}");
-                Console.WriteLine($"CandidateTries: {createResult1.Stats.CandidateTries}");
-                Console.WriteLine($"Backtracks: {createResult1.Stats.Backtracks}");
-                Console.WriteLine($"DeadEnds: {createResult1.Stats.DeadEnds}");
-                Console.WriteLine($"FullyFilledAutoAssignments: {createResult1.Stats.FullyFilledAutoAssignments}");
-                Console.WriteLine($"SingletonAutoAssignments: {createResult1.Stats.SingletonAutoAssignments}");
-                Console.WriteLine($"MaxAssignedSlotsReached: {createResult1.Stats.MaxAssignedSlotsReached}");
-                Console.WriteLine($"FinalAssignedSlots: {createResult1.Stats.FinalAssignedSlots}");
+            //if (solved)
+            //{
+            //    Console.WriteLine();
+            //    Console.WriteLine("SOLVED");
+            //}
 
-                Console.WriteLine();
-                Console.WriteLine($"Total Time: {elapsed1}");
-            }
-            else
-            {
-                Console.WriteLine("Unknown STATS...");
-                Console.WriteLine();
-            }
+            //if (createResult1 is not null)
+            //{
+            //    var ts1 = TimeSpan.FromMilliseconds(createResult1.Stats.ElapsedMilliseconds);
+            //    var elapsed1 = $"{ts1.Hours}h {ts1.Minutes}m {ts1.Seconds}s";
 
-            if (krizaljkaTemplate is not null)
-            {
-                var template = templatesDb.Templates.FirstOrDefault(t => t.Id == krizaljkaTemplate.Id);
-                if (template is null)
-                {
-                    Console.WriteLine("Template disappeared");
-                    Console.ReadKey();
-                    continue;
-                }
+            //    Console.WriteLine($"Timed out?: {(createResult1.Stats.TimedOut ? "YEP" : "no")}");
+            //    Console.WriteLine($"RecursiveCalls: {createResult1.Stats.RecursiveCalls}");
+            //    Console.WriteLine($"CandidateTries: {createResult1.Stats.CandidateTries}");
+            //    Console.WriteLine($"Backtracks: {createResult1.Stats.Backtracks}");
+            //    Console.WriteLine($"DeadEnds: {createResult1.Stats.DeadEnds}");
+            //    Console.WriteLine($"FullyFilledAutoAssignments: {createResult1.Stats.FullyFilledAutoAssignments}");
+            //    Console.WriteLine($"SingletonAutoAssignments: {createResult1.Stats.SingletonAutoAssignments}");
+            //    Console.WriteLine($"MaxAssignedSlotsReached: {createResult1.Stats.MaxAssignedSlotsReached}");
+            //    Console.WriteLine($"FinalAssignedSlots: {createResult1.Stats.FinalAssignedSlots}");
 
-                if (createResult1 is null)
-                {
-                    Console.WriteLine("CreateResult disappeared");
-                    Console.ReadKey();
-                    continue;
-                }
+            //    Console.WriteLine();
+            //    Console.WriteLine($"Total Time: {elapsed1}");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Unknown STATS...");
+            //    Console.WriteLine();
+            //}
 
-                if (solved)
-                {
-                    var solvedState = createResult1?.State;
-                    if (solvedState is null)
-                    {
-                        Console.WriteLine("Solved state disappeared...");
-                        Console.ReadKey();
-                        continue;
-                    }
+            //if (krizaljkaTemplate is not null)
+            //{
+            //    var template = templatesDb.Templates.FirstOrDefault(t => t.Id == krizaljkaTemplate.Id);
+            //    if (template is null)
+            //    {
+            //        Console.WriteLine("Template disappeared");
+            //        Console.ReadKey();
+            //        continue;
+            //    }
 
-                    theKrizaljka = TheKrizaljka.Create(template, solvedState);
-                }
-                else
-                {
-                    var bestState = createResult1.BestState;
-                    theKrizaljka = TheKrizaljka.Create(template, bestState);
-                }
+            //    if (createResult1 is null)
+            //    {
+            //        Console.WriteLine("CreateResult disappeared");
+            //        Console.ReadKey();
+            //        continue;
+            //    }
 
-                PrintKrizaljka();
-            }
+            //    if (solved)
+            //    {
+            //        var solvedState = createResult1?.State;
+            //        if (solvedState is null)
+            //        {
+            //            Console.WriteLine("Solved state disappeared...");
+            //            Console.ReadKey();
+            //            continue;
+            //        }
 
-            foreach (var themePlacement in krizaljkaThemePlacements)
-            {
-                var term = pojmoviDb.Terms.FirstOrDefault(t => t.Id == themePlacement.TermId);
-                var termText = term is null ? string.Empty : $"o: {term.Description}, w: {term.DenseValue}";
-                Console.Write($"SlotId: {themePlacement.SlotId}, term: ID: {themePlacement.TermId} ({termText})");
-            }
+            //        theKrizaljka = TheKrizaljka.Create(template, solvedState);
+            //    }
+            //    else
+            //    {
+            //        var bestState = createResult1.BestState;
+            //        theKrizaljka = TheKrizaljka.Create(template, bestState);
+            //    }
+
+            //    PrintKrizaljka();
+            //}
+
+            //foreach (var themePlacement in krizaljkaThemePlacements)
+            //{
+            //    var term = pojmoviDb.Terms.FirstOrDefault(t => t.Id == themePlacement.TermId);
+            //    var termText = term is null ? string.Empty : $"o: {term.Description}, w: {term.DenseValue}";
+            //    Console.Write($"SlotId: {themePlacement.SlotId}, term: ID: {themePlacement.TermId} ({termText})");
+            //}
 
             Console.ReadKey();
-
-            // TODO save state(s)
 
             break;
         case "k":

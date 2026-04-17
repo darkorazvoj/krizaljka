@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Xml;
 using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;

@@ -9,5 +9,6 @@ public record KrizaljkaVersionARequest(
     IReadOnlyList<long> ThemeTermIds,
     int MaxTemplatesToTry = 10,
     int MaxLayoutsPerTemplate = 20,
-    int MaxSlotPerThemeTerm = 12,
-    int MaxSolveMinutesPerLayout = 60);
+    int MaxSlotsPerThemeTerm = 12,
+    int  MaxParallelTemplates = 5,
+    int MaxSolveMinutesPerTemplate = 60);
