@@ -1,4 +1,5 @@
-﻿using Krizaljka.Console;
+﻿using System.Net.WebSockets;
+using Krizaljka.Console;
 using Krizaljka.Domain.Extensions;
 using Krizaljka.Domain.TemplateAnalysis;
 using System.Text;
@@ -742,8 +743,103 @@ while (true)
                 Console.WriteLine($"ID: {themeTerm.Id}, '{themeTerm.DenseValue}', ('{themeTerm.DenseValue}') ");
             }
 
-            Console.WriteLine("");
-            Console.ReadKey();
+            Console.WriteLine("START or x for exit");
+            var startCommand = Console.ReadLine();
+            if (startCommand?.ToUpper() == "X")
+            {
+                continue;
+            }
+
+            var solverResult = await new KrizaljkaVersionASolver().TrySolveAsync(
+                new KrizaljkaVersionARequest(
+                    templates,
+                    pojmoviDb.Terms,
+                    themeTerms.Select(x => x.Id)
+                        .ToList(),
+                    20,
+                    20,
+                    12,
+                    10));
+
+
+            if (solverResult.Solved)
+            {
+                Console.WriteLine();
+                Console.WriteLine("SOLVED");
+            }
+
+            if (solverResult.CreateResult is not null)
+            {
+                var createResult1 = solverResult.CreateResult;
+
+                var ts1 = TimeSpan.FromMilliseconds(solverResult.CreateResult.Stats.ElapsedMilliseconds);
+                var elapsed1 = $"{ts1.Hours}h {ts1.Minutes}m {ts1.Seconds}s";
+
+                Console.WriteLine($"Timed out?: {(createResult1.Stats.TimedOut ? "YEP" : "no")}");
+                Console.WriteLine($"RecursiveCalls: {createResult1.Stats.RecursiveCalls}");
+                Console.WriteLine($"CandidateTries: {createResult1.Stats.CandidateTries}");
+                Console.WriteLine($"Backtracks: {createResult1.Stats.Backtracks}");
+                Console.WriteLine($"DeadEnds: {createResult1.Stats.DeadEnds}");
+                Console.WriteLine($"FullyFilledAutoAssignments: {createResult1.Stats.FullyFilledAutoAssignments}");
+                Console.WriteLine($"SingletonAutoAssignments: {createResult1.Stats.SingletonAutoAssignments}");
+                Console.WriteLine($"MaxAssignedSlotsReached: {createResult1.Stats.MaxAssignedSlotsReached}");
+                Console.WriteLine($"FinalAssignedSlots: {createResult1.Stats.FinalAssignedSlots}");
+
+                Console.WriteLine();
+                Console.WriteLine($"Total Time: {elapsed1}");
+            }
+            else
+            {
+                Console.WriteLine("Unknown STATS...");
+                Console.WriteLine();
+            }
+
+            if (solverResult.Template is not null)
+            {
+                var template = templatesDb.Templates.FirstOrDefault(t => t.Id == solverResult.Template.Id);
+                if (template is null)
+                {
+                    Console.WriteLine("Template disappeared");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                if (solverResult.CreateResult is null)
+                {
+                    Console.WriteLine("CreateResult disappeared");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                if (solverResult.Solved)
+                {
+                    var solvedState = solverResult.CreateResult?.State;
+                    if (solvedState is null)
+                    {
+                        Console.WriteLine("Solved state disappeared...");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    theKrizaljka = TheKrizaljka.Create(template, solvedState);
+                }
+                else
+                {
+                    var bestState = solverResult.CreateResult.BestState;
+                    theKrizaljka = TheKrizaljka.Create(template, bestState);
+                }
+
+                PrintKrizaljka();
+            }
+
+            foreach (var themePlacement in solverResult.ThemePlacements)
+            {
+                var term = pojmoviDb.Terms.FirstOrDefault(t => t.Id == themePlacement.TermId);
+                var termText = term is null ? string.Empty : $"o: {term.Description}, w: {term.DenseValue}";
+                Console.Write($"SlotId: {themePlacement.SlotId}, term: ID: {themePlacement.TermId} ({termText})");
+            }
+
+            // TODO save state(s)
 
             break;
         case "k":
