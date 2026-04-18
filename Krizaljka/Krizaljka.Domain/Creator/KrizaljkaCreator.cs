@@ -15,8 +15,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private sealed record MatchingTermsCacheEntry(
         (int SlotId, string Pattern) Key,
         IReadOnlyList<Term> Value);
-
-    private CreatorCache _cache = new();
+    
     private IReadOnlyList<Term> _normalizedTerms = [];
     private Dictionary<long, Term> _normalizedTermsById = [];
     private Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<long>>> _termIdsByLengthAndLettersKey = [];
@@ -41,7 +40,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         CancellationToken stopToken)
     {
         ResetStats();
-        _cache = new CreatorCache();
         _matchingTermsCacheIndex.Clear();
         _matchingTermsCacheLru.Clear();
         _stopToken = stopToken;
@@ -244,7 +242,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                                 StringComparer.Ordinal));
         }
 
-        if (_cache.TermsByLengthPositionLetter.Count == 0)
+        if (GlobalCaches.TermsByLengthPositionLetter.Count == 0)
         {
             var result =
                 new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
@@ -270,7 +268,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 result.Add(lengthGroup.Key, positionMap);
             }
 
-            _cache.TermsByLengthPositionLetter = result;
+            GlobalCaches.TermsByLengthPositionLetter = result;
         }
     }
 
@@ -835,7 +833,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return [];
         }
 
-        if (!_cache.TermsByLengthPositionLetter.TryGetValue(slot.Length, out var byPosition))
+        if (!GlobalCaches.TermsByLengthPositionLetter.TryGetValue(slot.Length, out var byPosition))
         {
             return allTerms;
         }
@@ -980,7 +978,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return 0;
         }
 
-        if (!_cache.TermsByLengthPositionLetter.TryGetValue(neighborSlot.Length, out var byPosition))
+        if (!GlobalCaches.TermsByLengthPositionLetter.TryGetValue(neighborSlot.Length, out var byPosition))
         {
             HashSet<string> distinctWithoutIndex = new(StringComparer.Ordinal);
 
