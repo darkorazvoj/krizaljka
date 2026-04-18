@@ -344,10 +344,11 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 continue;
             }
 
-            var domainSnapshot = CloneDomains();
+            var domainChangeLog = new DomainChangeLog();
+            //var domainSnapshot = CloneDomains();
             var initialPlacement = Place(nextSlot, term);
 
-            if (!TryPropagateSingletonDomainsAfterPlacement(initialPlacement, out var fullPlacement))
+            if (!TryPropagateSingletonDomainsAfterPlacement(initialPlacement, domainChangeLog, out var fullPlacement))
             {
                 if (!_timedOut)
                 {
@@ -356,7 +357,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                 }
 
                 Undo(fullPlacement);
-                RestoreDomains(domainSnapshot);
+                UndoDomainChanges(domainChangeLog);
+                //RestoreDomains(domainSnapshot);
                 continue;
             }
 
@@ -371,7 +373,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             }
 
             Undo(fullPlacement);
-            RestoreDomains(domainSnapshot);
+            UndoDomainChanges(domainChangeLog);
+            //RestoreDomains(domainSnapshot);
         }
 
         return false;
@@ -379,12 +382,13 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
     private bool TryPropagateSingletonDomainsAfterPlacement(
         PlacementResult initialPlacement,
+        DomainChangeLog domainChangeLog,
         out PlacementResult fullPlacement)
     {
-        List<(int SliotId, long TermId)> assignedSlots = initialPlacement.AssignedSlots.ToList();
-        List<(int Row, int Col)> newCells = initialPlacement.NewCells.ToList();
+        var assignedSlots = initialPlacement.AssignedSlots.ToList();
+        var newCells = initialPlacement.NewCells.ToList();
 
-        if (!UpdateDomainsAfterPlacement(initialPlacement))
+        if (!UpdateDomainsAfterPlacement(initialPlacement, domainChangeLog))
         {
             fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
             return false;
@@ -420,7 +424,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             assignedSlots.AddRange(singletonPlacement.AssignedSlots);
             newCells.AddRange(singletonPlacement.NewCells);
 
-            if (!UpdateDomainsAfterPlacement(singletonPlacement))
+            if (!UpdateDomainsAfterPlacement(singletonPlacement, domainChangeLog))
             {
                 fullPlacement = new PlacementResult(assignedSlots.AsReadOnly(), newCells.AsReadOnly());
                 return false;
@@ -516,16 +520,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return true;
     }
-
-    private Dictionary<int, IReadOnlyList<Term>> CloneDomains() =>
-        _currentDomainsBySlotId.ToDictionary(x => x.Key, x => x.Value);
-
-    private bool UpdateDomainsAfterPlacement(PlacementResult placement)
+    
+    private bool UpdateDomainsAfterPlacement(PlacementResult placement, DomainChangeLog domainChangeLog)
     {
         HashSet<int> affectedSlotIds = [];
 
         foreach (var (assignedSlotId, _) in placement.AssignedSlots)
         {
+            RecordDomainChange(domainChangeLog, assignedSlotId);
             _currentDomainsBySlotId.Remove(assignedSlotId);
 
             if (!theKrizaljka.IntersectionsBySlotId.TryGetValue(assignedSlotId, out var intersections))
@@ -548,7 +550,16 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         foreach (var slotId in _currentDomainsBySlotId.Keys.ToList())
         {
-            _currentDomainsBySlotId[slotId] = RefreshCollapsedDomainTerms(_currentDomainsBySlotId[slotId]);
+            var oldDomain = _currentDomainsBySlotId[slotId];
+            var refreshedDomain = RefreshCollapsedDomainTerms(oldDomain);
+
+            if (!DomainsEqual(oldDomain, refreshedDomain))
+            {
+                RecordDomainChange(domainChangeLog, slotId);
+                _currentDomainsBySlotId[slotId] = refreshedDomain;
+            }
+
+            //_currentDomainsBySlotId[slotId] = RefreshCollapsedDomainTerms(_currentDomainsBySlotId[slotId]);
         }
 
         foreach (var slotId in affectedSlotIds)
@@ -559,6 +570,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             }
 
             var domain = CollapseToDistinctAvailableTerms(GetIndexedMatchingTerms(slot));
+            RecordDomainChange(domainChangeLog, slotId);
             _currentDomainsBySlotId[slotId] = domain;
         }
 
@@ -577,8 +589,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return true;
     }
-
-    private void RestoreDomains(Dictionary<int, IReadOnlyList<Term>> snapshot) => _currentDomainsBySlotId = snapshot;
 
     private int GetUnassignedNeighborCount(KrizaljkaSlot slot)
     {
@@ -1254,6 +1264,62 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return string.Join("|", letters);
     }
 
+    private void RecordDomainChange(DomainChangeLog domainChangeLog, int slotId)
+    {
+        if (!domainChangeLog.RecordedSlotIds.Add(slotId))
+        {
+            return;
+        }
+
+        if (_currentDomainsBySlotId.TryGetValue(slotId, out var previousValue))
+        {
+            domainChangeLog.Changes.Add(new DomainChange(slotId, true, previousValue));
+        }
+        else
+        {
+            domainChangeLog.Changes.Add(new DomainChange(slotId, false, null));
+        }
+    }
+
+    private void UndoDomainChanges(DomainChangeLog domainChangeLog)
+    {
+        for (var i = domainChangeLog.Changes.Count - 1; i >= 0; i--)
+        {
+            var change = domainChangeLog.Changes[i];
+
+            if (change.HadValue)
+            {
+                _currentDomainsBySlotId[change.SlotId] = change.PreviousValue!;
+            }
+            else
+            {
+                _currentDomainsBySlotId.Remove(change.SlotId);
+            }
+        }
+    }
+
+    private static bool DomainsEqual(IReadOnlyList<Term> first, IReadOnlyList<Term> second)
+    {
+        if (ReferenceEquals(first, second))
+        {
+            return true;
+        }
+
+        if (first.Count != second.Count)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < first.Count; i++)
+        {
+            if (first[i].Id != second[i].Id)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
     private bool HasTimedOut()
     {
         if (_timedOut)
