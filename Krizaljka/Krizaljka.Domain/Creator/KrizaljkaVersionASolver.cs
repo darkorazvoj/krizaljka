@@ -82,9 +82,18 @@ public sealed class KrizaljkaVersionASolver
             .ToList();
 
         var batchSize = Math.Max(1, request.MaxLayoutsPerTemplate);
+        var solvedTarget = request.StopAfterSolvedTemplates.GetValueOrDefault(int.MaxValue);
+        var solvedCount = 0;
 
-        for (var i = 0; i < orderedTemplates.Count; i++)
+        using var cts = new CancellationTokenSource();
+
+        for (var i = 0; i < orderedTemplates.Count; i+= batchSize)
         {
+            if (cts.IsCancellationRequested)
+            {
+                break;
+            }
+
             var batch = orderedTemplates
                 .Skip(i)
                 .Take(batchSize)
@@ -94,7 +103,8 @@ public sealed class KrizaljkaVersionASolver
                 .Select(templateEntry => ProcessTemplateAsync(
                     templateEntry.Template,
                     request,
-                    termsById))
+                    termsById,
+                    cts.Token))
                 .ToList();
 
 
@@ -108,6 +118,20 @@ public sealed class KrizaljkaVersionASolver
                 await SaveProcessedTemplateAsync(
                     message.ProcessId,
                     processedTemplate);
+
+                if (processedTemplate.IsSolved)
+                {
+                    solvedCount++;
+
+                    if (solvedCount >= solvedTarget)
+                    {
+                        await cts.CancelAsync();
+                    }
+                }
+            }
+            if (solvedCount >= solvedTarget)
+            {
+                break;
             }
         }
 
@@ -142,12 +166,14 @@ public sealed class KrizaljkaVersionASolver
     private Task<ProcessedTemplate> ProcessTemplateAsync(
         KrizaljkaTemplate template,
         KrizaljkaVersionARequest request,
-        Dictionary<long, Term> termsById) => Task.Run(() => ProcessTemplate(template, request, termsById));
+        Dictionary<long, Term> termsById,
+        CancellationToken stopToken) => Task.Run(() => ProcessTemplate(template, request, termsById, stopToken));
 
     private ProcessedTemplate ProcessTemplate(
         KrizaljkaTemplate template,
         KrizaljkaVersionARequest request,
-        IReadOnlyDictionary<long, Term> termsById)
+        IReadOnlyDictionary<long, Term> termsById,
+        CancellationToken stopToken)
     {
         var analyzedKrizaljka = TheKrizaljka.Create(template);
 
@@ -161,6 +187,11 @@ public sealed class KrizaljkaVersionASolver
 
         foreach (var layout in layouts)
         {
+            if (stopToken.IsCancellationRequested)
+            {
+                break;
+            }
+
             var freshKrizaljka = TheKrizaljka.Create(template);
             var creator = new KrizaljkaCreator(freshKrizaljka);
 
@@ -187,7 +218,7 @@ public sealed class KrizaljkaVersionASolver
             var solveResult = creator.TrySolve(
                 request.Terms,
                 request.MaxSolveMinutesPerTemplate,
-                CancellationToken.None);
+                stopToken);
 
             if (solveResult.IsCreated)
             {
