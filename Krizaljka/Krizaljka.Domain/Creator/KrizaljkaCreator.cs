@@ -8,6 +8,14 @@ namespace Krizaljka.Domain.Creator;
 
 public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 {
+    private const int MaxMatchingTermsCacheEntries = 10000;
+    private readonly Dictionary<(int SlotId, string Pattern), LinkedListNode<MatchingTermsCacheEntry>> _matchingTermsCacheIndex = [];
+    private readonly LinkedList<MatchingTermsCacheEntry> _matchingTermsCacheLru = [];
+
+    private sealed record MatchingTermsCacheEntry(
+        (int SlotId, string Pattern) Key,
+        IReadOnlyList<Term> Value);
+
     private CreatorCache _cache = new();
     private IReadOnlyList<Term> _normalizedTerms = [];
     private Dictionary<long, Term> _normalizedTermsById = [];
@@ -34,6 +42,8 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     {
         ResetStats();
         _cache = new CreatorCache();
+        _matchingTermsCacheIndex.Clear();
+        _matchingTermsCacheLru.Clear();
         _stopToken = stopToken;
 
         _normalizedTerms = GetNormalizedTerms(terms);
@@ -739,21 +749,61 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         }
     }
 
+    //private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
+    //{
+    //    var pattern = GetSlotPattern(slot);
+    //    var cacheKey = (slot.Id, pattern);
+
+    //    if (_cache.MatchingTermsCache.TryGetValue(cacheKey, out var cached))
+    //    {
+    //        return cached;
+    //    }
+
+    //    if (_cache.MatchingTermsCache.Count >= MaxMatchingTermsCacheEntries)
+    //    {
+    //        _cache.MatchingTermsCache.Clear();
+    //    }
+
+    //    var result = GetIndexedMatchingTermsCore(slot);
+    //    _cache.MatchingTermsCache[cacheKey] = result;
+
+    //    return result;
+    //}
+
     private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
     {
         var pattern = GetSlotPattern(slot);
         var cacheKey = (slot.Id, pattern);
 
-        if (_cache.MatchingTermsCache.TryGetValue(cacheKey, out var cached))
+        if (_matchingTermsCacheIndex.TryGetValue(cacheKey, out var existingNode))
         {
-            return cached;
+            _matchingTermsCacheLru.Remove(existingNode);
+            _matchingTermsCacheLru.AddFirst(existingNode);
+            return existingNode.Value.Value;
         }
 
         var result = GetIndexedMatchingTermsCore(slot);
-        _cache.MatchingTermsCache[cacheKey] = result;
+
+        var entry = new MatchingTermsCacheEntry(cacheKey, result);
+        var newNode = new LinkedListNode<MatchingTermsCacheEntry>(entry);
+
+        _matchingTermsCacheLru.AddFirst(newNode);
+        _matchingTermsCacheIndex[cacheKey] = newNode;
+
+        if (_matchingTermsCacheIndex.Count > MaxMatchingTermsCacheEntries)
+        {
+            var lastNode = _matchingTermsCacheLru.Last;
+            if (lastNode is not null)
+            {
+                _matchingTermsCacheLru.RemoveLast();
+                _matchingTermsCacheIndex.Remove(lastNode.Value.Key);
+            }
+        }
 
         return result;
     }
+
+    
 
     private string GetSlotPattern(KrizaljkaSlot slot)
     {

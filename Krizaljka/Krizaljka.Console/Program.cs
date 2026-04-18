@@ -751,7 +751,7 @@ while (true)
             }
 
             Console.WriteLine($"Started at {DateTime.Now}...");
-            var processId = new KrizaljkaVersionASolver().QueueSolveAttempt(
+            var processId = new KrizaljkaVersionASolver(2).QueueSolveAttempt(
                 new KrizaljkaVersionARequest(
                     templates,
                     pojmoviDb.Terms,

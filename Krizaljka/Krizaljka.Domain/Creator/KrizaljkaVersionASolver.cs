@@ -15,7 +15,7 @@ public sealed class KrizaljkaVersionASolver
         { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true  };
     private readonly Channel<SolveAttemptMessage> _channel;
 
-    public KrizaljkaVersionASolver(int workerCount = 5)
+    public KrizaljkaVersionASolver(int workerCount = 1)
     {
         _channel = Channel.CreateUnbounded<SolveAttemptMessage>(
             new UnboundedChannelOptions
