@@ -429,6 +429,8 @@ while (true)
                 continue;
             }
 
+            GlobalCaches.Initialize(pojmoviDb.Terms);
+
             if (theKrizaljka is null)
             {
                 Console.WriteLine("Krizaljka template not loaded.");
@@ -613,8 +615,7 @@ while (true)
                 continue;
             }
 
-            GlobalCaches.Terms.Clear();
-            GlobalCaches.Terms.AddRange(pojmoviDb.Terms);
+            GlobalCaches.Initialize(pojmoviDb.Terms);
 
             Console.WriteLine($"Started: {DateTime.Now}");
             var createResult = new KrizaljkaCreator(theKrizaljka)
@@ -753,8 +754,7 @@ while (true)
                 continue;
             }
 
-            GlobalCaches.Terms.Clear();
-            GlobalCaches.Terms.AddRange(pojmoviDb.Terms);
+            GlobalCaches.Initialize(pojmoviDb.Terms);
 
             Console.WriteLine($"Started at {DateTime.Now}...");
             var processId = new KrizaljkaVersionASolver(2).QueueSolveAttempt(

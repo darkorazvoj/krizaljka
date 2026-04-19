@@ -38,8 +38,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         _matchingTermsCacheLru.Clear();
         _stopToken = stopToken;
 
-        EnsureTermsCaches();
-
         _maxSolveElapsedMilliseconds = maxMinutes > 0
             ? (long)(maxMinutes * 60_000d)
             : null;
@@ -86,11 +84,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         long termId,
         out string? error)
     {
-        if (GlobalCaches.NormalizedTerms.Count == 0)
-        {
-            EnsureTermsCaches();
-        }
-
         return TryPlaceAssignedTerm(
             slotId,
             termId,
@@ -186,83 +179,83 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         return true;
     }
 
-    private static IReadOnlyList<Term> GetNormalizedTerms(IReadOnlyList<Term> terms) =>
-        terms
-            .Select(t => t with
-            {
-                Letters = t.Letters.Select(x => x.NormalizeLetters()).ToArray()
-            })
-            .ToList()
-            .AsReadOnly();
+    //private static IReadOnlyList<Term> GetNormalizedTerms(IReadOnlyList<Term> terms) =>
+    //    terms
+    //        .Select(t => t with
+    //        {
+    //            Letters = t.Letters.Select(x => x.NormalizeLetters()).ToArray()
+    //        })
+    //        .ToList()
+    //        .AsReadOnly();
 
-    private void EnsureTermsCaches()
-    {
-        GlobalCaches.NormalizedTerms = GetNormalizedTerms(GlobalCaches.Terms);
+    //private void EnsureTermsCaches()
+    //{
+    //    GlobalCaches.NormalizedTerms = GetNormalizedTerms(GlobalCaches.Terms);
 
-        if (GlobalCaches.TermsByLength.Count == 0)
-        {
-            GlobalCaches.TermsByLength = GlobalCaches.NormalizedTerms
-                .GroupBy(x => x.Length)
-                .ToDictionary(
-                    x => x.Key,
-                    x => (IReadOnlyList<Term>)x
-                        .OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
-                        .ThenBy(t => t.Id)
-                        .ToList());
-        }
+    //    if (GlobalCaches.TermsByLength.Count == 0)
+    //    {
+    //        GlobalCaches.TermsByLength = GlobalCaches.NormalizedTerms
+    //            .GroupBy(x => x.Length)
+    //            .ToDictionary(
+    //                x => x.Key,
+    //                x => (IReadOnlyList<Term>)x
+    //                    .OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
+    //                    .ThenBy(t => t.Id)
+    //                    .ToList());
+    //    }
 
-        if (GlobalCaches.NormalizedTermsById.Count == 0)
-        {
-            GlobalCaches.NormalizedTermsById = GlobalCaches.NormalizedTerms.ToDictionary(x => x.Id);
-        }
+    //    if (GlobalCaches.NormalizedTermsById.Count == 0)
+    //    {
+    //        GlobalCaches.NormalizedTermsById = GlobalCaches.NormalizedTerms.ToDictionary(x => x.Id);
+    //    }
 
-        if (GlobalCaches.TermIdsByLengthAndLettersKey.Count == 0)
-        {
-            GlobalCaches.TermIdsByLengthAndLettersKey = GlobalCaches.NormalizedTerms
-                .GroupBy(x => x.Length)
-                .ToDictionary(
-                    lengthGroup => lengthGroup.Key,
-                    lengthGroup =>
-                        (IReadOnlyDictionary<string, IReadOnlyList<long>>)lengthGroup
-                            .GroupBy(term => CreateLettersKey(term.Letters))
-                            .ToDictionary(
-                                group => group.Key,
-                                group => (IReadOnlyList<long>)group
-                                    .OrderBy(t => t.Id)
-                                    .Select(t => t.Id)
-                                    .ToList(),
-                                StringComparer.Ordinal));
-        }
+    //    if (GlobalCaches.TermIdsByLengthAndLettersKey.Count == 0)
+    //    {
+    //        GlobalCaches.TermIdsByLengthAndLettersKey = GlobalCaches.NormalizedTerms
+    //            .GroupBy(x => x.Length)
+    //            .ToDictionary(
+    //                lengthGroup => lengthGroup.Key,
+    //                lengthGroup =>
+    //                    (IReadOnlyDictionary<string, IReadOnlyList<long>>)lengthGroup
+    //                        .GroupBy(term => CreateLettersKey(term.Letters))
+    //                        .ToDictionary(
+    //                            group => group.Key,
+    //                            group => (IReadOnlyList<long>)group
+    //                                .OrderBy(t => t.Id)
+    //                                .Select(t => t.Id)
+    //                                .ToList(),
+    //                            StringComparer.Ordinal));
+    //    }
 
-        if (GlobalCaches.TermsByLengthPositionLetter.Count == 0)
-        {
-            var result =
-                new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
+    //    if (GlobalCaches.TermsByLengthPositionLetter.Count == 0)
+    //    {
+    //        var result =
+    //            new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
 
-            foreach (var lengthGroup in GlobalCaches.NormalizedTerms.GroupBy(x => x.Length))
-            {
-                var positionMap = new Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>();
+    //        foreach (var lengthGroup in GlobalCaches.NormalizedTerms.GroupBy(x => x.Length))
+    //        {
+    //            var positionMap = new Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>();
 
-                for (var i = 0; i < lengthGroup.Key; i++)
-                {
-                    var letterMap = lengthGroup
-                        .GroupBy(term => term.Letters[i])
-                        .ToDictionary(
-                            x => x.Key,
-                            x => (IReadOnlyList<Term>)x
-                                .OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
-                                .ThenBy(t => t.Id)
-                                .ToList());
+    //            for (var i = 0; i < lengthGroup.Key; i++)
+    //            {
+    //                var letterMap = lengthGroup
+    //                    .GroupBy(term => term.Letters[i])
+    //                    .ToDictionary(
+    //                        x => x.Key,
+    //                        x => (IReadOnlyList<Term>)x
+    //                            .OrderBy(t => t.DenseValue, StringComparer.OrdinalIgnoreCase)
+    //                            .ThenBy(t => t.Id)
+    //                            .ToList());
 
-                    positionMap.Add(i, letterMap);
-                }
+    //                positionMap.Add(i, letterMap);
+    //            }
 
-                result.Add(lengthGroup.Key, positionMap);
-            }
+    //            result.Add(lengthGroup.Key, positionMap);
+    //        }
 
-            GlobalCaches.TermsByLengthPositionLetter = result;
-        }
-    }
+    //        GlobalCaches.TermsByLengthPositionLetter = result;
+    //    }
+    //}
 
     private bool TryPlaceAssignedTerm(
         int slotId,
@@ -990,7 +983,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                     continue;
                 }
 
-                distinctWithoutIndex.Add(CreateLettersKey(term.Letters));
+                distinctWithoutIndex.Add(term.Letters.CreateLettersKey());
             }
 
             return distinctWithoutIndex.Count;
@@ -1059,7 +1052,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
             if (matches)
             {
-                distinctMatches.Add(CreateLettersKey(term.Letters));
+                distinctMatches.Add(term.Letters.CreateLettersKey());
             }
         }
 
@@ -1174,7 +1167,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         List<Term> result = [];
 
         foreach (var group in terms
-                     .GroupBy(term => CreateLettersKey(term.Letters))
+                     .GroupBy(term => term.Letters.CreateLettersKey())
                      .OrderBy(group => group.Key, StringComparer.Ordinal))
         {
             var representative = group
@@ -1215,7 +1208,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return false;
         }
 
-        var lettersKey = CreateLettersKey(letters);
+        var lettersKey = letters.CreateLettersKey();
 
         if (!byLettersKey.TryGetValue(lettersKey, out var termIds))
         {
@@ -1248,11 +1241,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         term = collapsedMatches[0];
         return true;
-    }
-
-    private static string CreateLettersKey(IReadOnlyList<string> letters)
-    {
-        return string.Join("|", letters);
     }
 
     private void RecordDomainChange(DomainChangeLog domainChangeLog, int slotId)

@@ -63,13 +63,13 @@ public sealed class KrizaljkaVersionASolver
     private async Task ProcessSolveAttemptAsync(SolveAttemptMessage message)
     {
         var request = message.Request;
-        var termsById = GlobalCaches.NormalizedTerms.ToDictionary(x => x.Id);
+        //var termsById = GlobalCaches.NormalizedTerms.ToDictionary(x => x.Id);
 
         var orderedTemplates = request.Templates
             .Select(template =>
             {
                 var krizaljka = TheKrizaljka.Create(template);
-                var score = ScoreTemplate(krizaljka, request.ThemeTermIds, termsById);
+                var score = ScoreTemplate(krizaljka, request.ThemeTermIds);
 
                 return new
                 {
@@ -104,7 +104,6 @@ public sealed class KrizaljkaVersionASolver
                 .Select(templateEntry => ProcessTemplateAsync(
                     templateEntry.Template,
                     request,
-                    termsById,
                     cts.Token))
                 .ToList();
 
@@ -167,21 +166,18 @@ public sealed class KrizaljkaVersionASolver
     private Task<ProcessedTemplate> ProcessTemplateAsync(
         KrizaljkaTemplate template,
         KrizaljkaVersionARequest request,
-        Dictionary<long, Term> termsById,
-        CancellationToken stopToken) => Task.Run(() => ProcessTemplate(template, request, termsById, stopToken));
+        CancellationToken stopToken) => Task.Run(() => ProcessTemplate(template, request, stopToken));
 
     private ProcessedTemplate ProcessTemplate(
         KrizaljkaTemplate template,
         KrizaljkaVersionARequest request,
-        IReadOnlyDictionary<long, Term> termsById,
         CancellationToken stopToken)
     {
         var analyzedKrizaljka = TheKrizaljka.Create(template);
 
         var layouts = BuildThemeLayouts(
             analyzedKrizaljka,
-            request,
-            termsById);
+            request);
 
         var bestState = analyzedKrizaljka.State;
         var bestAssignedCount = analyzedKrizaljka.State.AssignedTermsBySlotId.Count;
@@ -242,11 +238,10 @@ public sealed class KrizaljkaVersionASolver
 
     private List<KrizaljkaThemeLayout> BuildThemeLayouts(
         TheKrizaljka krizaljka,
-        KrizaljkaVersionARequest request,
-        IReadOnlyDictionary<long, Term> termsById)
+        KrizaljkaVersionARequest request)
     {
         var themeTerms = request.ThemeTermIds
-            .Select(id => termsById[id])
+            .Select(id => GlobalCaches.NormalizedTermsById[id])
             .ToList();
 
         var candidateSlotsByTermId = new Dictionary<long, List<KrizaljkaSlot>>();
@@ -474,14 +469,13 @@ public sealed class KrizaljkaVersionASolver
 
     private static int ScoreTemplate(
     TheKrizaljka krizaljka,
-    IReadOnlyList<long> themeTermIds,
-    Dictionary<long, Term> termsById)
+    IReadOnlyList<long> themeTermIds)
     {
         var total = 0;
 
         foreach (var termId in themeTermIds)
         {
-            if (!termsById.TryGetValue(termId, out var term))
+            if (!GlobalCaches.NormalizedTermsById.TryGetValue(termId, out var term))
             {
                 return int.MinValue;
             }
