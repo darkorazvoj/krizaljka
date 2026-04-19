@@ -6,6 +6,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Krizaljka.Domain;
+using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Creator;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Terms;
@@ -496,7 +497,6 @@ while (true)
 
 
             if (!new KrizaljkaCreator(theKrizaljka).TryPlaceAssignedTermManually(
-                    pojmoviDb.Terms,
                     slotIdInput,
                     termIdInput,
                     out var errorAssigningTermToSlot))
@@ -613,9 +613,12 @@ while (true)
                 continue;
             }
 
+            GlobalCaches.Terms.Clear();
+            GlobalCaches.Terms.AddRange(pojmoviDb.Terms);
+
             Console.WriteLine($"Started: {DateTime.Now}");
             var createResult = new KrizaljkaCreator(theKrizaljka)
-                .TrySolve(pojmoviDb.Terms, 3, CancellationToken.None);
+                .TrySolve( 3, CancellationToken.None);
 
             var ts = TimeSpan.FromMilliseconds(createResult.Stats.ElapsedMilliseconds);
             var elapsed = $"{ts.Hours}h {ts.Minutes}m {ts.Seconds}s";
@@ -750,11 +753,13 @@ while (true)
                 continue;
             }
 
+            GlobalCaches.Terms.Clear();
+            GlobalCaches.Terms.AddRange(pojmoviDb.Terms);
+
             Console.WriteLine($"Started at {DateTime.Now}...");
             var processId = new KrizaljkaVersionASolver(2).QueueSolveAttempt(
                 new KrizaljkaVersionARequest(
                     templates,
-                    pojmoviDb.Terms,
                     themeTerms.Select(x => x.Id)
                         .ToList(),
                     20,

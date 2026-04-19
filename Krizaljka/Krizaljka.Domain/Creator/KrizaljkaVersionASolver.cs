@@ -1,4 +1,5 @@
-﻿using Krizaljka.Domain.Template;
+﻿using Krizaljka.Domain.Caches;
+using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TemplateAnalysis;
 using Krizaljka.Domain.Terms;
 using System.Text.Encodings.Web;
@@ -62,7 +63,7 @@ public sealed class KrizaljkaVersionASolver
     private async Task ProcessSolveAttemptAsync(SolveAttemptMessage message)
     {
         var request = message.Request;
-        var termsById = request.Terms.ToDictionary(x => x.Id);
+        var termsById = GlobalCaches.NormalizedTerms.ToDictionary(x => x.Id);
 
         var orderedTemplates = request.Templates
             .Select(template =>
@@ -156,7 +157,7 @@ public sealed class KrizaljkaVersionASolver
             await File.WriteAllTextAsync(Path.Combine(currentSolveFolder, fileName),
                 processedTemplateJsonString);
         }
-        catch (Exception e)
+        catch
         {
             Console.WriteLine(
                 $"SAVE FAILED: TemplateId: {processedTemplate.TemplateId}, isSolved: {processedTemplate.IsSolved}");
@@ -200,7 +201,6 @@ public sealed class KrizaljkaVersionASolver
             foreach (var placement in layout.Placements)
             {
                 if (!creator.TryPlaceAssignedTermManually(
-                        request.Terms,
                         placement.SlotId,
                         placement.TermId,
                         out _))
@@ -215,10 +215,7 @@ public sealed class KrizaljkaVersionASolver
                 continue;
             }
 
-            var solveResult = creator.TrySolve(
-                request.Terms,
-                request.MaxSolveMinutesPerTemplate,
-                stopToken);
+            var solveResult = creator.TrySolve(request.MaxSolveMinutesPerTemplate, stopToken);
 
             if (solveResult.IsCreated)
             {

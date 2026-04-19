@@ -15,10 +15,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private sealed record MatchingTermsCacheEntry(
         (int SlotId, string Pattern) Key,
         IReadOnlyList<Term> Value);
-    
-    private IReadOnlyList<Term> _normalizedTerms = [];
-    private Dictionary<long, Term> _normalizedTermsById = [];
-    private Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<long>>> _termIdsByLengthAndLettersKey = [];
+
     private Dictionary<int, IReadOnlyList<Term>> _currentDomainsBySlotId = [];
     private CancellationToken _stopToken;
 
@@ -34,18 +31,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     private bool _timedOut;
     private KrizaljkaSolveState? _bestStateSnapshot;
 
-    public KrizaljkaCreateResult TrySolve(
-        IReadOnlyList<Term> terms, 
-        int maxMinutes, 
-        CancellationToken stopToken)
+    public KrizaljkaCreateResult TrySolve(int maxMinutes, CancellationToken stopToken)
     {
         ResetStats();
         _matchingTermsCacheIndex.Clear();
         _matchingTermsCacheLru.Clear();
         _stopToken = stopToken;
 
-        _normalizedTerms = GetNormalizedTerms(terms);
-        EnsureTermsCaches(_normalizedTerms);
+        EnsureTermsCaches();
 
         _maxSolveElapsedMilliseconds = maxMinutes > 0
             ? (long)(maxMinutes * 60_000d)
@@ -89,19 +82,16 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     }
 
     public bool TryPlaceAssignedTermManually(
-        IReadOnlyList<Term> terms,
         int slotId,
         long termId,
         out string? error)
     {
-        if (_normalizedTerms.Count == 0)
+        if (GlobalCaches.NormalizedTerms.Count == 0)
         {
-            _normalizedTerms = GetNormalizedTerms(terms);
-            EnsureTermsCaches(_normalizedTerms);
+            EnsureTermsCaches();
         }
 
         return TryPlaceAssignedTerm(
-            _normalizedTerms,
             slotId,
             termId,
             out error);
@@ -205,11 +195,13 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             .ToList()
             .AsReadOnly();
 
-    private void EnsureTermsCaches(IReadOnlyList<Term> normalizedTerms)
+    private void EnsureTermsCaches()
     {
+        GlobalCaches.NormalizedTerms = GetNormalizedTerms(GlobalCaches.Terms);
+
         if (GlobalCaches.TermsByLength.Count == 0)
         {
-            GlobalCaches.TermsByLength = normalizedTerms
+            GlobalCaches.TermsByLength = GlobalCaches.NormalizedTerms
                 .GroupBy(x => x.Length)
                 .ToDictionary(
                     x => x.Key,
@@ -219,14 +211,14 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
                         .ToList());
         }
 
-        if (_normalizedTermsById.Count == 0)
+        if (GlobalCaches.NormalizedTermsById.Count == 0)
         {
-            _normalizedTermsById = normalizedTerms.ToDictionary(x => x.Id);
+            GlobalCaches.NormalizedTermsById = GlobalCaches.NormalizedTerms.ToDictionary(x => x.Id);
         }
 
-        if (_termIdsByLengthAndLettersKey.Count == 0)
+        if (GlobalCaches.TermIdsByLengthAndLettersKey.Count == 0)
         {
-            _termIdsByLengthAndLettersKey = normalizedTerms
+            GlobalCaches.TermIdsByLengthAndLettersKey = GlobalCaches.NormalizedTerms
                 .GroupBy(x => x.Length)
                 .ToDictionary(
                     lengthGroup => lengthGroup.Key,
@@ -247,7 +239,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             var result =
                 new Dictionary<int, IReadOnlyDictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>>();
 
-            foreach (var lengthGroup in normalizedTerms.GroupBy(x => x.Length))
+            foreach (var lengthGroup in GlobalCaches.NormalizedTerms.GroupBy(x => x.Length))
             {
                 var positionMap = new Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<Term>>>();
 
@@ -273,7 +265,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     }
 
     private bool TryPlaceAssignedTerm(
-        IReadOnlyList<Term> terms,
         int slotId,
         long termId,
         out string? error)
@@ -293,7 +284,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             return false;
         }
 
-        var term = terms.FirstOrDefault(x => x.Id == termId);
+        var term = GlobalCaches.NormalizedTerms.FirstOrDefault(x => x.Id == termId);
         if (term is null)
         {
             error = "TermNotFound";
@@ -1219,7 +1210,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
     {
         term = null!;
 
-        if (!_termIdsByLengthAndLettersKey.TryGetValue(length, out var byLettersKey))
+        if (!GlobalCaches.TermIdsByLengthAndLettersKey.TryGetValue(length, out var byLettersKey))
         {
             return false;
         }
@@ -1234,7 +1225,7 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
         foreach (var termId in termIds)
         {
             if (!theKrizaljka.State.UsedTermsIds.Contains(termId) &&
-                _normalizedTermsById.TryGetValue(termId, out var availableTerm))
+                GlobalCaches.NormalizedTermsById.TryGetValue(termId, out var availableTerm))
             {
                 term = availableTerm;
                 return true;

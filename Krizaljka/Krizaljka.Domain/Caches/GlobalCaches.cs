@@ -5,7 +5,16 @@ namespace Krizaljka.Domain.Caches;
 
 public static class GlobalCaches
 {
+    public static List<Term> Terms = [];
+
+    public static IReadOnlyList<Term> NormalizedTerms = [];
+
+    public static Dictionary<long, Term> NormalizedTermsById = [];
+
     public static Dictionary<int, IReadOnlyList<Term>> TermsByLength = [];
+
+    public static Dictionary<int, IReadOnlyDictionary<string, IReadOnlyList<long>>> TermIdsByLengthAndLettersKey = [];
+
 
     /*
      Length
