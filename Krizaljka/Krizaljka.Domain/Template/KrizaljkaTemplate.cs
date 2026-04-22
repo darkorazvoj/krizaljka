@@ -3,5 +3,4 @@
 public record KrizaljkaTemplate(
 
     long Id, 
-    string Name, 
     int[][] Matrix);

@@ -68,7 +68,7 @@ public static class KrizaljkaStateManager
                     currentKey++;
                 }
             }
-            catch (Exception e)
+            catch
             {
                 System.Console.WriteLine($"Invalid solved state file: {file.Name}");
             }

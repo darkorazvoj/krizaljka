@@ -293,7 +293,7 @@ while (true)
             foreach (var template in templatesDb.Templates)
             {
                 Console.WriteLine(
-                    $"ID: {template.Id}, Name: {template.Name}, {template.Matrix.Length}x{(template.Matrix.Length > 0 ? template.Matrix[0].Length:0)}");
+                    $"ID: {template.Id}, {template.Matrix.Length}x{(template.Matrix.Length > 0 ? template.Matrix[0].Length:0)}");
             }
             Console.ReadKey();
             break;
