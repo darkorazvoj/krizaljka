@@ -132,22 +132,22 @@ public static class KrizaljkaTemplatesManager
         KrizaljkaTemplate first, 
         KrizaljkaTemplate second)
     {
-        if (first.Rows.Length != second.Rows.Length)
+        if (first.Matrix.Length != second.Matrix.Length)
         {
             return false;
 
         }
 
-        for (var r = 0; r < first.Rows.Length; r++)
+        for (var r = 0; r < first.Matrix.Length; r++)
         {
-            if (first.Rows[r].Length != second.Rows[r].Length)
+            if (first.Matrix[r].Length != second.Matrix[r].Length)
             {
                 return false;
             }
 
-            for (var c = 0; c < first.Rows[r].Length; c++)
+            for (var c = 0; c < first.Matrix[r].Length; c++)
             {
-                if (first.Rows[r][c] != second.Rows[r][c])
+                if (first.Matrix[r][c] != second.Matrix[r][c])
                 {
                     return false;
                 }
@@ -248,7 +248,7 @@ public static class KrizaljkaTemplatesManager
             try
             {
                 var template = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJsonString, Options);
-                if (template?.Rows is null)
+                if (template?.Matrix is null)
                 {
                     continue;
                 }

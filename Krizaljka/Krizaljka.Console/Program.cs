@@ -293,7 +293,7 @@ while (true)
             foreach (var template in templatesDb.Templates)
             {
                 Console.WriteLine(
-                    $"ID: {template.Id}, Name: {template.Name}, {template.Rows.Length}x{(template.Rows.Length > 0 ? template.Rows[0].Length:0)}");
+                    $"ID: {template.Id}, Name: {template.Name}, {template.Matrix.Length}x{(template.Matrix.Length > 0 ? template.Matrix[0].Length:0)}");
             }
             Console.ReadKey();
             break;
@@ -892,7 +892,7 @@ void PrintKrizaljka()
     Console.WriteLine($"Krizaljka template: {theKrizaljka.Template.Id}");
 
     StringBuilder sb = new();
-    var krizaljkaRows = theKrizaljka.Template.Rows;
+    var krizaljkaRows = theKrizaljka.Template.Matrix;
     for (var r = 0; r < krizaljkaRows.Length; r++)
     {
         for (var c = 0; c < krizaljkaRows[r].Length; c++)

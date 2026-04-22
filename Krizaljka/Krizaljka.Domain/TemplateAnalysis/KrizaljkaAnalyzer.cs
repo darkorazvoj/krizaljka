@@ -14,7 +14,7 @@ public class KrizaljkaAnalyzer
 
     public KrizaljkaTemplateAnalysis GeTemplateAnalysis(KrizaljkaTemplate template)
     {
-        if (template.Rows.Length == 0)
+        if (template.Matrix.Length == 0)
         {
             return new KrizaljkaTemplateAnalysis(
                 template,
@@ -87,7 +87,7 @@ public class KrizaljkaAnalyzer
     {
         List<KrizaljkaSlot> slots = [];
 
-        var rows = template.Rows;
+        var rows = template.Matrix;
         for (var r = 0; r < rows.Length; r++)
         {
             for (var c = 0; c < rows[r].Length; c++)
