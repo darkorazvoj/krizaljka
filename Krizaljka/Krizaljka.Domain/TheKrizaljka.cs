@@ -21,23 +21,23 @@ public sealed class TheKrizaljka
     public ReadOnlyDictionary<(int, int), List<SlotUsage>> CellSlots { get; private set; } =
         new(new Dictionary<(int, int), List<SlotUsage>>());
     
-    public KrizaljkaTemplate Template { get; }
+    public KrizaljkaTemplateBasic TemplateBasic { get; }
     public KrizaljkaSolveState State { get; private set; }
 
     public IReadOnlyList<AssignedTerm> AssignedTerms => State.AssignedTermsBySlotId.Values.ToList().AsReadOnly();
     
 
     private TheKrizaljka(
-        KrizaljkaTemplate template,
+        KrizaljkaTemplateBasic templateBasic,
         KrizaljkaSolveState state)
     {
-        Template = template;
+        TemplateBasic = templateBasic;
         State = state;
     }
 
     private void Init()
     {
-        var analysis = new KrizaljkaAnalyzer().GeTemplateAnalysis(Template);
+        var analysis = new KrizaljkaAnalyzer().GeTemplateAnalysis(TemplateBasic);
         Slots = analysis.Slots;
         SlotsById = Slots.ToDictionary(x => x.Id);
         Intersections = analysis.Intersections;
@@ -47,11 +47,11 @@ public sealed class TheKrizaljka
     }
 
     public static TheKrizaljka Create(
-        KrizaljkaTemplate template,
+        KrizaljkaTemplateBasic templateBasic,
         KrizaljkaSolveState? state = null)
     {
 
-        var krizaljka = new TheKrizaljka(template, state ?? new KrizaljkaSolveState());
+        var krizaljka = new TheKrizaljka(templateBasic, state ?? new KrizaljkaSolveState());
         krizaljka.Init();
         return krizaljka;
     }

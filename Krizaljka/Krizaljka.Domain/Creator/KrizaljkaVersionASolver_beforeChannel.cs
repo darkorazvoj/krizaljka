@@ -1,4 +1,4 @@
-﻿//using Krizaljka.Domain.Template;
+﻿//using Krizaljka.Domain.TemplateBasic;
 //using Krizaljka.Domain.TemplateAnalysis;
 //using Krizaljka.Domain.Terms;
 
@@ -6,19 +6,19 @@
 
 //public sealed class KrizaljkaVersionASolver
 //{
-//    private record KrizaljkaVersionAWorkItem(KrizaljkaTemplate Template, KrizaljkaThemeLayout Layout);
+//    private record KrizaljkaVersionAWorkItem(KrizaljkaTemplateBasic TemplateBasic, KrizaljkaThemeLayout Layout);
 
 //    public async Task<KrizaljkaVersionAResult> TrySolveAsync(KrizaljkaVersionARequest request)
 //    {
 //        var termsById = request.Terms.ToDictionary(x => x.Id);
 
 //        var orderedTemplates = request.Templates
-//            .Select(template =>
+//            .Select(templateBasic =>
 //            {
-//                var krizaljka = TheKrizaljka.Create(template, new KrizaljkaSolveState());
+//                var krizaljka = TheKrizaljka.Create(templateBasic, new KrizaljkaSolveState());
 //                var score = ScoreTemplate(krizaljka, request.ThemeTermIds, termsById);
 
-//                return new { Template = template, Score = score, Krizaljka = krizaljka };
+//                return new { TemplateBasic = templateBasic, Score = score, Krizaljka = krizaljka };
 //            })
 //            .Where(x => x.Score > int.MinValue)
 //            .OrderByDescending(x => x.Score)
@@ -28,7 +28,7 @@
 //        List<KrizaljkaVersionAWorkItem> workItems = [];
 //        foreach (var templateEntry in orderedTemplates)
 //        {
-//            var template = templateEntry.Template;
+//            var templateBasic = templateEntry.TemplateBasic;
 //            var analyzedKrizaljka = templateEntry.Krizaljka;
 
 //            var layouts = BuildThemeLayouts(
@@ -38,7 +38,7 @@
 
 //            foreach (var layout in layouts)
 //            {
-//                workItems.Add(new KrizaljkaVersionAWorkItem(template, layout));
+//                workItems.Add(new KrizaljkaVersionAWorkItem(templateBasic, layout));
 //            }
 //        }
 
@@ -92,7 +92,7 @@
 //        KrizaljkaVersionARequest request,
 //        CancellationToken stopToken)
 //    {
-//        var freshKrizaljka = TheKrizaljka.Create(workItem.Template, new KrizaljkaSolveState());
+//        var freshKrizaljka = TheKrizaljka.Create(workItem.TemplateBasic, new KrizaljkaSolveState());
 //        var creator = new KrizaljkaCreator(freshKrizaljka);
 
 //        var placedAllThemes = true;
@@ -115,7 +115,7 @@
 
 //        if (!placedAllThemes)
 //        {
-//            return new KrizaljkaVersionAResult(false, workItem.Template, placedThemes, null);
+//            return new KrizaljkaVersionAResult(false, workItem.TemplateBasic, placedThemes, null);
 //        }
 
 //        var solveResult = creator.TrySolve(
@@ -125,7 +125,7 @@
 
 //        return new KrizaljkaVersionAResult(
 //            solveResult.IsCreated,
-//            workItem.Template,
+//            workItem.TemplateBasic,
 //            placedThemes,
 //            solveResult);
 //    }

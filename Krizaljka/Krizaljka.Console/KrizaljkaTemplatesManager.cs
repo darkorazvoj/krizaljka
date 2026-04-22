@@ -74,13 +74,13 @@ public static class KrizaljkaTemplatesManager
     }
 
     private static async Task<int> AddNewToDbAsync(
-        List<KrizaljkaTemplate> existingTemplates,
-        List<KrizaljkaTemplate> newTemplates)
+        List<KrizaljkaTemplateBasic> existingTemplates,
+        List<KrizaljkaTemplateBasic> newTemplates)
     {
         var nextFileId = GetNextFileId();
         var nextTemplateId = existingTemplates.Select(x => x.Id).DefaultIfEmpty(0).Max() + 1;
 
-        List<KrizaljkaTemplate> newTemplatesBatch = [];
+        List<KrizaljkaTemplateBasic> newTemplatesBatch = [];
         var currentBatchSize = 0;
         var currentBatchId = nextFileId;
         var numOfNewTemplates = 0;
@@ -129,8 +129,8 @@ public static class KrizaljkaTemplatesManager
     }
 
     private static bool AreTemplatesEqual(
-        KrizaljkaTemplate first, 
-        KrizaljkaTemplate second)
+        KrizaljkaTemplateBasic first, 
+        KrizaljkaTemplateBasic second)
     {
         if (first.Matrix.Length != second.Matrix.Length)
         {
@@ -157,7 +157,7 @@ public static class KrizaljkaTemplatesManager
         return true;
     }
 
-    private static async Task SaveDbFileAsync(List<KrizaljkaTemplate> batch, int batchId)
+    private static async Task SaveDbFileAsync(List<KrizaljkaTemplateBasic> batch, int batchId)
     {
         var templatesDbJsonToWrite = JsonSerializer.Serialize(new KrizaljkaTemplatesDb(batch), Options);
         await File.WriteAllTextAsync(Path.Combine(TemplatesDbPath, $"{TemplatesDbNamePrefix}_{batchId:00000}.json"), templatesDbJsonToWrite);
@@ -186,9 +186,9 @@ public static class KrizaljkaTemplatesManager
         return currentMaxId + 1;
     }
 
-    private static async Task<List<KrizaljkaTemplate>> LoadAllTemplatesAsync()
+    private static async Task<List<KrizaljkaTemplateBasic>> LoadAllTemplatesAsync()
     {
-        List<KrizaljkaTemplate> templates = [];
+        List<KrizaljkaTemplateBasic> templates = [];
 
         var existingDbFiles = GetExistingDbFiles();
         foreach (var dbFile in existingDbFiles)
@@ -211,7 +211,7 @@ public static class KrizaljkaTemplatesManager
             }
             catch 
             {
-                System.Console.WriteLine($"Invalid template DB file: {dbFile}");
+                System.Console.WriteLine($"Invalid templateBasic DB file: {dbFile}");
             }
         }
 
@@ -231,9 +231,9 @@ public static class KrizaljkaTemplatesManager
             .ToList();
     }
 
-    private static async Task<(List<KrizaljkaTemplate> Templates, List<string> TemplatesFileNames)> GetNewTemplatesAsync()
+    private static async Task<(List<KrizaljkaTemplateBasic> Templates, List<string> TemplatesFileNames)> GetNewTemplatesAsync()
     {
-        List<KrizaljkaTemplate> templates = [];
+        List<KrizaljkaTemplateBasic> templates = [];
         List<string> templatesFileNames = [];
 
         var newTemplatesFileNames = GetNewTemplateFiles();
@@ -247,7 +247,7 @@ public static class KrizaljkaTemplatesManager
 
             try
             {
-                var template = JsonSerializer.Deserialize<KrizaljkaTemplate>(templateJsonString, Options);
+                var template = JsonSerializer.Deserialize<KrizaljkaTemplateBasic>(templateJsonString, Options);
                 if (template?.Matrix is null)
                 {
                     continue;
@@ -277,7 +277,7 @@ public static class KrizaljkaTemplatesManager
             }
             catch
             {
-                System.Console.WriteLine($"Invalid template JSON: {templateName}");
+                System.Console.WriteLine($"Invalid templateBasic JSON: {templateName}");
             }
         }
 

@@ -34,13 +34,13 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("td -> Create/Update templates database")
     .AppendLine("kts -> show krizaljka templates list")
     .AppendLine("wl -> Show words per length")
-    .AppendLine("lk -> load krizaljka template")
+    .AppendLine("lk -> load krizaljka templateBasic")
     .AppendLine("k -> Show current krizaljka")
     .AppendLine("kss -> Load solved state for current krizaljka")
     .AppendLine("kp -> Assign pojam to krizaljka")
     .AppendLine("kd -> Delete pojam from krizaljka")
     .AppendLine("kcr -> Run krizaljka creator")
-    .AppendLine("kmts -> Run krizaljka template finder and creator for theme words")
+    .AppendLine("kmts -> Run krizaljka templateBasic finder and creator for theme words")
     .AppendLine("st => Check processed templates")
     .ToString();
 
@@ -289,7 +289,7 @@ while (true)
             break;
 
         case "kts":
-            Console.WriteLine("Template IDs:");
+            Console.WriteLine("TemplateBasic IDs:");
             foreach (var template in templatesDb.Templates)
             {
                 Console.WriteLine(
@@ -304,7 +304,7 @@ while (true)
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Krizaljka template id (x for exit):");
+                Console.WriteLine("Krizaljka templateBasic id (x for exit):");
                 var krizaljkaTemplateIdString = Console.ReadLine();
                 if (krizaljkaTemplateIdString == "x")
                 {
@@ -319,7 +319,7 @@ while (true)
                 var template = templatesDb.Templates.FirstOrDefault(x => x.Id == krizaljkaTemplateId);
                 if (template is null)
                 {
-                    Console.WriteLine($"No template with ID {krizaljkaTemplateId}");
+                    Console.WriteLine($"No templateBasic with ID {krizaljkaTemplateId}");
                     Console.ReadKey();
                     continue;
                 }
@@ -369,7 +369,7 @@ while (true)
                 Console.ReadKey();
                 continue;
             }
-            var solvedStates = KrizaljkaStateManager.GetSolvedStates(theKrizaljka.Template.Id);
+            var solvedStates = KrizaljkaStateManager.GetSolvedStates(theKrizaljka.TemplateBasic.Id);
             if (solvedStates.Count == 0)
             {
                 Console.WriteLine("No solved states :(");
@@ -404,7 +404,7 @@ while (true)
 
                 if (solvedStates.TryGetValue(selectedSolvedState, out var state))
                 {
-                    theKrizaljka = TheKrizaljka.Create(theKrizaljka.Template, state.State);
+                    theKrizaljka = TheKrizaljka.Create(theKrizaljka.TemplateBasic, state.State);
                     PrintKrizaljka();
                     Console.ReadKey();
                     break;
@@ -433,7 +433,7 @@ while (true)
 
             if (theKrizaljka is null)
             {
-                Console.WriteLine("Krizaljka template not loaded.");
+                Console.WriteLine("Krizaljka templateBasic not loaded.");
                 Console.ReadKey();
                 continue;
             }
@@ -517,7 +517,7 @@ while (true)
 
                     var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options);
                     File.WriteAllText(
-                        Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.Template.Id)),
+                        Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.TemplateBasic.Id)),
                         currentStateToWriteJson);
                 }
                 catch (Exception e)
@@ -535,7 +535,7 @@ while (true)
         case "kd":
             if (theKrizaljka is null)
             {
-                Console.WriteLine("Krizaljka template not loaded.");
+                Console.WriteLine("Krizaljka templateBasic not loaded.");
                 Console.ReadKey();
                 continue;
             }
@@ -577,7 +577,7 @@ while (true)
                 try
                 {
                     var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options);
-                    File.WriteAllText(Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.Template.Id)),
+                    File.WriteAllText(Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.TemplateBasic.Id)),
                         currentStateToWriteJson);
                 }
                 catch (Exception e)
@@ -603,14 +603,14 @@ while (true)
 
             if (theKrizaljka is null)
             {
-                Console.WriteLine("Krizaljka template or other objects not loaded.");
+                Console.WriteLine("Krizaljka templateBasic or other objects not loaded.");
                 Console.ReadKey();
                 continue;
             }
 
             if (pojmoviDb?.Terms is null)
             {
-                Console.WriteLine("Krizaljka template or other objects not loaded.");
+                Console.WriteLine("Krizaljka templateBasic or other objects not loaded.");
                 Console.ReadKey();
                 continue;
             }
@@ -647,7 +647,7 @@ while (true)
             }
 
             // TODO save state
-            //KrizaljkaStateManager.SaveSolvedState(createResult.State, theKrizaljka.Template.Id);
+            //KrizaljkaStateManager.SaveSolvedState(createResult.State, theKrizaljka.TemplateBasic.Id);
             Console.WriteLine("SOLVED!!!!");
             PrintKrizaljka();
             Console.ReadKey();
@@ -660,7 +660,7 @@ while (true)
                 Console.ReadKey();
                 return;
             }
-            List<KrizaljkaTemplate> templates = [];
+            List<KrizaljkaTemplateBasic> templates = [];
             List<Term> themeTerms = [];
             while (true)
             {
@@ -683,7 +683,7 @@ while (true)
                 {
                     while (true)
                     {
-                        Console.Write("Template ID (d for DONE): ");
+                        Console.Write("TemplateBasic ID (d for DONE): ");
                         var templateIdString = Console.ReadLine();
                         if (string.IsNullOrWhiteSpace(templateIdString))
                         {
@@ -812,10 +812,10 @@ while (true)
 
             //if (krizaljkaTemplate is not null)
             //{
-            //    var template = templatesDb.Templates.FirstOrDefault(t => t.Id == krizaljkaTemplate.Id);
-            //    if (template is null)
+            //    var templateBasic = templatesDb.Templates.FirstOrDefault(t => t.Id == krizaljkaTemplate.Id);
+            //    if (templateBasic is null)
             //    {
-            //        Console.WriteLine("Template disappeared");
+            //        Console.WriteLine("TemplateBasic disappeared");
             //        Console.ReadKey();
             //        continue;
             //    }
@@ -837,12 +837,12 @@ while (true)
             //            continue;
             //        }
 
-            //        theKrizaljka = TheKrizaljka.Create(template, solvedState);
+            //        theKrizaljka = TheKrizaljka.Create(templateBasic, solvedState);
             //    }
             //    else
             //    {
             //        var bestState = createResult1.BestState;
-            //        theKrizaljka = TheKrizaljka.Create(template, bestState);
+            //        theKrizaljka = TheKrizaljka.Create(templateBasic, bestState);
             //    }
 
             //    PrintKrizaljka();
@@ -889,10 +889,10 @@ void PrintKrizaljka()
         return;
     }
 
-    Console.WriteLine($"Krizaljka template: {theKrizaljka.Template.Id}");
+    Console.WriteLine($"Krizaljka templateBasic: {theKrizaljka.TemplateBasic.Id}");
 
     StringBuilder sb = new();
-    var krizaljkaRows = theKrizaljka.Template.Matrix;
+    var krizaljkaRows = theKrizaljka.TemplateBasic.Matrix;
     for (var r = 0; r < krizaljkaRows.Length; r++)
     {
         for (var c = 0; c < krizaljkaRows[r].Length; c++)

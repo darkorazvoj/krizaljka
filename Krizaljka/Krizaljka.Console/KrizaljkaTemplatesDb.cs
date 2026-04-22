@@ -2,4 +2,4 @@
 
 namespace Krizaljka.Console;
 
-public record KrizaljkaTemplatesDb(List<KrizaljkaTemplate> Templates);
+public record KrizaljkaTemplatesDb(List<KrizaljkaTemplateBasic> Templates);

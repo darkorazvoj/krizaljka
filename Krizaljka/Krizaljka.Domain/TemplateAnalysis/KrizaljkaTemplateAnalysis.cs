@@ -3,7 +3,7 @@
 namespace Krizaljka.Domain.TemplateAnalysis;
 
 public record KrizaljkaTemplateAnalysis(
-    KrizaljkaTemplate Template,
+    KrizaljkaTemplateBasic TemplateBasic,
     IReadOnlyList<KrizaljkaSlot> Slots,
     IReadOnlyList<KrizaljkaIntersection> Intersections,
     IReadOnlyDictionary<int, IReadOnlyList<KrizaljkaIntersection>> IntersectionsBySlotId,

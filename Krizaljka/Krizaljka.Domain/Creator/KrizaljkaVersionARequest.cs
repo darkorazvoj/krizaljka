@@ -3,7 +3,7 @@
 namespace Krizaljka.Domain.Creator;
 
 public record KrizaljkaVersionARequest(
-    IReadOnlyList<KrizaljkaTemplate> Templates,
+    IReadOnlyList<KrizaljkaTemplateBasic> Templates,
     IReadOnlyList<long> ThemeTermIds,
     int MaxTemplatesToTry = 10,
     int MaxLayoutsPerTemplate = 20,

@@ -4,6 +4,6 @@ namespace Krizaljka.Domain.Creator;
 
 public record KrizaljkaVersionAResult(
     bool Solved,
-    KrizaljkaTemplate? Template,
+    KrizaljkaTemplateBasic? Template,
     IReadOnlyList<KrizaljkaThemePlacement> ThemePlacements,
     KrizaljkaCreateResult? CreateResult);

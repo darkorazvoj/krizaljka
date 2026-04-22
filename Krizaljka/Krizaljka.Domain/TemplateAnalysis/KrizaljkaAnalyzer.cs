@@ -12,12 +12,12 @@ public class KrizaljkaAnalyzer
 
     private int _lastSlotId;
 
-    public KrizaljkaTemplateAnalysis GeTemplateAnalysis(KrizaljkaTemplate template)
+    public KrizaljkaTemplateAnalysis GeTemplateAnalysis(KrizaljkaTemplateBasic templateBasic)
     {
-        if (template.Matrix.Length == 0)
+        if (templateBasic.Matrix.Length == 0)
         {
             return new KrizaljkaTemplateAnalysis(
-                template,
+                templateBasic,
                 [],
                 [],
                 ImmutableDictionary<int, IReadOnlyList<KrizaljkaIntersection>>.Empty,
@@ -25,13 +25,13 @@ public class KrizaljkaAnalyzer
                 []);
         }
 
-        var slots = GetSlots(template);
+        var slots = GetSlots(templateBasic);
         var (intersections, cellSlots) = GetIntersections(slots);
 
         var neighborSlotsIdsBySlotId = GetNeighborSlotIdBySlotId(intersections);
         var intersectionsBySlotId = GetIntersectionsBySlotId(intersections);
 
-        return new KrizaljkaTemplateAnalysis(template, slots, intersections, intersectionsBySlotId, neighborSlotsIdsBySlotId, cellSlots);
+        return new KrizaljkaTemplateAnalysis(templateBasic, slots, intersections, intersectionsBySlotId, neighborSlotsIdsBySlotId, cellSlots);
     }
 
     private static (IReadOnlyList<KrizaljkaIntersection>, Dictionary<(int, int), List<SlotUsage>>) GetIntersections(IReadOnlyList<KrizaljkaSlot> slots)
@@ -63,7 +63,7 @@ public class KrizaljkaAnalyzer
             if (cellSlots.Count > 2)
             {
                 throw new Exception(
-                    $"Invalid template, it has more than 2 intersections on cell ({cell.Item1},{cell.Item2})");
+                    $"Invalid templateBasic, it has more than 2 intersections on cell ({cell.Item1},{cell.Item2})");
             }
 
             // Valid intersection
@@ -83,11 +83,11 @@ public class KrizaljkaAnalyzer
         return (intersections.AsReadOnly(), usages);
     }
 
-    private IReadOnlyList<KrizaljkaSlot> GetSlots(KrizaljkaTemplate template)
+    private IReadOnlyList<KrizaljkaSlot> GetSlots(KrizaljkaTemplateBasic templateBasic)
     {
         List<KrizaljkaSlot> slots = [];
 
-        var rows = template.Matrix;
+        var rows = templateBasic.Matrix;
         for (var r = 0; r < rows.Length; r++)
         {
             for (var c = 0; c < rows[r].Length; c++)

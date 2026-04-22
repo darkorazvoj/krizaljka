@@ -164,16 +164,16 @@ public sealed class KrizaljkaVersionASolver
     }
 
     private Task<ProcessedTemplate> ProcessTemplateAsync(
-        KrizaljkaTemplate template,
+        KrizaljkaTemplateBasic templateBasic,
         KrizaljkaVersionARequest request,
-        CancellationToken stopToken) => Task.Run(() => ProcessTemplate(template, request, stopToken));
+        CancellationToken stopToken) => Task.Run(() => ProcessTemplate(templateBasic, request, stopToken));
 
     private ProcessedTemplate ProcessTemplate(
-        KrizaljkaTemplate template,
+        KrizaljkaTemplateBasic templateBasic,
         KrizaljkaVersionARequest request,
         CancellationToken stopToken)
     {
-        var analyzedKrizaljka = TheKrizaljka.Create(template);
+        var analyzedKrizaljka = TheKrizaljka.Create(templateBasic);
 
         var layouts = BuildThemeLayouts(
             analyzedKrizaljka,
@@ -189,7 +189,7 @@ public sealed class KrizaljkaVersionASolver
                 break;
             }
 
-            var freshKrizaljka = TheKrizaljka.Create(template);
+            var freshKrizaljka = TheKrizaljka.Create(templateBasic);
             var creator = new KrizaljkaCreator(freshKrizaljka);
 
             var placedAllThemes = true;
@@ -216,7 +216,7 @@ public sealed class KrizaljkaVersionASolver
             if (solveResult.IsCreated)
             {
                 return new ProcessedTemplate(
-                    template.Id,
+                    templateBasic.Id,
                     true,
                     solveResult.CurrentState);
             }
@@ -231,7 +231,7 @@ public sealed class KrizaljkaVersionASolver
         }
 
         return new ProcessedTemplate(
-            template.Id,
+            templateBasic.Id,
             false,
             bestState);
     }
