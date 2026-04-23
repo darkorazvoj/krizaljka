@@ -42,6 +42,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("kcr -> Run krizaljka creator")
     .AppendLine("kmts -> Run krizaljka templateBasic finder and creator for theme words")
     .AppendLine("st => Check processed templates")
+    .AppendLine("blt => Batch load templates")
     .ToString();
 
 
@@ -66,7 +67,7 @@ while (true)
             break;
 
         case "d":
-            var numOfTerms = await  RebuildDatabaseAsync();
+            var numOfTerms = await RebuildDatabaseAsync();
 
             Console.WriteLine("Database Rebuilt!");
             Console.WriteLine($"Number of terms: {numOfTerms.NumberOfTerms}");
@@ -96,6 +97,7 @@ while (true)
                     Console.ReadLine();
                     continue;
                 }
+
                 if (IsExit(description))
                 {
                     break;
@@ -121,7 +123,8 @@ while (true)
 
                 foreach (var addedTerm in addedTerms)
                 {
-                    var t = pojmoviDb.Terms.Where(x => x.RawValue.Contains(addedTerm, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                    var t = pojmoviDb.Terms
+                        .Where(x => x.RawValue.Contains(addedTerm, StringComparison.CurrentCultureIgnoreCase)).ToList();
                     foreach (var term in t)
                     {
                         Console.WriteLine($"ID: {term.Id} ({term.RawValue})");
@@ -221,7 +224,9 @@ while (true)
                             {
                                 continue;
                             }
-                            query = query.Where(x => x.DenseValue.StartsWith(startsWith.RemoveWhiteSpaces(), StringComparison.InvariantCultureIgnoreCase));
+
+                            query = query.Where(x => x.DenseValue.StartsWith(startsWith.RemoveWhiteSpaces(),
+                                StringComparison.InvariantCultureIgnoreCase));
                             break;
                         }
                     }
@@ -232,7 +237,7 @@ while (true)
                         for (var i = 0; i < length; i++)
                         {
                             var letterIndex = i;
-                            Console.Write($"Letter {i+1}: ");
+                            Console.Write($"Letter {i + 1}: ");
                             var let = Console.ReadLine();
 
                             if (!string.IsNullOrWhiteSpace(let))
@@ -293,8 +298,9 @@ while (true)
             foreach (var template in templatesDb.Templates)
             {
                 Console.WriteLine(
-                    $"ID: {template.Id}, {template.Matrix.Length}x{(template.Matrix.Length > 0 ? template.Matrix[0].Length:0)}");
+                    $"ID: {template.Id}, {template.Matrix.Length}x{(template.Matrix.Length > 0 ? template.Matrix[0].Length : 0)}");
             }
+
             Console.ReadKey();
             break;
 
@@ -323,6 +329,7 @@ while (true)
                     Console.ReadKey();
                     continue;
                 }
+
                 KrizaljkaSolveState? existingState = null;
 
                 // Load state if exists.
@@ -330,7 +337,8 @@ while (true)
                 {
                     var templateName = Directory
                         .GetFiles(templatesStatesDir)
-                        .Where(x => string.Equals(Path.GetFileName(x), GetTemplateStateFileName(template.Id), StringComparison.CurrentCultureIgnoreCase))
+                        .Where(x => string.Equals(Path.GetFileName(x), GetTemplateStateFileName(template.Id),
+                            StringComparison.CurrentCultureIgnoreCase))
                         .Select(Path.GetFullPath)
                         .FirstOrDefault();
 
@@ -352,7 +360,7 @@ while (true)
                         }
                     }
                 }
-                
+
                 theKrizaljka = TheKrizaljka.Create(template, existingState ?? new KrizaljkaSolveState());
                 PrintKrizaljka();
                 Console.ReadKey();
@@ -369,6 +377,7 @@ while (true)
                 Console.ReadKey();
                 continue;
             }
+
             var solvedStates = KrizaljkaStateManager.GetSolvedStates(theKrizaljka.TemplateBasic.Id);
             if (solvedStates.Count == 0)
             {
@@ -421,7 +430,7 @@ while (true)
                 Console.ReadKey();
                 continue;
             }
-            
+
             if (pojmoviDb.Terms.Count == 0)
             {
                 Console.WriteLine("Pojmovi database is empty...");
@@ -577,7 +586,8 @@ while (true)
                 try
                 {
                     var currentStateToWriteJson = JsonSerializer.Serialize(theKrizaljka.State, options);
-                    File.WriteAllText(Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.TemplateBasic.Id)),
+                    File.WriteAllText(
+                        Path.Combine(templatesStatesDir, GetTemplateStateFileName(theKrizaljka.TemplateBasic.Id)),
                         currentStateToWriteJson);
                 }
                 catch (Exception e)
@@ -619,7 +629,7 @@ while (true)
 
             Console.WriteLine($"Started: {DateTime.Now}");
             var createResult = new KrizaljkaCreator(theKrizaljka)
-                .TrySolve( 3, CancellationToken.None);
+                .TrySolve(3, CancellationToken.None);
 
             var ts = TimeSpan.FromMilliseconds(createResult.Stats.ElapsedMilliseconds);
             var elapsed = $"{ts.Hours}h {ts.Minutes}m {ts.Seconds}s";
@@ -660,6 +670,7 @@ while (true)
                 Console.ReadKey();
                 return;
             }
+
             List<KrizaljkaTemplateBasic> templates = [];
             List<Term> themeTerms = [];
             while (true)
@@ -674,10 +685,10 @@ while (true)
 
                 var templateSelectionUpper = templateSelection.ToUpper();
 
-               
+
                 if (templateSelectionUpper == "A")
                 {
-                    templates.AddRange( templatesDb.Templates);
+                    templates.AddRange(templatesDb.Templates);
                 }
                 else if (templateSelectionUpper == "S")
                 {
@@ -694,8 +705,8 @@ while (true)
                         if (templateIdUpper == "D")
                         {
                             break;
-                        } 
-                        
+                        }
+
                         if (int.TryParse(templateIdUpper, out var templateId))
                         {
                             var template = templatesDb.Templates.FirstOrDefault(x => x.Id == templateId);
@@ -708,7 +719,7 @@ while (true)
                         }
                     }
                 }
-               
+
 
                 while (true)
                 {
@@ -726,7 +737,7 @@ while (true)
                         {
                             continue;
                         }
-                        
+
                         var term = pojmoviDb.Terms.FirstOrDefault(x => x.Id == termId);
                         if (term != null)
                         {
@@ -778,7 +789,7 @@ while (true)
 
             Console.WriteLine($"Process ID: {processId}");
             Console.ReadKey();
-            
+
 
             //if (solved)
             //{
@@ -856,6 +867,11 @@ while (true)
             //}
 
             Console.ReadKey();
+            break;
+
+        case "blt":
+            //var krizaljkaRepo = new KrizaljkaTemplateRepo
+
 
             break;
         case "k":
