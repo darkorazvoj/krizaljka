@@ -10,6 +10,8 @@ using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Creator;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Terms;
+using Krizaljka.PostgreSql;
+using Microsoft.Extensions.DependencyInjection;
 
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -870,7 +872,10 @@ while (true)
             break;
 
         case "blt":
-            //var krizaljkaRepo = new KrizaljkaTemplateRepo
+            var services = new ServiceCollection();
+            services.AddKrizaljkaDomain(_ => { });
+            services.AddKrizaljkaPostgreSql(o => o.ConnectionStringCore = "asd");
+
 
 
             break;
