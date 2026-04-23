@@ -897,7 +897,21 @@ while (true)
 
             var appDispatcher = scope.ServiceProvider.GetRequiredService<AppDispatcher>();
 
-            //foreach (var template in templatesDb.Templates)
+            var dbTemplates = await KrizaljkaTemplatesManager.GetAllTemplatesAsync();
+            foreach (var template in dbTemplates)
+            {
+                var insertKrizaljkaResult = await appDispatcher.DispatchAsync(
+                    new InsertKrizaljkaTemplateServiceRequest(template.Rows, template.Name));
+
+                if (insertKrizaljkaResult is SuccessInsert<long> successInsert)
+                {
+                    Console.WriteLine($"Inserted: {successInsert.Id}");
+                }
+                else
+                {
+                    Console.WriteLine("No good... :(");
+                }
+            }
             //{
             //    var insertKrizaljkaResult = await appDispatcher.DispatchAsync(
             //        new InsertKrizaljkaTemplateServiceRequest(template.Matrix, ""));
