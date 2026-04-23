@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>eb7f8daa-09ff-4a2a-a4d7-b22182d2ce03</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,11 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Krizaljka.Domain\Krizaljka.Domain.csproj" />
+    <ProjectReference Include="..\Krizaljka.PostgreSql\Krizaljka.PostgreSql.csproj" />
   </ItemGroup>
 
 </Project>
