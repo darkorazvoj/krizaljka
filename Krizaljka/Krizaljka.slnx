@@ -2,4 +2,5 @@
   <Project Path="Krizaljka.Console/Krizaljka.Console.csproj" />
   <Project Path="Krizaljka.Domain/Krizaljka.Domain.csproj" />
   <Project Path="Krizaljka.PostgreSql/Krizaljka.PostgreSql.csproj" Id="d8c30769-e2d6-490d-ab88-6d43e69bdab9" />
+  <Project Path="Krizaljka.WebApi/Krizaljka.WebApi.csproj" Id="f2a2abf2-b4d3-4530-b8b6-c9f1561af121" />
 </Solution>
