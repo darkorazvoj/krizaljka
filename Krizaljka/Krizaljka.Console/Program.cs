@@ -9,6 +9,7 @@ using Krizaljka.Domain;
 using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Core.Stuff;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Creator;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Template.Handlers;
@@ -904,8 +905,14 @@ while (true)
             var insertKrizaljkaResult = await appDispatcher.DispatchAsync(
                 new InsertKrizaljkaTemplateServiceRequest(test, "test prva"));
 
-            Console.WriteLine(insertKrizaljkaResult.GetType().Name);
-
+            if (insertKrizaljkaResult is SuccessInsert<long> successInsert)
+            {
+                Console.WriteLine($"Inserted: {successInsert.Id}");
+            }
+            else
+            {
+                Console.WriteLine("No good... :(");
+            }
             Console.ReadKey();
 
 
