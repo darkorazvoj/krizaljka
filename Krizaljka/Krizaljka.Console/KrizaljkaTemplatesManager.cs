@@ -1,291 +1,291 @@
 ﻿
-using Krizaljka.Domain.Template;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
+//using Krizaljka.Domain.Template;
+//using System.Text.Encodings.Web;
+//using System.Text.Json;
+//using System.Text.Unicode;
 
-namespace Krizaljka.Console;
+//namespace Krizaljka.Console;
 
-public static class KrizaljkaTemplatesManager
-{
-    private const string TemplatesBasePath = @"C:\git\krizaljka\templates";
-    private const string TemplatesDbPath = @"C:\git\krizaljka\templates\db";
-    private const string ProcessedTemplatesPath = @"C:\git\krizaljka\templates\processed";
-    private const string TemplatesDbNamePrefix = "KrizaljkaTemplates";
-    private const int MaxTemplatesPerFile = 50;
+//public static class KrizaljkaTemplatesManager
+//{
+//    private const string TemplatesBasePath = @"C:\git\krizaljka\templates";
+//    private const string TemplatesDbPath = @"C:\git\krizaljka\templates\db";
+//    private const string ProcessedTemplatesPath = @"C:\git\krizaljka\templates\processed";
+//    private const string TemplatesDbNamePrefix = "KrizaljkaTemplates";
+//    private const int MaxTemplatesPerFile = 50;
 
-    private static readonly JsonSerializerOptions Options = new()
-        { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true  };
+//    private static readonly JsonSerializerOptions Options = new()
+//        { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true  };
 
-    public static async Task<(int NumberOfTemplates, int NumberOfNewTemplates)> CreateTemplateDatabaseAsync()
-    {
-        if (!Directory.Exists(TemplatesBasePath))
-        {
-            Directory.CreateDirectory(TemplatesBasePath);
-            return (0, 0);
-        }
+//    public static async Task<(int NumberOfTemplates, int NumberOfNewTemplates)> CreateTemplateDatabaseAsync()
+//    {
+//        if (!Directory.Exists(TemplatesBasePath))
+//        {
+//            Directory.CreateDirectory(TemplatesBasePath);
+//            return (0, 0);
+//        }
 
-        if (!Directory.Exists(TemplatesDbPath))
-        {
-            Directory.CreateDirectory(TemplatesDbPath);
-        }
+//        if (!Directory.Exists(TemplatesDbPath))
+//        {
+//            Directory.CreateDirectory(TemplatesDbPath);
+//        }
 
-        var existingTemplates = await LoadAllTemplatesAsync();
-        var (newTemplates, newTemplatesFileNames) = await GetNewTemplatesAsync();
+//        var existingTemplates = await LoadAllTemplatesAsync();
+//        var (newTemplates, newTemplatesFileNames) = await GetNewTemplatesAsync();
 
-        var numOfNew = 0;
-        if (newTemplates.Count > 0)
-        {
-            numOfNew = await AddNewToDbAsync(existingTemplates, newTemplates);
-            MoveProcessedFiles(newTemplatesFileNames);
-        }
+//        var numOfNew = 0;
+//        if (newTemplates.Count > 0)
+//        {
+//            numOfNew = await AddNewToDbAsync(existingTemplates, newTemplates);
+//            MoveProcessedFiles(newTemplatesFileNames);
+//        }
 
-        return (existingTemplates.Count, numOfNew);
-    }
+//        return (existingTemplates.Count, numOfNew);
+//    }
 
-    public static async Task<KrizaljkaTemplatesDb> LoadTemplatesAsync()
-    {
-        var list = await LoadAllTemplatesAsync();
-        return new KrizaljkaTemplatesDb(list);
-    }
+//    public static async Task<KrizaljkaTemplatesDb> LoadTemplatesAsync()
+//    {
+//        var list = await LoadAllTemplatesAsync();
+//        return new KrizaljkaTemplatesDb(list);
+//    }
 
-    private static void MoveProcessedFiles(List<string> newTemplatesFileNames)
-    {
-        if (!Directory.Exists(ProcessedTemplatesPath))
-        {
-            Directory.CreateDirectory(ProcessedTemplatesPath);
-        }
+//    private static void MoveProcessedFiles(List<string> newTemplatesFileNames)
+//    {
+//        if (!Directory.Exists(ProcessedTemplatesPath))
+//        {
+//            Directory.CreateDirectory(ProcessedTemplatesPath);
+//        }
 
-        foreach (var name in newTemplatesFileNames)
-        {
-            var fileName = Path.GetFileNameWithoutExtension(name);
-            var extension = Path.GetExtension(name);
-            var destination = Path.Combine(ProcessedTemplatesPath, fileName + extension);
+//        foreach (var name in newTemplatesFileNames)
+//        {
+//            var fileName = Path.GetFileNameWithoutExtension(name);
+//            var extension = Path.GetExtension(name);
+//            var destination = Path.Combine(ProcessedTemplatesPath, fileName + extension);
 
-            var count = 1;
-            while (File.Exists(destination))
-            {
-                var tempFileName = $"{fileName}_{count++}{extension}";
-                destination = Path.Combine(ProcessedTemplatesPath, tempFileName);
-            }
+//            var count = 1;
+//            while (File.Exists(destination))
+//            {
+//                var tempFileName = $"{fileName}_{count++}{extension}";
+//                destination = Path.Combine(ProcessedTemplatesPath, tempFileName);
+//            }
 
-            File.Move(name, destination);
-        }
-    }
+//            File.Move(name, destination);
+//        }
+//    }
 
-    private static async Task<int> AddNewToDbAsync(
-        List<KrizaljkaTemplateBasic> existingTemplates,
-        List<KrizaljkaTemplateBasic> newTemplates)
-    {
-        var nextFileId = GetNextFileId();
-        var nextTemplateId = existingTemplates.Select(x => x.Id).DefaultIfEmpty(0).Max() + 1;
+//    private static async Task<int> AddNewToDbAsync(
+//        List<KrizaljkaTemplateJson> existingTemplates,
+//        List<KrizaljkaTemplateJson> newTemplates)
+//    {
+//        var nextFileId = GetNextFileId();
+//        var nextTemplateId = existingTemplates.Select(x => x.Id).DefaultIfEmpty(0).Max() + 1;
 
-        List<KrizaljkaTemplateBasic> newTemplatesBatch = [];
-        var currentBatchSize = 0;
-        var currentBatchId = nextFileId;
-        var numOfNewTemplates = 0;
+//        List<KrizaljkaTemplateBasic> newTemplatesBatch = [];
+//        var currentBatchSize = 0;
+//        var currentBatchId = nextFileId;
+//        var numOfNewTemplates = 0;
 
-        foreach (var newTemplate in newTemplates)
-        {
-            var exists = false;
-            foreach (var existingTemplate in existingTemplates)
-            {
+//        foreach (var newTemplate in newTemplates)
+//        {
+//            var exists = false;
+//            foreach (var existingTemplate in existingTemplates)
+//            {
                 
-                if (AreTemplatesEqual(existingTemplate, newTemplate))
-                {
-                    exists = true;
-                    break;
-                }
-            }
+//                if (AreTemplatesEqual(existingTemplate, newTemplate))
+//                {
+//                    exists = true;
+//                    break;
+//                }
+//            }
 
-            if (exists)
-            {
-                continue;
-            }
+//            if (exists)
+//            {
+//                continue;
+//            }
 
-            newTemplatesBatch.Add(newTemplate with{Id = nextTemplateId});
-            nextTemplateId++;
-            currentBatchSize++;
-            numOfNewTemplates++;
+//            newTemplatesBatch.Add(newTemplate with{Id = nextTemplateId});
+//            nextTemplateId++;
+//            currentBatchSize++;
+//            numOfNewTemplates++;
 
-            if (currentBatchSize >= MaxTemplatesPerFile)
-            {
-                await SaveDbFileAsync(newTemplatesBatch, currentBatchId);
+//            if (currentBatchSize >= MaxTemplatesPerFile)
+//            {
+//                await SaveDbFileAsync(newTemplatesBatch, currentBatchId);
                 
-                currentBatchId++;
-                currentBatchSize = 0;
-                newTemplatesBatch.Clear();
-            }
-        }
+//                currentBatchId++;
+//                currentBatchSize = 0;
+//                newTemplatesBatch.Clear();
+//            }
+//        }
 
 
-        if (newTemplatesBatch.Count > 0)
-        {
-            await SaveDbFileAsync(newTemplatesBatch, currentBatchId);
-        }
+//        if (newTemplatesBatch.Count > 0)
+//        {
+//            await SaveDbFileAsync(newTemplatesBatch, currentBatchId);
+//        }
 
-        return numOfNewTemplates;
+//        return numOfNewTemplates;
 
-    }
+//    }
 
-    private static bool AreTemplatesEqual(
-        KrizaljkaTemplateBasic first, 
-        KrizaljkaTemplateBasic second)
-    {
-        if (first.Matrix.Length != second.Matrix.Length)
-        {
-            return false;
+//    private static bool AreTemplatesEqual(
+//        KrizaljkaTemplateJson first, 
+//        KrizaljkaTemplateJson second)
+//    {
+//        if (first.Rows.Length != second.Rows.Length)
+//        {
+//            return false;
 
-        }
+//        }
 
-        for (var r = 0; r < first.Matrix.Length; r++)
-        {
-            if (first.Matrix[r].Length != second.Matrix[r].Length)
-            {
-                return false;
-            }
+//        for (var r = 0; r < first.Rows.Length; r++)
+//        {
+//            if (first.Rows[r].Length != second.Rows[r].Length)
+//            {
+//                return false;
+//            }
 
-            for (var c = 0; c < first.Matrix[r].Length; c++)
-            {
-                if (first.Matrix[r][c] != second.Matrix[r][c])
-                {
-                    return false;
-                }
-            }
-        }
+//            for (var c = 0; c < first.Rows[r].Length; c++)
+//            {
+//                if (first.Rows[r][c] != second.Rows[r][c])
+//                {
+//                    return false;
+//                }
+//            }
+//        }
 
-        return true;
-    }
+//        return true;
+//    }
 
-    private static async Task SaveDbFileAsync(List<KrizaljkaTemplateBasic> batch, int batchId)
-    {
-        var templatesDbJsonToWrite = JsonSerializer.Serialize(new KrizaljkaTemplatesDb(batch), Options);
-        await File.WriteAllTextAsync(Path.Combine(TemplatesDbPath, $"{TemplatesDbNamePrefix}_{batchId:00000}.json"), templatesDbJsonToWrite);
+//    private static async Task SaveDbFileAsync(List<KrizaljkaTemplateBasic> batch, int batchId)
+//    {
+//        var templatesDbJsonToWrite = JsonSerializer.Serialize(new KrizaljkaTemplatesDb(batch), Options);
+//        await File.WriteAllTextAsync(Path.Combine(TemplatesDbPath, $"{TemplatesDbNamePrefix}_{batchId:00000}.json"), templatesDbJsonToWrite);
     
-    }
+//    }
 
-    private static int GetNextFileId()
-    {
-        var existingDbFileNames = GetExistingDbFiles();
-        var currentMaxId =  existingDbFileNames
-            .Select(f =>
-            {
-                var fileName = Path.GetFileNameWithoutExtension(f);
+//    private static int GetNextFileId()
+//    {
+//        var existingDbFileNames = GetExistingDbFiles();
+//        var currentMaxId =  existingDbFileNames
+//            .Select(f =>
+//            {
+//                var fileName = Path.GetFileNameWithoutExtension(f);
 
-                var parts = fileName.Split(new[] { '_', '.' });
-                if (parts.Length >= 2 && int.TryParse(parts[1], out var fileId))
-                {
-                    return fileId;
-                }
+//                var parts = fileName.Split(new[] { '_', '.' });
+//                if (parts.Length >= 2 && int.TryParse(parts[1], out var fileId))
+//                {
+//                    return fileId;
+//                }
 
-                return 0;
-            })
-            .DefaultIfEmpty(0)
-            .Max();
+//                return 0;
+//            })
+//            .DefaultIfEmpty(0)
+//            .Max();
 
-        return currentMaxId + 1;
-    }
+//        return currentMaxId + 1;
+//    }
 
-    private static async Task<List<KrizaljkaTemplateBasic>> LoadAllTemplatesAsync()
-    {
-        List<KrizaljkaTemplateBasic> templates = [];
+//    private static async Task<List<KrizaljkaTemplateBasic>> LoadAllTemplatesAsync()
+//    {
+//        List<KrizaljkaTemplateBasic> templates = [];
 
-        var existingDbFiles = GetExistingDbFiles();
-        foreach (var dbFile in existingDbFiles)
-        {
-            var templatesJsonString = await File.ReadAllTextAsync(dbFile);
-            if (string.IsNullOrWhiteSpace(templatesJsonString))
-            {
-                continue;
-            }
+//        var existingDbFiles = GetExistingDbFiles();
+//        foreach (var dbFile in existingDbFiles)
+//        {
+//            var templatesJsonString = await File.ReadAllTextAsync(dbFile);
+//            if (string.IsNullOrWhiteSpace(templatesJsonString))
+//            {
+//                continue;
+//            }
 
-            try
-            {
-                var templatesDb = JsonSerializer.Deserialize<KrizaljkaTemplatesDb>(templatesJsonString, Options);
-                if (templatesDb?.Templates is null)
-                {
-                    continue;
-                }
+//            try
+//            {
+//                var templatesDb = JsonSerializer.Deserialize<KrizaljkaTemplatesDb>(templatesJsonString, Options);
+//                if (templatesDb?.Templates is null)
+//                {
+//                    continue;
+//                }
 
-                templates.AddRange(templatesDb.Templates);
-            }
-            catch 
-            {
-                System.Console.WriteLine($"Invalid templateBasic DB file: {dbFile}");
-            }
-        }
+//                templates.AddRange(templatesDb.Templates);
+//            }
+//            catch 
+//            {
+//                System.Console.WriteLine($"Invalid templateBasic DB file: {dbFile}");
+//            }
+//        }
 
-        return templates;
-    }
+//        return templates;
+//    }
 
-    private static List<string> GetExistingDbFiles()
-    {
-        if (!Directory.Exists(TemplatesDbPath))
-        {
-            return [];
-        }
+//    private static List<string> GetExistingDbFiles()
+//    {
+//        if (!Directory.Exists(TemplatesDbPath))
+//        {
+//            return [];
+//        }
 
-        var dbDirectory = new DirectoryInfo(TemplatesDbPath);
-        var existingDbFiles = dbDirectory.GetFiles($"{TemplatesDbNamePrefix}_*.json");
-        return existingDbFiles.Select(x => x.FullName)
-            .ToList();
-    }
+//        var dbDirectory = new DirectoryInfo(TemplatesDbPath);
+//        var existingDbFiles = dbDirectory.GetFiles($"{TemplatesDbNamePrefix}_*.json");
+//        return existingDbFiles.Select(x => x.FullName)
+//            .ToList();
+//    }
 
-    private static async Task<(List<KrizaljkaTemplateBasic> Templates, List<string> TemplatesFileNames)> GetNewTemplatesAsync()
-    {
-        List<KrizaljkaTemplateBasic> templates = [];
-        List<string> templatesFileNames = [];
+//    private static async Task<(List<KrizaljkaTemplateJson> Templates, List<string> TemplatesFileNames)> GetNewTemplatesAsync()
+//    {
+//        List<KrizaljkaTemplateJson> templates = [];
+//        List<string> templatesFileNames = [];
 
-        var newTemplatesFileNames = GetNewTemplateFiles();
-        foreach (var templateName in newTemplatesFileNames)
-        {
-            var templateJsonString = await File.ReadAllTextAsync(templateName);
-            if (string.IsNullOrWhiteSpace(templateJsonString))
-            {
-                continue;
-            }
+//        var newTemplatesFileNames = GetNewTemplateFiles();
+//        foreach (var templateName in newTemplatesFileNames)
+//        {
+//            var templateJsonString = await File.ReadAllTextAsync(templateName);
+//            if (string.IsNullOrWhiteSpace(templateJsonString))
+//            {
+//                continue;
+//            }
 
-            try
-            {
-                var template = JsonSerializer.Deserialize<KrizaljkaTemplateBasic>(templateJsonString, Options);
-                if (template?.Matrix is null)
-                {
-                    continue;
-                }
+//            try
+//            {
+//                var template = JsonSerializer.Deserialize<KrizaljkaTemplateJson>(templateJsonString, Options);
+//                if (template?.Rows is null)
+//                {
+//                    continue;
+//                }
 
-                var isDuplicate = false;
-                if (templates.Count > 0)
-                {
-                    foreach (var existingTemplate in templates)
-                    {
-                        if (AreTemplatesEqual(existingTemplate, template))
-                        {
-                            isDuplicate = true;
-                            break;
-                        }
-                    }
-                }
+//                var isDuplicate = false;
+//                if (templates.Count > 0)
+//                {
+//                    foreach (var existingTemplate in templates)
+//                    {
+//                        if (AreTemplatesEqual(existingTemplate, template))
+//                        {
+//                            isDuplicate = true;
+//                            break;
+//                        }
+//                    }
+//                }
 
-                templatesFileNames.Add(templateName);
+//                templatesFileNames.Add(templateName);
 
-                if (isDuplicate)
-                {
-                    continue;
-                }
+//                if (isDuplicate)
+//                {
+//                    continue;
+//                }
 
-                templates.Add(template);
-            }
-            catch
-            {
-                System.Console.WriteLine($"Invalid templateBasic JSON: {templateName}");
-            }
-        }
+//                templates.Add(template);
+//            }
+//            catch
+//            {
+//                System.Console.WriteLine($"Invalid templateBasic JSON: {templateName}");
+//            }
+//        }
 
-        return (templates, templatesFileNames);
-    }
+//        return (templates, templatesFileNames);
+//    }
 
-    private static List<string> GetNewTemplateFiles() =>
-        !Directory.Exists(TemplatesBasePath) ? [] : Directory.GetFiles(TemplatesBasePath).ToList();
-}
+//    private static List<string> GetNewTemplateFiles() =>
+//        !Directory.Exists(TemplatesBasePath) ? [] : Directory.GetFiles(TemplatesBasePath).ToList();
+//}
 
 

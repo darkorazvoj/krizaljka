@@ -27,7 +27,7 @@ TheKrizaljka? theKrizaljka = null;
 
 
 var pojmoviDb = PojmoviManager.LoadTerms();
-var templatesDb = await KrizaljkaTemplatesManager.LoadTemplatesAsync();
+//var templatesDb = await KrizaljkaTemplatesManager.LoadTemplatesAsync();
 
 
 var options = new JsonSerializerOptions
@@ -290,23 +290,23 @@ while (true)
 
         case "td":
 
-            var (numOfExisting, numOfNew) = await KrizaljkaTemplatesManager.CreateTemplateDatabaseAsync();
-            templatesDb = await KrizaljkaTemplatesManager.LoadTemplatesAsync();
+            //var (numOfExisting, numOfNew) = await KrizaljkaTemplatesManager.CreateTemplateDatabaseAsync();
+            //templatesDb = await KrizaljkaTemplatesManager.LoadTemplatesAsync();
 
-            Console.WriteLine($"Number of existing templates: {numOfExisting}");
-            Console.WriteLine($"Number of new templates: {numOfNew}");
+            //Console.WriteLine($"Number of existing templates: {numOfExisting}");
+            //Console.WriteLine($"Number of new templates: {numOfNew}");
 
-            Console.ReadKey();
+            //Console.ReadKey();
 
             break;
 
         case "kts":
             Console.WriteLine("TemplateBasic IDs:");
-            foreach (var template in templatesDb.Templates)
-            {
-                Console.WriteLine(
-                    $"ID: {template.Id}, {template.Matrix.Length}x{(template.Matrix.Length > 0 ? template.Matrix[0].Length : 0)}");
-            }
+            //foreach (var template in templatesDb.Templates)
+            //{
+            //    Console.WriteLine(
+            //        $"ID: {template.Id}, {template.Matrix.Length}x{(template.Matrix.Length > 0 ? template.Matrix[0].Length : 0)}");
+            //}
 
             Console.ReadKey();
             break;
@@ -329,7 +329,7 @@ while (true)
                     continue;
                 }
 
-                var template = templatesDb.Templates.FirstOrDefault(x => x.Id == krizaljkaTemplateId);
+                var template = new KrizaljkaTemplateBasic(123, new int[1][]); // templatesDb.Templates.FirstOrDefault(x => x.Id == krizaljkaTemplateId);
                 if (template is null)
                 {
                     Console.WriteLine($"No templateBasic with ID {krizaljkaTemplateId}");
@@ -695,7 +695,9 @@ while (true)
 
                 if (templateSelectionUpper == "A")
                 {
-                    templates.AddRange(templatesDb.Templates);
+                    //templates.AddRange(templatesDb.Templates);
+                    // TODO
+                    
                 }
                 else if (templateSelectionUpper == "S")
                 {
@@ -716,7 +718,8 @@ while (true)
 
                         if (int.TryParse(templateIdUpper, out var templateId))
                         {
-                            var template = templatesDb.Templates.FirstOrDefault(x => x.Id == templateId);
+                            // TODO
+                            var template = new KrizaljkaTemplateBasic(1, new  int[1][]);// templatesDb.Templates.FirstOrDefault(x => x.Id == templateId);
                             if (template is null)
                             {
                                 continue;
@@ -894,25 +897,23 @@ while (true)
 
             var appDispatcher = scope.ServiceProvider.GetRequiredService<AppDispatcher>();
 
-            int[][] test = new int[2][];
-            test[0] = new int[2];
-            test[1] = new int[2];
-            test[0][0] = 1;
-            test[0][1] = 2;
-            test[1][0] = 3;
-            test[1][1] = 4;
+            //foreach (var template in templatesDb.Templates)
+            //{
+            //    var insertKrizaljkaResult = await appDispatcher.DispatchAsync(
+            //        new InsertKrizaljkaTemplateServiceRequest(template.Matrix, ""));
+            //}
+          
 
-            var insertKrizaljkaResult = await appDispatcher.DispatchAsync(
-                new InsertKrizaljkaTemplateServiceRequest(test, "test prva"));
+           
 
-            if (insertKrizaljkaResult is SuccessInsert<long> successInsert)
-            {
-                Console.WriteLine($"Inserted: {successInsert.Id}");
-            }
-            else
-            {
-                Console.WriteLine("No good... :(");
-            }
+            //if (insertKrizaljkaResult is SuccessInsert<long> successInsert)
+            //{
+            //    Console.WriteLine($"Inserted: {successInsert.Id}");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("No good... :(");
+            //}
             Console.ReadKey();
 
 
