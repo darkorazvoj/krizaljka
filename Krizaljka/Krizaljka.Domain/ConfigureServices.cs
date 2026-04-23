@@ -1,5 +1,6 @@
 ﻿
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+using Krizaljka.Domain.Core.Stuff.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Krizaljka.Domain;
@@ -13,6 +14,9 @@ public static class ConfigureServices
         options.Invoke(opts);
 
         services.AddSingleton(opts);
+
+        services.RegisterHandlersForAssembly(typeof(KrizaljkaDomainOptions).Assembly);
+
 
         services.AddScoped<AppDispatcher>();
 

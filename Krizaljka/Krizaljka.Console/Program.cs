@@ -14,6 +14,7 @@ using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.Domain.Terms;
 using Krizaljka.PostgreSql;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 Console.OutputEncoding = Encoding.UTF8;
@@ -876,9 +877,15 @@ while (true)
 
         case "blt":
         {
+            IConfiguration config = new ConfigurationBuilder()
+                .AddUserSecrets<Program>()
+                .Build();
+
+            var connectionString = config["ConnectionString"];
+
             var services = new ServiceCollection();
             services.AddKrizaljkaDomain(_ => { });
-            services.AddKrizaljkaPostgreSql(o => o.ConnectionStringCore = "asd");
+            services.AddKrizaljkaPostgreSql(o => o.ConnectionStringCore = connectionString);
             services.AddSingleton<IAuthUser, AuthUserConsole>();
 
             await using var provider = services.BuildServiceProvider();
