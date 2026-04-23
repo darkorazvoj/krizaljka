@@ -21,11 +21,10 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
             $"call cr.templateinsert_v1 (@name, @matrix, @numRows, @numColumns, @isActive, @createdOn, @RanById, null);",
             new SqlParams()
                 .Add("name", name)
-                .Add("matrix", matrix)
+                .AddJsonb("matrix", matrix)
                 .Add("numRows", numOfRows)
                 .Add("numColumns", numOfColumns)
                 .Add("isactive", true)
-
                 .Add("createdOn", createdOn)
                 .Add("ranById", ranById)
                 .AddOutput("newId", DbType.Int64),

@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text.Json;
 using Dapper;
 using Krizaljka.PostgreSql.Postgres.Stuff.Helpers;
 using Npgsql;
@@ -67,6 +68,16 @@ public sealed class SqlParams : SqlMapper.IDynamicParameters
             DbType = dbType,
             Direction = ParameterDirection.Output
         });
+        return this;
+    }
+
+    public SqlParams AddJsonb(string name, int[][] value)
+    {
+        _npgsqlParams.Add(new NpgsqlParameter<string>(name, JsonSerializer.Serialize(value))
+        {
+            NpgsqlDbType = NpgsqlDbType.Jsonb
+        });
+
         return this;
     }
 
