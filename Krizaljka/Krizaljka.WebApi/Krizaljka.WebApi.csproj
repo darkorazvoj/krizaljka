@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Krizaljka.Domain\Krizaljka.Domain.csproj" />
     <ProjectReference Include="..\Krizaljka.PostgreSql\Krizaljka.PostgreSql.csproj" />
   </ItemGroup>
