@@ -7,8 +7,11 @@ using System.Text.Json;
 using System.Text.Unicode;
 using Krizaljka.Domain;
 using Krizaljka.Domain.Caches;
+using Krizaljka.Domain.Core.Stuff;
+using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Creator;
 using Krizaljka.Domain.Template;
+using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.Domain.Terms;
 using Krizaljka.PostgreSql;
 using Microsoft.Extensions.DependencyInjection;
@@ -872,13 +875,35 @@ while (true)
             break;
 
         case "blt":
+        {
             var services = new ServiceCollection();
             services.AddKrizaljkaDomain(_ => { });
             services.AddKrizaljkaPostgreSql(o => o.ConnectionStringCore = "asd");
+            services.AddSingleton<IAuthUser, AuthUserConsole>();
 
+            await using var provider = services.BuildServiceProvider();
+            using var scope = provider.CreateScope();
+
+            var appDispatcher = scope.ServiceProvider.GetRequiredService<AppDispatcher>();
+
+            int[][] test = new int[2][];
+            test[0] = new int[2];
+            test[1] = new int[2];
+            test[0][0] = 1;
+            test[0][1] = 2;
+            test[1][0] = 3;
+            test[1][1] = 4;
+
+            var insertKrizaljkaResult = await appDispatcher.DispatchAsync(
+                new InsertKrizaljkaTemplateServiceRequest(test, "test prva"));
+
+            Console.WriteLine(insertKrizaljkaResult.GetType().Name);
+
+            Console.ReadKey();
 
 
             break;
+        }
         case "k":
             PrintKrizaljka();
             Console.ReadKey();
