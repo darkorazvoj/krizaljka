@@ -17,7 +17,6 @@ public static class ConfigureServices
 
         services.RegisterHandlersForAssembly(typeof(KrizaljkaDomainOptions).Assembly);
 
-
         services.AddScoped<AppDispatcher>();
 
         return services;

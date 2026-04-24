@@ -5,4 +5,5 @@ public class ConnectionStringsConfig
     public const string SectionName = "ConnectionStrings";
 
     public string Db { get; init; } = string.Empty;
+    public string Au { get; init; } = string.Empty;
 }

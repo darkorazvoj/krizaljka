@@ -3,5 +3,6 @@ namespace Krizaljka.PostgreSql;
 
 public enum ConnStrings
 {
-    Core
+    Core,
+    Au
 }

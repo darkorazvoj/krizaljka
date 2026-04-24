@@ -1,10 +1,13 @@
 ﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.WebApi.Models.KrizaljkaTemplate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Krizaljka.WebApi.Controllers;
 
+[Authorize]
+[ApiController]
 public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : BaseController
 {
     private const string BaseRute = "templates";
@@ -26,5 +29,12 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
             request.Name), ct);
 
         return MapResult<long>(result);
+    }
+
+    [Route(BaseRute)]
+    [HttpGet]
+    public async Task<IActionResult> GetPaginatedListAsync(CancellationToken ct)
+    {
+        return Ok(new { list = new[] { "abc", "def" } });
     }
 }
