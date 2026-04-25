@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Krizaljka.Domain.Core.Stuff;
@@ -23,6 +22,12 @@ public class AuthController : BaseController
         if (request is null)
         {
             return BadRequestBodyMissing();
+        }
+
+        // Block logged-in users
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, null);
         }
 
         // TODO: validate username/password against DB.
