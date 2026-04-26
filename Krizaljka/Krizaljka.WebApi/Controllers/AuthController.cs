@@ -1,17 +1,21 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Krizaljka.Domain.Core.Stuff;
+using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+using Krizaljka.Domain.User.Handlers;
+using Krizaljka.WebApi.Models;
+using Krizaljka.WebApi.Models.Auth;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Krizaljka.Domain.Core.Stuff;
-using Krizaljka.WebApi.Models.Auth;
-using Microsoft.AspNetCore.Authorization;
+using Krizaljka.Domain.Core.Stuff.Services;
 
 namespace Krizaljka.WebApi.Controllers;
 
 [Authorize]
 [Route("auth")]
 [ApiController]
-public class AuthController : BaseController
+public class AuthController(AppDispatcher dispatcher) : BaseController
 {
     [AllowAnonymous]
     [HttpPost("login")]
@@ -30,12 +34,23 @@ public class AuthController : BaseController
             return StatusCode(StatusCodes.Status403Forbidden, null);
         }
 
-        // TODO: validate username/password against DB.
-        long userId = 7;
+        if (string.IsNullOrWhiteSpace(request.Username) ||
+            string.IsNullOrWhiteSpace(request.Password))
+        {
+            return BadRequest(new ErrorDto("credentials_required"));
+        }
+
+        var result =
+            await dispatcher.DispatchAsync(new GetUserByUsernameServiceRequest(request.Username, request.Password), ct);
+
+        if (result is not Success<long> successResult)
+        {
+            return BadRequest(new ErrorDto("credentials_required"));
+        }
 
         List<Claim> claims =
         [
-            new(ClaimTypes.NameIdentifier, userId.ToString())
+            new(ClaimTypes.NameIdentifier, successResult.Data.ToString())
         ];
 
         ClaimsIdentity identity = new(
@@ -71,4 +86,10 @@ public class AuthController : BaseController
         {
             user.Id
         });
+
+    public IActionResult AuthServiceUnavailableResult =>
+        StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "service_unavailable" });
+
+    public IActionResult ServerErrorResult =>
+        StatusCode(StatusCodes.Status500InternalServerError, new { error = "server_error" });
 }

@@ -1,6 +1,8 @@
 ﻿
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Extensions;
+using Krizaljka.Domain.Core.Stuff.Hashers;
+using Krizaljka.Domain.User.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Krizaljka.Domain;
@@ -18,6 +20,9 @@ public static class ConfigureServices
         services.RegisterHandlersForAssembly(typeof(KrizaljkaDomainOptions).Assembly);
 
         services.AddScoped<AppDispatcher>();
+
+        services.AddScoped<GetUserByCredentialsService>();
+        services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
 
         return services;
     }

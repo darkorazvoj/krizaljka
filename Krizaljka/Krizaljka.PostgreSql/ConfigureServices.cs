@@ -1,9 +1,11 @@
 ﻿
 using Dapper;
 using Krizaljka.Domain.Template;
+using Krizaljka.Domain.User.Repo;
 using Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 using Krizaljka.PostgreSql.Postgres.Stuff.DapperSqlMappers;
 using Krizaljka.PostgreSql.Postgres.Stuff.DataProtection;
+using Krizaljka.PostgreSql.User;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +31,7 @@ public static class ConfigureServices
         services.AddSingleton<IXmlRepository, DbXmlRepo>();
 
         services.AddScoped<IKrizaljkaTemplateRepo, KrizaljkaTemplateRepo>();
+        services.AddScoped<IAppUserRepo, AppUserRepo>();
 
         services.AddSingleton<IReadOnlyDictionary<ConnStrings, string>>(
             _ => new Dictionary<ConnStrings, string>

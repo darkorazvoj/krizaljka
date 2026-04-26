@@ -35,8 +35,8 @@ try
     CorsConfig corsConfig = new();
     builder.Configuration.GetSection(CorsConfig.SectionName).Bind(corsConfig);
 
-    const string CorsPolicyName = "FrontendCors";
-    const string AuthCookieScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    const string corsPolicyName = "FrontendCors";
+    const string authCookieScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
 // Add services to the container.
 
@@ -47,7 +47,7 @@ try
 
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy(CorsPolicyName, policy =>
+        options.AddPolicy(corsPolicyName, policy =>
         {
             // SECURITY - never allow "*" when using cookies/credentials
             if (corsConfig.AllowedOrigins.Length == 0)
@@ -68,8 +68,8 @@ try
     });
 
     builder.Services
-        .AddAuthentication(AuthCookieScheme)
-        .AddCookie(AuthCookieScheme, options =>
+        .AddAuthentication(authCookieScheme)
+        .AddCookie(authCookieScheme, options =>
         {
             options.Cookie.Name = "__kr_auth";
             options.Cookie.HttpOnly = true;
@@ -105,7 +105,7 @@ try
     builder.Services.AddAuthorization();
 
 
-    builder.Services.AddKrizaljkaDomain(o => { });
+    builder.Services.AddKrizaljkaDomain(_ => { });
     builder.Services.AddKrizaljkaPostgreSql(o =>
     {
         o.ConnectionStringCore = connStringsConfig.Db;
@@ -121,7 +121,34 @@ try
         .AddDataProtection()
         .SetApplicationName("KrAu");
 
+    builder.Services.AddSingleton<ServiceUser>();
+    builder.Services.AddSingleton<IServiceUser>(sp => sp.GetRequiredService<ServiceUser>());
+
     var app = builder.Build();
+
+    using (app.Services.CreateScope())
+    {
+        //var repo = scope.ServiceProvider.GetRequiredService<IServiceUserRepo>();
+        var user = app.Services.GetRequiredService<ServiceUser>();
+
+        try
+        {
+            // Set the value once at startup
+            // This will fail if there are more than one service users and that is correct!
+            //var serviceUserId = await repo.GetAsync(CancellationToken.None);
+            //if (serviceUserId is null)
+            //{
+            //    throw new ArgumentException("Missing service user id!");
+            //}
+
+            user.Id = 7;// serviceUserId.Value;
+        }
+        catch (InvalidOperationException)
+        {
+            Log.Fatal("Service user not loaded!");
+            throw;
+        }
+    }
 
 // Configure the HTTP request pipeline.
 
@@ -133,7 +160,7 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseCors(CorsPolicyName);
+    app.UseCors(corsPolicyName);
 
     app.Use(async (context, next) =>
     {
