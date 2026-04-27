@@ -11,4 +11,7 @@ public interface IKrizaljkaTemplateRepo
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct);
+
+    Task<KrizaljkaTemplate?> GetAsync(long id, CancellationToken ct);
 }
+

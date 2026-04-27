@@ -8,6 +8,7 @@ public record InvalidRequestWithReason(string Error = "") : IServiceResult;
 public record SuccessInsert<T>(T Id) : IServiceResult;
 public record Success<T>(T Data) : IServiceResult;
 
+public record NoData : IServiceResult;
 
 public record Error(string Message) : IServiceResult;
 public record NoAuthUser : IServiceResult;

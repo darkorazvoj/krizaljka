@@ -1,8 +1,8 @@
 ﻿
-using System.Data;
 using Krizaljka.Domain.Template;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
+using System.Data;
 
 namespace Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 
@@ -29,6 +29,14 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
                 .Add("ranById", ranById)
                 .AddOutput("newId", DbType.Int64),
             "newId",
+            ConnStrings.Core,
+            ct);
+
+    public Task<KrizaljkaTemplate?> GetAsync(long id, CancellationToken ct)=>
+        BaseGetAsync<KrizaljkaTemplate, KrizaljkaTemplateDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaTemplateDao))} from cr.templateView_V1 where id = @id",
+            new SqlParams()
+                .Add("id", id),
             ConnStrings.Core,
             ct);
 }

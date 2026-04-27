@@ -1,5 +1,6 @@
 ﻿
 using Krizaljka.Domain.Template;
+using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 
 namespace Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 
@@ -12,17 +13,25 @@ internal record KrizaljkaTemplateDao(
     bool IsActive,
     long CreatedById,
     DateTimeOffset? CreatedOn,
-    string Changestamp)
-{
-    public KrizaljkaTemplate MapTo() =>
-        new(
-            Id,
-            Name,
-            Matrix,
-            NumRows,
-            NumColumns,
-            IsActive,
-            CreatedById,
-            CreatedOn,
-            Changestamp);
+    string Changestamp) : IDao
+{ 
+    public TCoreModel MapTo<TCoreModel>()
+    {
+        if (typeof(TCoreModel) == typeof(KrizaljkaTemplate))
+        {
+            object result = new KrizaljkaTemplate(
+                Id,
+                Name,
+                Matrix,
+                NumRows,
+                NumColumns,
+                IsActive,
+                CreatedById,
+                CreatedOn,
+                Changestamp);
+            return (TCoreModel)result;
+        }
+
+        throw new InvalidOperationException($"Unsupported mapping to {typeof(TCoreModel).Name}");
+    }
 }

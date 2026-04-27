@@ -1,4 +1,6 @@
 ﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.WebApi.Models.KrizaljkaTemplate;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +20,6 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
         [FromBody] KrizaljkaTemplatePostRequest? request,
         CancellationToken ct)
     {
-
         if (request is null)
         {
             return BadRequestBodyMissing();
@@ -29,6 +30,30 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
             request.Name), ct);
 
         return MapResult<long>(result);
+    }
+
+    [Route(BaseRute + "/{id:long}")]
+    [HttpGet]
+    public async Task<IActionResult> GetAsync([FromRoute] long id, CancellationToken ct)
+    {
+        var result = await dispatcher.DispatchAsync(new GetKrizaljkaTemplateServiceRequest(id), ct);
+
+        
+        if (result is Success<KrizaljkaTemplate> successResult)
+        {
+            return Ok(new KrizaljkaTemplateResponse(
+                successResult.Data.Id,
+                successResult.Data.Name,
+                successResult.Data.Matrix,
+                successResult.Data.RowsCount,
+                successResult.Data.ColumnsCount,
+                successResult.Data.IsActive,
+                successResult.Data.CreatedById,
+                successResult.Data.CreatedOn,
+                successResult.Data.Changestamp));
+        }
+
+        return MapResult(result);
     }
 
     [Route(BaseRute)]
