@@ -3,6 +3,7 @@ using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.WebApi.Models.KrizaljkaTemplate;
+using Krizaljka.WebApi.PaginationUtils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,8 +59,11 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
 
     [Route(BaseRute)]
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedListAsync(CancellationToken ct)
+    public async Task<IActionResult> GetPaginatedListAsync([FromQuery]string? pg, CancellationToken ct)
     {
+        var paginationCore = PaginationParser.Parse(pg);
+
+        
         return Ok(new { list = new[] { "abc", "def" } });
     }
 }
