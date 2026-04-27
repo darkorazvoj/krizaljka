@@ -6,7 +6,7 @@ using Krizaljka.Domain.User.Services;
 
 namespace Krizaljka.Domain.User.Handlers;
 
-public record GetUserByUsernameServiceRequest(string? Username, string? Password) : IServiceRequest;
+public record GetUserByUsernameServiceRequest(string? Username, string? Password) : IAnonymousServiceRequest;
 
 internal class GetUserByUsernameHandler(GetUserByCredentialsService getUserByCredentialsService)
     : IAppRequestHandler<GetUserByUsernameServiceRequest>
@@ -26,8 +26,6 @@ internal class GetUserByUsernameHandler(GetUserByCredentialsService getUserByCre
             return result;
         }
 
-
         return new Success<long>(successUser.Data.Id);
-
     }
 }

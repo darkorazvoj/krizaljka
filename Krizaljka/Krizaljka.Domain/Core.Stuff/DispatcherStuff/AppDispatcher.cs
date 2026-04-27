@@ -12,6 +12,11 @@ public sealed class AppDispatcher(
         CancellationToken ct = default)
         where TServiceRequest : IServiceRequest
     {
+        if (request is IAnonymousServiceRequest)
+        {
+            return await InvokeAsync(request, ct);
+        }
+
         if (!authUser.IsAuthenticatedAppUser)
         {
             return new NoAuthUser();

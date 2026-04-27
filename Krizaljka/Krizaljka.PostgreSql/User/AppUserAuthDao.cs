@@ -9,7 +9,6 @@ internal record AppUserAuthDao(
     string LoginEmail,
     string? PasswordHash,
     bool EmailVerified,
-    bool CanCreateTenant,
     int LoginFailedAttempt,
     bool IsBlocked,
     DateTimeOffset? BlockedUntil,

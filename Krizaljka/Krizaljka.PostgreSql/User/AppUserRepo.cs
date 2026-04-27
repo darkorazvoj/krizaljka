@@ -9,7 +9,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
     : BaseRepo<ConnStrings>(conns), IAppUserRepo{
     public  Task<AppUserAuth?> GetByLoginEmailAsync(string username, CancellationToken ct) =>
         BaseGetAsync<AppUserAuth, AppUserAuthDao>(
-            $"select {DaoUtils.GetSelectColumns(typeof(AppUserAuthDao))} from au.serviceUserGet_v1 (@username)",
+            $"select {DaoUtils.GetSelectColumns(typeof(AppUserAuthDao))} from cr.appUserLoginGet_v1 (@username)",
             new SqlParams()
                 .Add("username", username),
             ConnStrings.Core,
@@ -17,7 +17,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
 
     public Task IncreaseLoginAttemptAsync(long id, string changestamp, long ranById, CancellationToken ct) =>
         BaseExecuteAsync(
-            $"call au.appUserIncreaseLoginAttemptAndBlock_v1 (@id,@ranById,@changestamp);",
+            "call cr.appUserIncreaseLoginAttempt (@id,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("ranById", ranById)
@@ -32,7 +32,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
         long ranById, 
         CancellationToken ct) =>
         BaseExecuteAsync(
-            $"call au.appUserIncreaseLoginAttemptAndBlock_v1 (@id,@blockedUntil,@ranById,@changestamp);",
+            "call cr.appUserIncreaseLoginAttemptAndBlock_v1 (@id,@blockedUntil,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("blockedUntil", blockedUntil)
@@ -46,7 +46,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
         long ranById,
         CancellationToken ct) =>
         BaseExecuteAsync(
-            $"call au.fl_appUserUnblock_v1 (@id,@ranById,@changestamp);",
+            "call cr.appUserUnblock_v1 (@id,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("ranById", ranById)
@@ -56,7 +56,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
 
     public Task ResetLoginAttemptsAsync(long id, string changestamp, long ranById, CancellationToken ct) =>
         BaseExecuteAsync(
-            $"call au.appUserResetLoginAttempts_v1 (@id,@ranById,@changestamp);",
+            "call cr.appUserResetLoginAttempts_v1 (@id,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("ranById", ranById)
