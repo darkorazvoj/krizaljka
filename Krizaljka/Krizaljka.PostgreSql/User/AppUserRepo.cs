@@ -17,7 +17,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
 
     public Task IncreaseLoginAttemptAsync(long id, string changestamp, long ranById, CancellationToken ct) =>
         BaseExecuteAsync(
-            "call cr.appUserIncreaseLoginAttempt (@id,@ranById,@changestamp);",
+            "call cr.appUserIncreaseLoginAttempt_v1 (@id,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("ranById", ranById)

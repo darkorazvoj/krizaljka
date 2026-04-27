@@ -42,10 +42,10 @@ public class AuthController(AppDispatcher dispatcher) : BaseController
 
         var result =
             await dispatcher.DispatchAsync(new GetUserByUsernameServiceRequest(request.Username, request.Password), ct);
-
+        
         if (result is not Success<long> successResult)
         {
-            return BadRequest(new ErrorDto("credentials_required"));
+            return BadRequest(new ErrorDto("invalid_credentials"));
         }
 
         List<Claim> claims =
