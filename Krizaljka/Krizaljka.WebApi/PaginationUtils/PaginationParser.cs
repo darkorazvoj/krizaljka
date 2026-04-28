@@ -66,8 +66,10 @@ internal static class PaginationParser
                        PaginationConsts.PaginationLimitDefault;
         var page = ParseIntValueValue(PaginationConsts.PageQueryStringKey, queryStringValues) ?? 1;
         var getTotalNum = ParseBoolValueValue(PaginationConsts.GetTotalNumQueryStringKey, queryStringValues) ?? false;
+        var sort = ParseSort(queryStringValues);
+        var searchTerm = ParseSearchTerm(queryStringValues);
 
-        return PaginationOffset.Initial();
+        return new PaginationOffset(pageSize, page, sort, searchTerm, getTotalNum);
     }
 
     private static int? ParseIntValueValue(string key, IReadOnlyDictionary<string, string> queryStringValues)
@@ -99,6 +101,82 @@ internal static class PaginationParser
 
         return null;
     }
+
+    private static ISort ParseSort(IReadOnlyDictionary<string, string> queryStringValues)
+    {
+        queryStringValues.TryGetValue(PaginationConsts.SortQueryStringKey, out var sortString);
+
+        if (string.IsNullOrWhiteSpace(sortString))
+        {
+            return new SortEmpty();
+        }
+
+        var elements = sortString.Split(':');
+        if (elements.Length != 2)
+        {
+            return new SortEmpty();
+        }
+
+        var sortDirectionValue = elements[1].Trim().ToLower();
+        return sortDirectionValue switch
+        {
+            PaginationConsts.SortDirectionAsc => new Sort(elements[0], SortDirection.Asc),
+            PaginationConsts.SortDirectionDesc => new Sort(elements[0], SortDirection.Desc),
+            _ => new SortEmpty()
+        };
+    }
+
+    private static ISearchTerm ParseSearchTerm(
+        IReadOnlyDictionary<string, string> queryStringValues)
+    {
+        queryStringValues.TryGetValue(PaginationConsts.SearchTermQueryStringKey, out var searchTermString);
+
+        if (string.IsNullOrWhiteSpace(searchTermString))
+        {
+            return new SearchTermEmpty();
+        }
+
+        var elements = searchTermString.Split(':');
+        switch (elements.Length)
+        {
+            case 1:
+                return new SearchTerm(elements[0], SearchType.StartsWith, []);
+            case 2:
+                var searchTypeParsed2 = ParseSearchTypeValue(elements[1]);
+                return searchTypeParsed2 is null
+                    ? new SearchTermEmpty()
+                    : new SearchTerm(elements[0], searchTypeParsed2.Value, []);
+            case 3:
+            {
+                var searchTypeParsed3 = ParseSearchTypeValue(elements[1]);
+                if (searchTypeParsed3 is null)
+                {
+                    return new SearchTermEmpty();
+                }
+
+                List<string> searchColumns = [];
+
+                if (!string.IsNullOrWhiteSpace(elements[2]))
+                {
+                    searchColumns.AddRange(elements[2].Split(',').ToList());
+                }
+
+                return new SearchTerm(elements[0], searchTypeParsed3.Value, searchColumns);
+            }
+            default:
+                return new SearchTermEmpty();
+        }
+    }
+
+    private static SearchType? ParseSearchTypeValue(string searchTypeStringValue) =>
+        searchTypeStringValue switch
+        {
+            "e" => SearchType.Equal,
+            "ne" => SearchType.NotEqual,
+            "sw" => SearchType.StartsWith,
+            "c" => SearchType.Contains,
+            _ => null
+        };
 }
 
 
