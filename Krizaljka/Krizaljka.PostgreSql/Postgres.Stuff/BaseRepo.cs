@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Krizaljka.Domain.Core.Stuff.Pagination;
+using Krizaljka.PostgreSql.Pagination;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using Npgsql;
 
@@ -69,5 +71,20 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
     {
         await using var conn = await GetOpenedConnectionAsync(connKey, cancellationToken);
         await conn.ExecuteAsync(sql, parameters);
+    }
+
+    internal async Task<PaginatedResult<List<TCoreModel>>> BaseGetPaginatedListAsync<TCoreModel, TDao>(
+        IPaginationCore paginationCore,
+        string viewName,
+        Func<DaoPaginationParameters<TDao>> getDaoPaginationParameters,
+        CancellationToken cancellationToken)
+    {
+        var daoPaginationParameters = getDaoPaginationParameters();
+        var paginationParameters = PaginationUtils.GetPaginationParameters(
+            paginationCore,
+            daoPaginationParameters);
+
+        return new PaginatedResult<List<TCoreModel>>(new InvalidPagination(), [], 0, false);
+
     }
 }

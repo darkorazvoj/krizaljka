@@ -38,7 +38,6 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
     public async Task<IActionResult> GetAsync([FromRoute] long id, CancellationToken ct)
     {
         var result = await dispatcher.DispatchAsync(new GetKrizaljkaTemplateServiceRequest(id), ct);
-
         
         if (result is Success<KrizaljkaTemplate> successResult)
         {
@@ -62,7 +61,8 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
     public async Task<IActionResult> GetPaginatedListAsync([FromQuery]string? pg, CancellationToken ct)
     {
         var paginationCore = PaginationParser.Parse(pg);
-
+        var result =
+            await dispatcher.DispatchAsync(new GetKrizaljkaTemplatesPaginatedListServiceRequest(paginationCore), ct);
         
         return Ok(new { list = new[] { "abc", "def" } });
     }

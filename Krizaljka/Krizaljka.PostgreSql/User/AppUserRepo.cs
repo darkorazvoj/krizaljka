@@ -2,6 +2,7 @@
 using Krizaljka.Domain.User.Repo;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
+using Krizaljka.PostgreSql.Sql;
 
 namespace Krizaljka.PostgreSql.User;
 
@@ -9,7 +10,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
     : BaseRepo<ConnStrings>(conns), IAppUserRepo{
     public  Task<AppUserAuth?> GetByLoginEmailAsync(string username, CancellationToken ct) =>
         BaseGetAsync<AppUserAuth, AppUserAuthDao>(
-            $"select {DaoUtils.GetSelectColumns(typeof(AppUserAuthDao))} from cr.appUserLoginGet_v1 (@username)",
+            $"select {DaoUtils.GetSelectColumns(typeof(AppUserAuthDao))} from {Procs.AppUserLoginGet} (@username)",
             new SqlParams()
                 .Add("username", username),
             ConnStrings.Core,
@@ -17,7 +18,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
 
     public Task IncreaseLoginAttemptAsync(long id, string changestamp, long ranById, CancellationToken ct) =>
         BaseExecuteAsync(
-            "call cr.appUserIncreaseLoginAttempt_v1 (@id,@ranById,@changestamp);",
+            $"call {Procs.AppUserIncreaseLoginAttempt} (@id,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("ranById", ranById)
@@ -32,7 +33,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
         long ranById, 
         CancellationToken ct) =>
         BaseExecuteAsync(
-            "call cr.appUserIncreaseLoginAttemptAndBlock_v1 (@id,@blockedUntil,@ranById,@changestamp);",
+            $"call {Procs.AppUserIncreaseLoginAttemptAndBlock} (@id,@blockedUntil,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("blockedUntil", blockedUntil)
@@ -46,7 +47,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
         long ranById,
         CancellationToken ct) =>
         BaseExecuteAsync(
-            "call cr.appUserUnblock_v1 (@id,@ranById,@changestamp);",
+            $"call {Procs.AppUserUnblock} (@id,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("ranById", ranById)
@@ -56,7 +57,7 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
 
     public Task ResetLoginAttemptsAsync(long id, string changestamp, long ranById, CancellationToken ct) =>
         BaseExecuteAsync(
-            "call cr.appUserResetLoginAttempts_v1 (@id,@ranById,@changestamp);",
+            $"call {Procs.AppUserResetLoginAttempts} (@id,@ranById,@changestamp);",
             new SqlParams()
                 .Add("id", id)
                 .Add("ranById", ranById)

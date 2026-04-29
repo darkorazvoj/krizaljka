@@ -3,6 +3,8 @@ using Krizaljka.Domain.Template;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using System.Data;
+using Krizaljka.Domain.Core.Stuff.Pagination;
+using Krizaljka.PostgreSql.Sql;
 
 namespace Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 
@@ -18,7 +20,7 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
         DateTimeOffset createdOn,
         CancellationToken ct) =>
         await BaseExecuteWithOutAsync<long>(
-            $"call cr.templateinsert_v1 (@name, @matrix, @numRows, @numColumns, @isActive, @createdOn, @RanById, null);",
+            $"call {Procs.TemplateInsert} (@name, @matrix, @numRows, @numColumns, @isActive, @createdOn, @RanById, null);",
             new SqlParams()
                 .Add("name", name)
                 .AddJsonb("matrix", matrix)
@@ -34,9 +36,17 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
 
     public Task<KrizaljkaTemplate?> GetAsync(long id, CancellationToken ct)=>
         BaseGetAsync<KrizaljkaTemplate, KrizaljkaTemplateDao>(
-            $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaTemplateDao))} from cr.templateView_V1 where id = @id",
+            $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaTemplateDao))} from {Procs.TemplateView} where id = @id",
             new SqlParams()
                 .Add("id", id),
             ConnStrings.Core,
+            ct);
+
+    public Task<PaginatedResult<List<KrizaljkaTemplateListItem>>> GetListAsync(IPaginationCore paginationCore,
+        CancellationToken ct) =>
+        BaseGetPaginatedListAsync<KrizaljkaTemplateListItem, KrizaljkaTemplateListItemDao>(
+            paginationCore,
+            Procs.TemplateView,
+            KrizaljkaTemplateListItemDao.ToDaoPaginationParameters,
             ct);
 }

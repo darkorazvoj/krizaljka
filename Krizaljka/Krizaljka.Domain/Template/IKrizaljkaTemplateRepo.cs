@@ -1,4 +1,6 @@
 ﻿
+using Krizaljka.Domain.Core.Stuff.Pagination;
+
 namespace Krizaljka.Domain.Template;
 
 public interface IKrizaljkaTemplateRepo
@@ -13,5 +15,5 @@ public interface IKrizaljkaTemplateRepo
         CancellationToken ct);
 
     Task<KrizaljkaTemplate?> GetAsync(long id, CancellationToken ct);
+    Task<PaginatedResult<List<KrizaljkaTemplateListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct);
 }
-
