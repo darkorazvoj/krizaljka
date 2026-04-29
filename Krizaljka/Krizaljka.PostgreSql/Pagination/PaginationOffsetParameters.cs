@@ -6,6 +6,6 @@ public record PaginationOffsetParameters(
     string WhereClause,
     string OrderByClause,
     string PageClause,
-    List<string> SearchTerms,
+    // List<string> SearchTerms,
     bool GetTotal,
     DynamicParameters DynamicParameters);

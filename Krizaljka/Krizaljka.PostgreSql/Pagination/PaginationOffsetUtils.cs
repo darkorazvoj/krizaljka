@@ -7,7 +7,7 @@ namespace Krizaljka.PostgreSql.Pagination;
 
 internal static class PaginationOffsetUtils
 {
-    internal static (List<string> whereConditions, DynamicParameters dynamicParameters) GetWhereClause(
+    internal static (string whereClause, DynamicParameters dynamicParameters) GetWhereClause(
         ISearchTerm iSearchTerm,
         Dictionary<string, DaoColumn> searchableColumns)
     {
@@ -15,7 +15,7 @@ internal static class PaginationOffsetUtils
 
         if (iSearchTerm is not SearchTerm searchTerm)
         {
-            return ([], dynamicParameters);
+            return (string.Empty, dynamicParameters);
         }
 
         List<string> searchConditions = [];
@@ -62,7 +62,9 @@ internal static class PaginationOffsetUtils
             }
         }
 
-        return (searchConditions, dynamicParameters);
+        var whereClause = $"WHERE {string.Join(" AND ", searchConditions)}";
+
+        return (whereClause, dynamicParameters);
     }
 
     internal static string GetOrderByClause(

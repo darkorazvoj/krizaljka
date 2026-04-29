@@ -5,14 +5,14 @@ namespace Krizaljka.PostgreSql.Pagination;
 
 internal static class PaginationUtils
 {
-    internal static PaginationParameters GetPaginationParameters<T>(
+    internal static PaginationOffsetParameters GetPaginationParameters<T>(
         IPaginationCore paginationCore,
         DaoPaginationParameters<T> daoPaginationParameters)
     {
         var whereClause = string.Empty;
         var orderByClause = string.Empty;
         var limitClause = string.Empty;
-        List<string> searchTerms = [];
+        //List<string> searchTerms = [];
         var getTotal = false;
 
         var dynamicParameters = new DynamicParameters();
@@ -20,8 +20,8 @@ internal static class PaginationUtils
         switch (paginationCore)
         {
             case PaginationOffset paginationOffset:
-                var (searchTermsParsed, searchTermsParameters) = PaginationOffsetUtils.GetWhereClause(paginationOffset.SearchTerm, daoPaginationParameters.SearchableColumns);
-                searchTerms.AddRange(searchTermsParsed);
+                (whereClause, var searchTermsParameters) = PaginationOffsetUtils.GetWhereClause(paginationOffset.SearchTerm, daoPaginationParameters.SearchableColumns);
+                //searchTerms.AddRange(searchTermsParsed);
                 dynamicParameters.AddDynamicParams(searchTermsParameters);
 
                 orderByClause = PaginationOffsetUtils.GetOrderByClause(
@@ -35,11 +35,11 @@ internal static class PaginationUtils
                 break;
         }
 
-        return new PaginationParameters(
+        return new PaginationOffsetParameters(
             whereClause,
             orderByClause,
             limitClause,
-            searchTerms ?? [],
+           // searchTerms,
             getTotal,
             dynamicParameters);
     }
