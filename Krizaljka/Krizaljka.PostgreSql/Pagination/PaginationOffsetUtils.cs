@@ -1,5 +1,7 @@
-﻿using Dapper;
+﻿using System.Text;
+using Dapper;
 using Krizaljka.Domain.Core.Stuff.Pagination;
+using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Extensions;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 
@@ -90,6 +92,26 @@ internal static class PaginationOffsetUtils
         }
     }
 
-    internal static string GetLimitClause(int limit) => $"LIMIT {limit}";
+    internal static (string pagingClause, DynamicParameters dynamicParameters) GetPagingClause(int page, int pageSize)
+    {
+        var dynamicParameters = new DynamicParameters();
+        const string pagingClause = " LIMIT @pageSize OFFSET @offset";
 
+        dynamicParameters.Add("pageSize", pageSize);
+        dynamicParameters.Add("offset", (page - 1) * pageSize);
+
+        return (pagingClause, dynamicParameters);
+    }
+
+    internal static string GetSqlQuery(
+        Type daoType,
+        string viewName, 
+        PaginationOffsetParameters paginationParameters) =>
+        $"{GetBaseSqlQuery(daoType, viewName)} {paginationParameters.WhereClause} {paginationParameters.OrderByClause} {paginationParameters.PagingClause}";
+
+    private static string GetBaseSqlQuery(Type? daoType, string viewName)
+    {
+        var selectColumns = daoType is null ? "*" : DaoUtils.GetSelectColumns(daoType);
+        return $"select {selectColumns} from {viewName}";
+    }
 }

@@ -2,6 +2,7 @@
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.PostgreSql.Pagination;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
+using Microsoft.Extensions.Options;
 using Npgsql;
 
 namespace Krizaljka.PostgreSql.Postgres.Stuff;
@@ -77,12 +78,21 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         IPaginationCore paginationCore,
         string viewName,
         Func<DaoPaginationParameters<TDao>> getDaoPaginationParameters,
-        CancellationToken cancellationToken)
+        TDbKey connKey,
+        CancellationToken ct)
     {
         var daoPaginationParameters = getDaoPaginationParameters();
         var paginationParameters = PaginationUtils.GetPaginationParameters(
             paginationCore,
             daoPaginationParameters);
+
+        await using var conn = await GetOpenedConnectionAsync(connKey, ct);
+
+
+        var list = (await conn.QueryAsync<TDao>(
+                PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters),
+                paginationParameters.DynamicParameters))
+            .ToList();
 
         return new PaginatedResult<List<TCoreModel>>(new InvalidPagination(), [], 0, false);
 

@@ -5,7 +5,7 @@ namespace Krizaljka.PostgreSql.Pagination;
 public record PaginationOffsetParameters(
     string WhereClause,
     string OrderByClause,
-    string PageClause,
+    string PagingClause,
     // List<string> SearchTerms,
     bool GetTotal,
     DynamicParameters DynamicParameters);

@@ -11,8 +11,7 @@ internal static class PaginationUtils
     {
         var whereClause = string.Empty;
         var orderByClause = string.Empty;
-        var limitClause = string.Empty;
-        //List<string> searchTerms = [];
+        var pagingClause = string.Empty;
         var getTotal = false;
 
         var dynamicParameters = new DynamicParameters();
@@ -21,7 +20,6 @@ internal static class PaginationUtils
         {
             case PaginationOffset paginationOffset:
                 (whereClause, var searchTermsParameters) = PaginationOffsetUtils.GetWhereClause(paginationOffset.SearchTerm, daoPaginationParameters.SearchableColumns);
-                //searchTerms.AddRange(searchTermsParsed);
                 dynamicParameters.AddDynamicParams(searchTermsParameters);
 
                 orderByClause = PaginationOffsetUtils.GetOrderByClause(
@@ -29,7 +27,10 @@ internal static class PaginationUtils
                     daoPaginationParameters.IdColumn,
                     daoPaginationParameters.Mappings);
 
-                limitClause = PaginationOffsetUtils.GetLimitClause(paginationOffset.PageSize);
+                (pagingClause, var pagingParameters) =
+                    PaginationOffsetUtils.GetPagingClause(paginationOffset.Page, paginationOffset.PageSize);
+                dynamicParameters.AddDynamicParams(pagingParameters);
+
                 getTotal = paginationOffset.GetTotalNum;
 
                 break;
@@ -38,8 +39,7 @@ internal static class PaginationUtils
         return new PaginationOffsetParameters(
             whereClause,
             orderByClause,
-            limitClause,
-           // searchTerms,
+            pagingClause,
             getTotal,
             dynamicParameters);
     }

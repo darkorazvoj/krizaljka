@@ -48,5 +48,6 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
             paginationCore,
             Procs.TemplateView,
             KrizaljkaTemplateListItemDao.ToDaoPaginationParameters,
+            ConnStrings.Core,
             ct);
 }
