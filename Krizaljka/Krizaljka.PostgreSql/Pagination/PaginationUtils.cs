@@ -24,6 +24,14 @@ internal static class PaginationUtils
                 searchTerms.AddRange(searchTermsParsed);
                 dynamicParameters.AddDynamicParams(searchTermsParameters);
 
+                orderByClause = PaginationOffsetUtils.GetOrderByClause(
+                    paginationOffset,
+                    daoPaginationParameters.IdColumn,
+                    daoPaginationParameters.Mappings);
+
+                limitClause = PaginationOffsetUtils.GetLimitClause(paginationOffset.PageSize);
+                getTotal = paginationOffset.GetTotalNum;
+
                 break;
         }
 

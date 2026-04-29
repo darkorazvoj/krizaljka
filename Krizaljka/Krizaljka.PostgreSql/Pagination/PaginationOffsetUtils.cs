@@ -64,4 +64,30 @@ internal static class PaginationOffsetUtils
 
         return (searchConditions, dynamicParameters);
     }
+
+    internal static string GetOrderByClause(
+        IPaginationCore paginationCore,
+        DaoColumn idColumn,
+        Dictionary<string, DaoColumn> columnNicknameDaoColumn)
+    {
+        switch (paginationCore)
+        {
+
+            case PaginationOffset paginationOffset:
+                if(paginationOffset.Sort is Sort sort)
+                {
+                    if(columnNicknameDaoColumn.TryGetValue(sort.ColumnName.ToLower(), out var daoColumn))
+                    {
+                        return $"ORDER BY {daoColumn.ColumnName} {sort.SortDirection.ToString().ToUpper()}";
+                    }
+                }
+
+                return  $"ORDER BY {idColumn.ColumnName} ASC";
+            default:
+                return string.Empty;
+        }
+    }
+
+    internal static string GetLimitClause(int limit) => $"LIMIT {limit}";
+
 }
