@@ -3,6 +3,8 @@ using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Extensions;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
+using Krizaljka.PostgreSql.Postgres.Stuff.Utils;
+using System.ComponentModel;
 
 namespace Krizaljka.PostgreSql.Pagination;
 
@@ -13,7 +15,7 @@ internal static class PaginationOffsetUtils
         Dictionary<string, DaoColumn> searchableColumns)
     {
         var dynamicParameters = new DynamicParameters();
-        List<string> searchConditions = [];
+        List<string> whereConditions = [];
 
         var counter = 1;
         foreach (var iSearchTerm in iSearchTerms)
@@ -36,6 +38,12 @@ internal static class PaginationOffsetUtils
 
                 var (originalColumnName, columnType) = column;
 
+                var searchTermParsedValue = TypesConverter.CastToType(searchTerm.Term.ToLower(), columnType);
+                if (searchTermParsedValue is null)
+                {
+                    continue;
+                }
+
                 var columnNameInQuery = originalColumnName;
                 if (columnType == typeof(string))
                 {
@@ -43,32 +51,32 @@ internal static class PaginationOffsetUtils
                 }
 
                 var parameterName = $"@{originalColumnName}{counter}search";
+
                 switch (searchTerm.SearchType)
                 {
                     case SearchType.Equal:
-                        searchConditions.Add($"{columnNameInQuery} = {parameterName}");
-                        dynamicParameters.Add(parameterName, searchTerm.Term.ToLower());
+                        whereConditions.Add($"{columnNameInQuery} = {parameterName}");
+                        dynamicParameters.Add(parameterName, searchTermParsedValue);
                         break;
                     case SearchType.NotEqual:
-                        searchConditions.Add($"{columnNameInQuery} <> {parameterName}");
-                        dynamicParameters.Add(parameterName, searchTerm.Term.ToLower());
+                        whereConditions.Add($"{columnNameInQuery} <> {parameterName}");
+                        dynamicParameters.Add(parameterName, searchTermParsedValue);
                         break;
                     case SearchType.StartsWith:
-                        searchConditions.Add($"{columnNameInQuery} like {parameterName}");
-                        dynamicParameters.Add(parameterName, searchTerm.Term.ToLower() + "%");
+                        whereConditions.Add($"{columnNameInQuery} like {parameterName}");
+                        dynamicParameters.Add(parameterName, searchTermParsedValue + "%");
                         break;
                     case SearchType.Contains:
-                        searchConditions.Add($"{columnNameInQuery} like {parameterName}");
-                        dynamicParameters.Add(parameterName, "%" + searchTerm.Term.ToLower() + "%");
+                        whereConditions.Add($"{columnNameInQuery} like {parameterName}");
+                        dynamicParameters.Add(parameterName, "%" + searchTermParsedValue + "%");
                         break;
                 }
-
                 counter++;
             }
         }
 
-        var whereClause = searchConditions.Count > 0
-            ? $"WHERE {string.Join(" AND ", searchConditions)}"
+        var whereClause = whereConditions.Count > 0
+            ? $"WHERE {string.Join(" AND ", whereConditions)}"
             : string.Empty;
 
         return (whereClause, dynamicParameters);
