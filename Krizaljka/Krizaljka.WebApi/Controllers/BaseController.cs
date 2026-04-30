@@ -10,7 +10,9 @@ public abstract class BaseController : Controller
         {
             Success<T> successData => Ok(successData.Data),
             SuccessInsert<T> successInsert => Created(successInsert.Id?.ToString(), null),
+            UpdateSuccessChangestamp<T> updateSuccessChangestamp => Ok(new {changestamp = updateSuccessChangestamp.Changestamp}),
             InvalidRequestWithReason invalidRequestWithReason => BadRequest(new { error = invalidRequestWithReason.Error }),
+            InvalidChangestamp => StatusCode(428,null),
             NoData => NotFound(null),
             Error er => StatusCode(500, er.Message),
             _ => StatusCode(500)

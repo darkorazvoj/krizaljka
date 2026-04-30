@@ -5,14 +5,17 @@ public interface IServiceResult;
 public record Success: IServiceResult;
 
 public record InvalidRequestWithReason(string Error = "") : IServiceResult;
-public record SuccessInsert<T>(T Id) : IServiceResult;
+public record SuccessInsert<T>(T Id) : IServiceResult; 
 public record Success<T>(T Data) : IServiceResult;
+public record UpdateSuccessChangestamp<T>(T Changestamp) : IServiceResult;
+
 
 public record NoData : IServiceResult;
 
 public record Error(string Message) : IServiceResult;
 public record NoAuthUser : IServiceResult;
 public record InvalidCredentials : IServiceResult;
+public record InvalidChangestamp : IServiceResult;
 public record ShouldUnblockUser: IServiceResult;
 
 public record EmailNotVerified: IServiceResult;

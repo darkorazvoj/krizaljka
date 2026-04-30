@@ -1,5 +1,6 @@
 ﻿
 using Dapper;
+using Krizaljka.Domain.Core.Stuff.Utils;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.User.Repo;
 using Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
@@ -29,6 +30,7 @@ public static class ConfigureServices
         services.AddSingleton(opts);
 
         services.AddSingleton<IXmlRepository, DbXmlRepo>();
+        services.AddSingleton<IDatabaseUtils, DatabaseUtils>();
 
         services.AddScoped<IKrizaljkaTemplateRepo, KrizaljkaTemplateRepo>();
         services.AddScoped<IAppUserRepo, AppUserRepo>();

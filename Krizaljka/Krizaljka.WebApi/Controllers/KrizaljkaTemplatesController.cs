@@ -72,4 +72,23 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
         
         return MapResult(result);
     }
+
+    [Route(BaseRute + "/{id:long}/active")]
+    [HttpPut]
+    public async Task<IActionResult> UpdateActiveAsync(
+        [FromRoute] long id, 
+        [FromBody] UpdateActiveKrizaljkaTemplateRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateIsActiveKrizaljkaTemplateServiceRequest(
+                id,
+                request.IsActive,
+                request.Changestamp),
+            ct));
+    }
 }

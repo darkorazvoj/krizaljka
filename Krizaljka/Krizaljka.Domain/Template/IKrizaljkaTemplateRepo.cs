@@ -16,4 +16,9 @@ public interface IKrizaljkaTemplateRepo
 
     Task<KrizaljkaTemplate?> GetAsync(long id, CancellationToken ct);
     Task<PaginatedResult<List<KrizaljkaTemplateListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct);
+    Task<string?> UpdateIsActiveAsync(
+        long id, 
+        bool isActive, 
+        string changestamp,
+        CancellationToken ct);
 }

@@ -50,4 +50,20 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
             KrizaljkaTemplateListItemDao.ToDaoPaginationParameters,
             ConnStrings.Core,
             ct);
+
+    public Task<string?> UpdateIsActiveAsync(
+        long id, 
+        bool isActive, 
+        string changestamp, 
+        CancellationToken ct) =>
+        BaseExecuteWithOutAsync<string?>(
+            $"call {Procs.TemplateUpdateIsActive}(@id, @isactive, @changestamp,  null);",
+            new SqlParams()
+                .Add("id", id)
+                .Add("isactive", isActive)
+                .Add("changestamp", changestamp)
+                .AddOutput("newchangestamp", dbType: DbType.String),
+            "newchangestamp",
+            ConnStrings.Core,
+            ct);
 }
