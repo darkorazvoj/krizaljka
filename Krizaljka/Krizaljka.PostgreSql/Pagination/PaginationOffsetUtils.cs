@@ -59,12 +59,14 @@ internal static class PaginationOffsetUtils
                     searchConditions.Add($"{columnNameInQuery} like @{originalColumnName}search");
                     dynamicParameters.Add($"{originalColumnName}search", "%" + searchTerm.Term.ToLower() + "%");
                     break;
-                default:
-                    throw new Exception($"Unhandled SearchType {searchTerm.SearchType.ToString()}");
+                //default:
+                  //  throw new Exception($"Unhandled SearchType {searchTerm.SearchType.ToString()}");
             }
         }
 
-        var whereClause = $"WHERE {string.Join(" AND ", searchConditions)}";
+        var whereClause = searchConditions.Count > 0
+            ? $"WHERE {string.Join(" AND ", searchConditions)}"
+            : string.Empty;
 
         return (whereClause, dynamicParameters);
     }
@@ -114,4 +116,10 @@ internal static class PaginationOffsetUtils
         var selectColumns = daoType is null ? "*" : DaoUtils.GetSelectColumns(daoType);
         return $"select {selectColumns} from {viewName}";
     }
+
+    internal static string GetSqlQueryForTotal(
+        string viewName,
+        PaginationOffsetParameters paginationParameters) =>
+        $"select count(*) as c from {viewName} {paginationParameters.WhereClause}";
+
 }

@@ -1,4 +1,5 @@
 ﻿
+using Krizaljka.Domain.Template;
 using Krizaljka.PostgreSql.Pagination;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 
@@ -10,6 +11,7 @@ internal record KrizaljkaTemplateListItemDao(
     int NumRows,
     int NumColumns,
     bool IsActive)
+: IDao
 {
     private static readonly DaoColumn IdColumn = new("id", typeof(long));
 
@@ -31,4 +33,19 @@ internal record KrizaljkaTemplateListItemDao(
                 { "numcolumns", new DaoColumn("numcolumns", typeof(int)) },
                 { "isactive", new DaoColumn("isactive", typeof(bool)) }
             });
+
+    public TCoreModel MapTo<TCoreModel>()
+    {
+        if (typeof(TCoreModel) == typeof(KrizaljkaTemplateListItem))
+        {
+            object result = new KrizaljkaTemplateListItem(
+                Id,
+                Name,
+                NumRows,
+                NumColumns,
+                IsActive);
+            return (TCoreModel)result;
+        }
+
+        throw new InvalidOperationException($"Unsupported mapping to {typeof(TCoreModel).Name}");    }
 }

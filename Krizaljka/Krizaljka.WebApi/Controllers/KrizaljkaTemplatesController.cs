@@ -1,4 +1,5 @@
 ﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Template.Handlers;
@@ -63,7 +64,12 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
         var paginationCore = PaginationParser.Parse(pg);
         var result =
             await dispatcher.DispatchAsync(new GetKrizaljkaTemplatesPaginatedListServiceRequest(paginationCore), ct);
+
+        if (result is Success<PaginatedResult<List<KrizaljkaTemplateListItem>>> successResult)
+        {
+            return Ok(successResult.Data);
+        }
         
-        return Ok(new { list = new[] { "abc", "def" } });
+        return MapResult(result);
     }
 }

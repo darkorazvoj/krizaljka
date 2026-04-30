@@ -2,7 +2,6 @@
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.PostgreSql.Pagination;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
-using Microsoft.Extensions.Options;
 using Npgsql;
 
 namespace Krizaljka.PostgreSql.Postgres.Stuff;
@@ -80,6 +79,7 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         Func<DaoPaginationParameters<TDao>> getDaoPaginationParameters,
         TDbKey connKey,
         CancellationToken ct)
+    where TDao: IDao
     {
         var daoPaginationParameters = getDaoPaginationParameters();
         var paginationParameters = PaginationUtils.GetPaginationParameters(
@@ -89,12 +89,25 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         await using var conn = await GetOpenedConnectionAsync(connKey, ct);
 
 
-        var list = (await conn.QueryAsync<TDao>(
+        var listDao = (await conn.QueryAsync<TDao>(
                 PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters),
                 paginationParameters.DynamicParameters))
             .ToList();
 
-        return new PaginatedResult<List<TCoreModel>>(new InvalidPagination(), [], 0, false);
+        long total = -1;
+        if (paginationParameters.GetTotal)
+        {
+            total = await conn.ExecuteScalarAsync<long>(
+                PaginationOffsetUtils.GetSqlQueryForTotal(viewName, paginationParameters),
+                paginationParameters.DynamicParameters);
+        }
+
+        var list = listDao.Select(x => x.MapTo<TCoreModel>())
+            .ToList();
+
+       // return new PaginatedResult<List<TCoreModel>>(mapper.Map<List<TDao>, List<TCoreModel>>(list), total);
+
+       return new PaginatedResult<List<TCoreModel>>(list, total);
 
     }
 }
