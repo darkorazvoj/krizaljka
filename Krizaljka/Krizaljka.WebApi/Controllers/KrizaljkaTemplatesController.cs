@@ -67,7 +67,15 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
 
         if (result is Success<PaginatedResult<List<KrizaljkaTemplateListItem>>> successResult)
         {
-            return Ok(successResult.Data);
+            var response = successResult.Data.List
+                .Select(x => new KrizaljkaTemplateListItemResponse(
+                    x.Id,
+                    x.Name,
+                    x.RowsCount,
+                    x.ColumnsCount, x.IsActive))
+                .ToList();
+
+            return Ok(response);
         }
         
         return MapResult(result);
