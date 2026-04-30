@@ -19,7 +19,7 @@ internal static class PaginationUtils
         switch (paginationCore)
         {
             case PaginationOffset paginationOffset:
-                (whereClause, var searchTermsParameters) = PaginationOffsetUtils.GetWhereClause(paginationOffset.SearchTerm, daoPaginationParameters.SearchableColumns);
+                (whereClause, var searchTermsParameters) = PaginationOffsetUtils.GetWhereClause(paginationOffset.SearchTerms, daoPaginationParameters.SearchableColumns);
                 dynamicParameters.AddDynamicParams(searchTermsParameters);
 
                 orderByClause = PaginationOffsetUtils.GetOrderByClause(

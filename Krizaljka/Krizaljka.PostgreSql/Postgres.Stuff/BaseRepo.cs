@@ -105,9 +105,6 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         var list = listDao.Select(x => x.MapTo<TCoreModel>())
             .ToList();
 
-       // return new PaginatedResult<List<TCoreModel>>(mapper.Map<List<TDao>, List<TCoreModel>>(list), total);
-
        return new PaginatedResult<List<TCoreModel>>(list, total);
-
     }
 }

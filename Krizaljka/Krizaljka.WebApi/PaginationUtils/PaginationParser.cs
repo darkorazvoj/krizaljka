@@ -16,12 +16,17 @@ internal static class PaginationParser
         {
             var queryStringValues = ParseQueryString(paginationQueryStringBase64);
 
-            if (!queryStringValues.TryGetValue(PaginationConsts.PaginationTypeQueryStringKey, out var paginationType))
+            if (!queryStringValues.TryGetValue(PaginationConsts.PaginationTypeQueryStringKey, out var paginationTypeList))
             {
                 return PaginationOffset.Initial();
             }
 
-            return paginationType.Trim().ToLower() switch
+            if (paginationTypeList.Count != 1)
+            {
+                return PaginationOffset.Initial();
+            }
+
+            return paginationTypeList[0].Trim().ToLower() switch
             {
                 PaginationConsts.PaginationTypeOffsetQueryStringValue => GetOffsetPagination(queryStringValues),
                 _ => PaginationOffset.Initial()
@@ -34,9 +39,9 @@ internal static class PaginationParser
         }
     }
 
-    private static Dictionary<string, string> ParseQueryString(string paginationQueryStringBase64 )
+    private static Dictionary<string, List<string>> ParseQueryString(string paginationQueryStringBase64 )
     {
-        Dictionary<string, string> queryStringValues = [];
+        Dictionary<string, List<string>> queryStringValues = [];
 
         var paginationQueryString = paginationQueryStringBase64.ConvertFromBase64StringSafe();
         var paginationQueryStringArray = paginationQueryString
@@ -52,7 +57,11 @@ internal static class PaginationParser
             {
                 if (!queryStringValues.ContainsKey(keyValueArray[0]))
                 {
-                    queryStringValues.Add(keyValueArray[0], keyValueArray[1]);
+                    queryStringValues.Add(keyValueArray[0], [keyValueArray[1]]);
+                }
+                else
+                {
+                    queryStringValues[keyValueArray[0]].Add(keyValueArray[1]);
                 }
             }
         }
@@ -60,7 +69,7 @@ internal static class PaginationParser
         return queryStringValues;
     }
 
-    private static PaginationOffset GetOffsetPagination(IReadOnlyDictionary<string, string> queryStringValues)
+    private static PaginationOffset GetOffsetPagination(IReadOnlyDictionary<string, List<string>> queryStringValues)
     {
         var pageSize = ParseIntValueValue(PaginationConsts.PageSizeQueryStringKey, queryStringValues) ??
                        PaginationConsts.PaginationLimitDefault;
@@ -72,14 +81,15 @@ internal static class PaginationParser
         return new PaginationOffset(pageSize, page, sort, searchTerm, getTotalNum);
     }
 
-    private static int? ParseIntValueValue(string key, IReadOnlyDictionary<string, string> queryStringValues)
+    private static int? ParseIntValueValue(string key, IReadOnlyDictionary<string, List<string>> queryStringValues)
     {
-        if (!queryStringValues.TryGetValue(key, out var valueString))
+        if (!queryStringValues.TryGetValue(key, out var valueStringList) ||
+            valueStringList.Count != 1)
         {
             return null;
         }
 
-        if (int.TryParse(valueString, out var value))
+        if (int.TryParse(valueStringList[0], out var value))
         {
             return value;
         }
@@ -87,14 +97,15 @@ internal static class PaginationParser
         return null;
     }
 
-    private static bool? ParseBoolValueValue(string key, IReadOnlyDictionary<string, string> queryStringValues)
+    private static bool? ParseBoolValueValue(string key, IReadOnlyDictionary<string, List<string>> queryStringValues)
     {
-        if (!queryStringValues.TryGetValue(key, out var valueString))
+        if (!queryStringValues.TryGetValue(key, out var valueStringList) ||
+            valueStringList.Count != 1)
         {
             return null;
         }
 
-        if (bool.TryParse(valueString, out var value))
+        if (bool.TryParse(valueStringList[0], out var value))
         {
             return value;
         }
@@ -102,16 +113,16 @@ internal static class PaginationParser
         return null;
     }
 
-    private static ISort ParseSort(IReadOnlyDictionary<string, string> queryStringValues)
+    private static ISort ParseSort(IReadOnlyDictionary<string, List<string>> queryStringValues)
     {
-        queryStringValues.TryGetValue(PaginationConsts.SortQueryStringKey, out var sortString);
+        queryStringValues.TryGetValue(PaginationConsts.SortQueryStringKey, out var sortStringList);
 
-        if (string.IsNullOrWhiteSpace(sortString))
+        if (sortStringList is null || sortStringList.Count != 1)
         {
             return new SortEmpty();
         }
 
-        var elements = sortString.Split(':');
+        var elements = sortStringList[0].Split(':');
         if (elements.Length != 2)
         {
             return new SortEmpty();
@@ -126,46 +137,56 @@ internal static class PaginationParser
         };
     }
 
-    private static ISearchTerm ParseSearchTerm(
-        IReadOnlyDictionary<string, string> queryStringValues)
+    private static List<ISearchTerm> ParseSearchTerm(
+        IReadOnlyDictionary<string, List<string>> queryStringValues)
     {
-        queryStringValues.TryGetValue(PaginationConsts.SearchTermQueryStringKey, out var searchTermString);
+        queryStringValues.TryGetValue(PaginationConsts.SearchTermQueryStringKey, out var searchTermStringList);
 
-        if (string.IsNullOrWhiteSpace(searchTermString))
+        if (searchTermStringList is null)
         {
-            return new SearchTermEmpty();
+            return [];
         }
 
-        var elements = searchTermString.Split(':');
-        switch (elements.Length)
+        List<ISearchTerm> searchTerms = [];
+
+        foreach (var searchTermString in searchTermStringList)
         {
-            case 1:
-                return new SearchTerm(elements[0], SearchType.StartsWith, []);
-            case 2:
-                var searchTypeParsed2 = ParseSearchTypeValue(elements[1]);
-                return searchTypeParsed2 is null
-                    ? new SearchTermEmpty()
-                    : new SearchTerm(elements[0], searchTypeParsed2.Value, []);
-            case 3:
+            var elements = searchTermString.Split(':');
+            switch (elements.Length)
             {
-                var searchTypeParsed3 = ParseSearchTypeValue(elements[1]);
-                if (searchTypeParsed3 is null)
+                case 1:
+                    searchTerms.Add(new SearchTerm(elements[0], SearchType.StartsWith, []));
+                    break;
+                case 2:
+                    var searchTypeParsed2 = ParseSearchTypeValue(elements[1]);
+                    if (searchTypeParsed2 is not null)
+                    {
+                        searchTerms.Add(new SearchTerm(elements[0], searchTypeParsed2.Value, []));
+                    }
+
+                    break;
+                case 3:
                 {
-                    return new SearchTermEmpty();
+                    var searchTypeParsed3 = ParseSearchTypeValue(elements[1]);
+                    if (searchTypeParsed3 is null)
+                    {
+                        continue;
+                    }
+
+                    List<string> searchColumns = [];
+
+                    if (!string.IsNullOrWhiteSpace(elements[2]))
+                    {
+                        searchColumns.AddRange(elements[2].Split(',').ToList());
+                    }
+
+                    searchTerms.Add(new SearchTerm(elements[0], searchTypeParsed3.Value, searchColumns));
                 }
-
-                List<string> searchColumns = [];
-
-                if (!string.IsNullOrWhiteSpace(elements[2]))
-                {
-                    searchColumns.AddRange(elements[2].Split(',').ToList());
-                }
-
-                return new SearchTerm(elements[0], searchTypeParsed3.Value, searchColumns);
+                    break;
             }
-            default:
-                return new SearchTermEmpty();
         }
+
+        return searchTerms;
     }
 
     private static SearchType? ParseSearchTypeValue(string searchTypeStringValue) =>
@@ -178,6 +199,3 @@ internal static class PaginationParser
             _ => null
         };
 }
-
-
-// ?pt=offset

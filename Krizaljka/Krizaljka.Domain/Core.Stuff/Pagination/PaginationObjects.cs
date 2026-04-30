@@ -26,7 +26,7 @@ public interface IPaginationOffset : IPaginationCore
     int PageSize { get; }
     int Page { get; }
     ISort Sort { get; }
-    ISearchTerm SearchTerm { get; }
+    List<ISearchTerm> SearchTerms { get; }
     bool GetTotalNum { get; }
 }
 
@@ -34,8 +34,8 @@ public record PaginationOffset(
     int PageSize,
     int Page,
     ISort Sort,
-    ISearchTerm SearchTerm,
+    List<ISearchTerm> SearchTerms,
     bool GetTotalNum) : IPaginationOffset
 {
-    public static PaginationOffset Initial() => new(5, 1, new SortEmpty(), new SearchTermEmpty(), false);
+    public static PaginationOffset Initial() => new(5, 1, new SortEmpty(), [], false);
 }
