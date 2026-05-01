@@ -18,6 +18,7 @@ namespace Krizaljka.WebApi.Controllers;
 [ApiController]
 public class AuthController(AppDispatcher dispatcher) : BaseController
 {
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login(
         [FromBody] KrLoginRequest? request,

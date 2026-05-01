@@ -5,10 +5,12 @@ using Krizaljka.WebApi.Auth;
 using Krizaljka.WebApi.Configs;
 using Krizaljka.WebApi.Csrf;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Options;
 using Serilog;
 
@@ -41,7 +43,16 @@ try
 
 // Add services to the container.
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers(options =>
+    {
+        // Create a policy that requires an authenticated user
+        var policy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .Build();
+
+        // 2. Add the policy as a global filter
+        options.Filters.Add(new AuthorizeFilter(policy));
+    });
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<IAuthUser, AuthUser>();
