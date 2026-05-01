@@ -65,4 +65,11 @@ internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             ConnStrings.Core,
             ct);
 
+    public Task<AppUserMe?> GetAsync(long id, CancellationToken ct)=>
+        BaseGetAsync<AppUserMe, AppUserMeDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(AppUserMeDao))} from {Procs.MeView} where id = @id",
+            new SqlParams()
+                .Add("id", id),
+            ConnStrings.Core,
+            ct);
 }

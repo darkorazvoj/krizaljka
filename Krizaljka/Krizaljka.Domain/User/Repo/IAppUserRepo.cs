@@ -10,4 +10,5 @@ public interface IAppUserRepo
     Task UnblockAsync(long id, string changestamp, long ranById, CancellationToken ct);
     Task ResetLoginAttemptsAsync(long id, string changestamp, long serviceUserId, CancellationToken ct);
 
+    Task<AppUserMe?> GetAsync(long id, CancellationToken ct);
 }

@@ -11,6 +11,8 @@ internal static class Procs
     public static string AppUserIncreaseLoginAttemptAndBlock => "cr.appUserIncreaseLoginAttemptAndBlock_v1";
     public static string AppUserUnblock => "cr.appUserUnblock_v1";
     public static string AppUserResetLoginAttempts => "cr.appUserResetLoginAttempts_v1";
+    public static string MeView => "cr.meView_v1";
+
 
     public static string TemplateInsert => "cr.templateinsert_v1";
     public static string TemplateView => "cr.templateView_V1";
