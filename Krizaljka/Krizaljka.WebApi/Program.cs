@@ -3,6 +3,7 @@ using Krizaljka.Domain.Core.Stuff;
 using Krizaljka.PostgreSql;
 using Krizaljka.WebApi.Auth;
 using Krizaljka.WebApi.Configs;
+using Krizaljka.WebApi.Csrf;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
@@ -104,6 +105,15 @@ try
 
     builder.Services.AddAuthorization();
 
+    builder.Services.AddAntiforgery(options =>
+    {
+        options.HeaderName = "X-CSRF";
+        options.Cookie.Name = "__Host-kr-csrf";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.None;
+    });
+
 
     builder.Services.AddKrizaljkaDomain(_ => { });
     builder.Services.AddKrizaljkaPostgreSql(o =>
@@ -162,48 +172,49 @@ try
 
     app.UseCors(corsPolicyName);
 
-    app.Use(async (context, next) =>
-    {
-        if (HttpMethods.IsOptions(context.Request.Method) ||
-            HttpMethods.IsGet(context.Request.Method) ||
-            HttpMethods.IsHead(context.Request.Method) ||
-            HttpMethods.IsTrace(context.Request.Method))
-        {
-            await next();
-            return;
-        }
+    //app.Use(async (context, next) =>
+    //{
+    //    if (HttpMethods.IsOptions(context.Request.Method) ||
+    //        HttpMethods.IsGet(context.Request.Method) ||
+    //        HttpMethods.IsHead(context.Request.Method) ||
+    //        HttpMethods.IsTrace(context.Request.Method))
+    //    {
+    //        await next();
+    //        return;
+    //    }
 
-        string? origin = context.Request.Headers.Origin;
+    //    string? origin = context.Request.Headers.Origin;
 
-        if (string.IsNullOrWhiteSpace(origin))
-        {
-            if (app.Environment.IsDevelopment())
-            {
-                await next();
-                return;
-            }
+    //    if (string.IsNullOrWhiteSpace(origin))
+    //    {
+    //        if (app.Environment.IsDevelopment())
+    //        {
+    //            await next();
+    //            return;
+    //        }
 
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return;
-        }
+    //        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+    //        return;
+    //    }
 
-        if (!corsConfig.AllowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
-        {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return;
-        }
+    //    if (!corsConfig.AllowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+    //    {
+    //        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+    //        return;
+    //    }
 
-        //if (string.IsNullOrWhiteSpace(origin) ||
-        //    !corsConfig.AllowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
-        //{
-        //    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-        //    return;
-        //}
+    //    //if (string.IsNullOrWhiteSpace(origin) ||
+    //    //    !corsConfig.AllowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+    //    //{
+    //    //    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+    //    //    return;
+    //    //}
 
-        await next();
-    });
+    //    await next();
+    //});
 
     app.UseAuthentication();
+    app.UseMiddleware<CsrfEnforcementMiddleware>();
     app.UseAuthorization();
 
     app.MapControllers();
