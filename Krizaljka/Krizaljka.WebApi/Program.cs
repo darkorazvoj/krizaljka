@@ -62,7 +62,7 @@ try
                 .WithOrigins(corsConfig.AllowedOrigins)
                 .AllowCredentials()
                 .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                .WithHeaders("Content-Type", "X-CSRF", "Authorization", "device-id")
+                .WithHeaders("Content-Type", "X-CSRF", "Authorization", "session-id")
                 .SetPreflightMaxAge(TimeSpan.FromHours(1));
         });
     });
