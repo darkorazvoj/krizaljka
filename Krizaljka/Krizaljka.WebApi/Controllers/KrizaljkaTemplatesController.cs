@@ -3,6 +3,7 @@ using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Template.Handlers;
+using Krizaljka.WebApi.Models;
 using Krizaljka.WebApi.Models.KrizaljkaTemplate;
 using Krizaljka.WebApi.PaginationUtils;
 using Microsoft.AspNetCore.Authorization;
@@ -67,7 +68,7 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
 
         if (result is Success<PaginatedResult<List<KrizaljkaTemplateListItem>>> successResult)
         {
-            var response = successResult.Data.List
+            var list = successResult.Data.List
                 .Select(x => new KrizaljkaTemplateListItemResponse(
                     x.Id,
                     x.Name,
@@ -75,7 +76,9 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
                     x.ColumnsCount, x.IsActive))
                 .ToList();
 
-            return Ok(response);
+            return Ok(new PaginationOffsetResponse<List<KrizaljkaTemplateListItemResponse>>(
+                list,
+                successResult.Data.TotalRows));
         }
         
         return MapResult(result);

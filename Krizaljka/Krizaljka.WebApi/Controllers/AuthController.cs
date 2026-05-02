@@ -14,7 +14,7 @@ using Krizaljka.WebApi.Csrf;
 namespace Krizaljka.WebApi.Controllers;
 
 [Authorize]
-[Route("auth")]
+[Route("")]
 [ApiController]
 public class AuthController(AppDispatcher dispatcher) : BaseController
 {
@@ -80,13 +80,6 @@ public class AuthController(AppDispatcher dispatcher) : BaseController
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Ok();
     }
-    
-    [HttpGet("me")]
-    public IActionResult Me(IAuthUser user) =>
-        Ok(new
-        {
-            user.Id
-        });
 
     public IActionResult AuthServiceUnavailableResult =>
         StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "service_unavailable" });

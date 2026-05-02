@@ -94,7 +94,7 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
                 paginationParameters.DynamicParameters))
             .ToList();
 
-        long total = -1;
+        long? total = null;
         if (paginationParameters.GetTotal)
         {
             total = await conn.ExecuteScalarAsync<long>(
