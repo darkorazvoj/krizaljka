@@ -13,7 +13,7 @@ internal class DatabaseUtils : IDatabaseUtils
             "CC002" => "RecordNotFound",
             "CC003" => "ChangestampMissing",
             "CC004" => "UpdateValueIsEqual",
-            "CC005" => "Forbidden",
+            IDatabaseUtils.ForbiddenCode => "Forbidden",
             _ => "DatabaseOperationParametersIssue"
         };
 }
