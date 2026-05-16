@@ -9,7 +9,7 @@ public record SuccessInsert<T>(T Id) : IServiceResult;
 public record Success<T>(T Data) : IServiceResult;
 public record UpdateSuccessChangestamp<T>(T Changestamp) : IServiceResult;
 
-
+public record RecordExists : IServiceResult;
 public record NoData : IServiceResult;
 
 public record Error(string Message) : IServiceResult;

@@ -44,6 +44,14 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
             ConnStrings.Core,
             ct);
 
+    public Task<KrizaljkaTemplate?> GetByMatrixKeyAsync(string matrixKey, CancellationToken ct) =>
+        BaseGetAsync<KrizaljkaTemplate, KrizaljkaTemplateDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaTemplateDao))} from {Procs.TemplateView} where matrixKey = @key",
+            new SqlParams()
+                .Add("key", matrixKey),
+            ConnStrings.Core,
+            ct);
+
     public Task<PaginatedResult<List<KrizaljkaTemplateListItem>>> GetListAsync(IPaginationCore paginationCore,
         CancellationToken ct) =>
         BaseGetPaginatedListAsync<KrizaljkaTemplateListItem, KrizaljkaTemplateListItemDao>(

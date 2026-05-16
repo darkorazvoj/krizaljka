@@ -45,9 +45,17 @@ internal class InsertKrizaljkaTemplateHandler(
 
         try
         {
+            var matrixKey = MatrixKeyManager.CreateKey(request.Matrix);
+
+            var existing = await repo.GetByMatrixKeyAsync(matrixKey, ct);
+            if (existing is not null)
+            {
+                return new RecordExists();
+            }
+
             var id = await repo.InsertAsync(
                 request.Matrix,
-                MatrixKeyManager.CreateKey(request.Matrix),
+                matrixKey,
                 request.Name,
                 rowsCount,
                 columnsCount,
