@@ -75,6 +75,7 @@ try
                 .AllowCredentials()
                 .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .WithHeaders("Content-Type", "X-CSRF", "Authorization", "session-id")
+                .WithExposedHeaders("X-CSRF", "Location")
                 .SetPreflightMaxAge(TimeSpan.FromHours(1));
         });
     });
