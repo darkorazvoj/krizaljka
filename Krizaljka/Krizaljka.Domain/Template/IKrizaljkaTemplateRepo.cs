@@ -7,6 +7,7 @@ public interface IKrizaljkaTemplateRepo
 {
     Task<long> InsertAsync(
         int[][] matrix,
+        string matrixKey,
         string? name,
         int numOfRows,
         int numOfColumns,

@@ -20,7 +20,7 @@ internal class InsertKrizaljkaTemplateHandler(
             return new InvalidRequestWithReason("Missing matrix");
         }
 
-        if (request.Matrix.Length <= 0)
+        if (request.Matrix.Length <= 0 || request.Matrix[0].Length <=0)
         {
             return new InvalidRequestWithReason("Matrix can't be empty");
         }
@@ -47,6 +47,7 @@ internal class InsertKrizaljkaTemplateHandler(
         {
             var id = await repo.InsertAsync(
                 request.Matrix,
+                MatrixKeyManager.CreateKey(request.Matrix),
                 request.Name,
                 rowsCount,
                 columnsCount,

@@ -13,6 +13,7 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
 {
     public async Task<long> InsertAsync(
         int[][] matrix,
+        string matrixKey,
         string? name,
         int numOfRows,
         int numOfColumns,
@@ -20,10 +21,11 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
         DateTimeOffset createdOn,
         CancellationToken ct) =>
         await BaseExecuteWithOutAsync<long>(
-            $"call {Procs.TemplateInsert} (@name, @matrix, @numRows, @numColumns, @isActive, @createdOn, @RanById, null);",
+            $"call {Procs.TemplateInsert} (@name, @matrix, @matrixKey, @numRows, @numColumns, @isActive, @createdOn, @RanById, null);",
             new SqlParams()
                 .Add("name", name)
                 .AddJsonb("matrix", matrix)
+                .Add("matrixKey", matrixKey)
                 .Add("numRows", numOfRows)
                 .Add("numColumns", numOfColumns)
                 .Add("isactive", true)
