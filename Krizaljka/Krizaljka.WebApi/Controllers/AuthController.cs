@@ -32,7 +32,7 @@ public class AuthController(AppDispatcher dispatcher) : BaseController
         // Block logged-in users
         if (User.Identity?.IsAuthenticated == true)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, null);
+            return StatusCode(StatusCodes.Status403Forbidden, new ErrorDto("already_in"));
         }
 
         if (string.IsNullOrWhiteSpace(request.Username) ||
