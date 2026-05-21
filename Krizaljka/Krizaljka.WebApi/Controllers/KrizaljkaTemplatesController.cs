@@ -1,4 +1,5 @@
-﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+﻿using System.Threading.Channels;
+using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Template;
@@ -13,7 +14,9 @@ namespace Krizaljka.WebApi.Controllers;
 
 [Authorize]
 [ApiController]
-public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : BaseController
+public sealed class KrizaljkaTemplatesController(
+    AppDispatcher dispatcher,
+    ChannelWriter<List<FileRecord>> channelWriter) : BaseController
 {
     private const string BaseRute = "templates";
 
@@ -40,7 +43,7 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
     public async Task<IActionResult> GetAsync([FromRoute] long id, CancellationToken ct)
     {
         var result = await dispatcher.DispatchAsync(new GetKrizaljkaTemplateServiceRequest(id), ct);
-        
+
         if (result is Success<KrizaljkaTemplate> successResult)
         {
             return Ok(new KrizaljkaTemplateResponse(
@@ -60,7 +63,7 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
 
     [Route(BaseRute)]
     [HttpGet]
-    public async Task<IActionResult> GetPaginatedListAsync([FromQuery]string? pg, CancellationToken ct)
+    public async Task<IActionResult> GetPaginatedListAsync([FromQuery] string? pg, CancellationToken ct)
     {
         var paginationCore = PaginationParser.Parse(pg);
         var result =
@@ -80,14 +83,14 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
                 list,
                 successResult.Data.TotalRows));
         }
-        
+
         return MapResult(result);
     }
 
     [Route(BaseRute + "/{id:long}/active")]
     [HttpPut]
     public async Task<IActionResult> UpdateActiveAsync(
-        [FromRoute] long id, 
+        [FromRoute] long id,
         [FromBody] UpdateActiveKrizaljkaTemplateRequest? request,
         CancellationToken ct)
     {
@@ -102,4 +105,52 @@ public sealed class KrizaljkaTemplatesController(AppDispatcher dispatcher) : Bas
                 request.Changestamp),
             ct));
     }
+
+
+    [HttpPost("/files")]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(100 * 1024 * 1024)]
+    public async Task<IActionResult> UploadJsonFiles(
+        [FromForm] List<IFormFile>? files,
+        CancellationToken cancellationToken)
+    {
+        if (files is null || files.Count == 0)
+        {
+            return BadRequest("no_files");
+        }
+
+        List<FileRecord> fileRecords = [];
+
+        foreach (var file in files)
+        {
+            if (file.Length == 0)
+            {
+                continue;
+            }
+
+            using StreamReader reader = new(file.OpenReadStream());
+
+            var content = await reader.ReadToEndAsync(cancellationToken);
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                continue;
+            }
+
+            fileRecords.Add(new FileRecord(content));
+        }
+
+        if (fileRecords.Count > 0)
+        {
+            await channelWriter.WriteAsync(fileRecords, cancellationToken);
+        }
+
+        return Accepted(new
+        {
+            queued = fileRecords.Count
+        });
+    }
 }
+
+    
+
