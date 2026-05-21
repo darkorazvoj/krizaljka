@@ -107,7 +107,7 @@ public sealed class KrizaljkaTemplatesController(
     }
 
 
-    [HttpPost("/files")]
+    [HttpPost(BaseRute +"/files")]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(100 * 1024 * 1024)]
     public async Task<IActionResult> UploadJsonFiles(

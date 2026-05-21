@@ -4,6 +4,7 @@ using Krizaljka.PostgreSql;
 using Krizaljka.WebApi.Auth;
 using Krizaljka.WebApi.Configs;
 using Krizaljka.WebApi.Csrf;
+using Krizaljka.WebApi.Workers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -145,6 +146,8 @@ try
 
     builder.Services.AddSingleton<ServiceUser>();
     builder.Services.AddSingleton<IServiceUser>(sp => sp.GetRequiredService<ServiceUser>());
+
+    builder.Services.AddHostedService<BatchLoadTemplatesWorker>();
 
     var app = builder.Build();
 
