@@ -158,11 +158,6 @@ public sealed class KrizaljkaTemplatesController(
         [FromBody] KrizaljkaTemplateExportRequest? request,
         CancellationToken ct)
     {
-        //if (request?.Ids is null ||
-        //    request.Ids.Count == 0)
-        //{
-        //    return BadRequest("missing_data");
-        //}
 
         const int batchSize = 100;
         const string baseFileName = "KrizaljkaTemplatesDb";
