@@ -1,4 +1,6 @@
-﻿using System.Threading.Channels;
+﻿using System.IO.Compression;
+using System.Text.Json;
+using System.Threading.Channels;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
@@ -150,6 +152,61 @@ public sealed class KrizaljkaTemplatesController(
             queued = fileRecords.Count
         });
     }
+
+    [HttpPost(BaseRute + "/export")]
+    public async Task<IActionResult> ExportAsync(
+        [FromBody] KrizaljkaTemplateExportRequest? request,
+        CancellationToken ct)
+    {
+        if (request?.Ids is null ||
+            request.Ids.Count == 0)
+        {
+            return BadRequest("missing_data");
+        }
+
+        const int batchSize = 100;
+        const string baseFileName = "KrizaljkaTemplatesDb";
+
+        var result = await dispatcher.DispatchAsync(new GetKrizaljkaTemplatesForExportServiceRequest(request.Ids), ct);
+
+        if (result is not Success<List<KrizaljkaTemplateExport>> successResult)
+        {
+            return StatusCode(500, "unknown");
+        }
+
+        MemoryStream zipStream = new();
+
+        await using (ZipArchive zip = new(zipStream, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            var fileIndex = 1;
+
+            foreach (var batch in successResult.Data.Chunk(batchSize))
+            {
+                var entry = zip.CreateEntry(
+                    $"{baseFileName}_{fileIndex}.json",
+                    CompressionLevel.Fastest);
+
+                await using var entryStream = await entry.OpenAsync(ct);
+
+                var exportFile = new KrizaljkaTemplatesExportResponse(batch.ToList());
+
+                await JsonSerializer.SerializeAsync(
+                    entryStream,
+                    exportFile,
+                    cancellationToken: ct);
+
+                fileIndex++;
+            }
+        }
+
+        zipStream.Position = 0;
+
+        return File(
+            zipStream,
+            "application/zip",
+            "KrizaljkaTemplatesDb.zip");
+    }
+
 }
 
     

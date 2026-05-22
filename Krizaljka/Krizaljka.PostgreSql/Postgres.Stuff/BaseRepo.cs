@@ -63,6 +63,25 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         return dao is null ? default : dao.MapTo<TCoreModel>();
     }
 
+    protected async Task<List<TCoreModel>> BaseGetListAsync<TCoreModel, TDao>(
+        string sql,
+        SqlParams parameters,
+        TDbKey connKey,
+        CancellationToken cancellationToken)
+        where TDao : IDao
+    {
+        await using var conn = await GetOpenedConnectionAsync(connKey, cancellationToken);
+
+        var listDao =
+            (await conn.QueryAsync<TDao>(sql, parameters))
+            .ToList();
+
+        var list = listDao.Select(x => x.MapTo<TCoreModel>())
+            .ToList();
+
+        return list;
+    }
+
     protected async Task BaseExecuteAsync(
         string sql, 
         SqlParams? parameters,

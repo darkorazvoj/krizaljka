@@ -15,6 +15,7 @@ public interface IKrizaljkaTemplateRepo
         DateTimeOffset createdOn,
         CancellationToken ct);
     Task<KrizaljkaTemplate?> GetAsync(long id, CancellationToken ct);
+    Task<List<KrizaljkaTemplateExport>> GetForExportAsync(List<long> ids, CancellationToken ct);
     Task<KrizaljkaTemplate?> GetByMatrixKeyAsync(string matrixKey, CancellationToken ct);
     Task<PaginatedResult<List<KrizaljkaTemplateListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct);
     Task<string?> UpdateIsActiveAsync(
