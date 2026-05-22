@@ -46,7 +46,7 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
 
     public Task<List<KrizaljkaTemplateExport>> GetForExportAsync(List<long> ids, CancellationToken ct) =>
         BaseGetListAsync<KrizaljkaTemplateExport, KrizaljkaTemplateExportDao>(
-            $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaTemplateExportDao))} from {Procs.TemplateView} where id = ANY(@ids)",
+            $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaTemplateExportDao))} from {Procs.TemplateView}  {(ids.Count > 0 ? "where id = ANY(@ids)" : "")};",
             new SqlParams()
                 .Add("ids", ids),
             ConnStrings.Core,

@@ -158,16 +158,17 @@ public sealed class KrizaljkaTemplatesController(
         [FromBody] KrizaljkaTemplateExportRequest? request,
         CancellationToken ct)
     {
-        if (request?.Ids is null ||
-            request.Ids.Count == 0)
-        {
-            return BadRequest("missing_data");
-        }
+        //if (request?.Ids is null ||
+        //    request.Ids.Count == 0)
+        //{
+        //    return BadRequest("missing_data");
+        //}
 
         const int batchSize = 100;
         const string baseFileName = "KrizaljkaTemplatesDb";
 
-        var result = await dispatcher.DispatchAsync(new GetKrizaljkaTemplatesForExportServiceRequest(request.Ids), ct);
+        var result =
+            await dispatcher.DispatchAsync(new GetKrizaljkaTemplatesForExportServiceRequest(request?.Ids ?? []), ct);
 
         if (result is not Success<List<KrizaljkaTemplateExport>> successResult)
         {
