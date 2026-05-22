@@ -1,13 +1,17 @@
-﻿using System.Text.Encodings.Web;
+﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+using Krizaljka.Domain.Template;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using Krizaljka.Domain.Template;
 using System.Threading.Channels;
+using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.Template.Handlers;
 
 namespace Krizaljka.WebApi.Workers;
 
 public sealed class BatchLoadTemplatesWorker(
     ChannelReader<List<FileRecord>> channelReader,
+    IServiceScopeFactory scopeFactory,
     ILogger<BatchLoadTemplatesWorker> logger) : BackgroundService
 {
     private static readonly JsonSerializerOptions Options = new()
@@ -38,31 +42,27 @@ public sealed class BatchLoadTemplatesWorker(
     {
         var list = GetTemplates(files);
 
-        //foreach (var fileRecord in files)
-        //{
-        //    var one = TryDeserializeOne(fileRecord.Content);
+        if (list.Count == 0)
+        {
+            return;
+        }
 
-        //    if (one is not null)
-        //    {
-
-
-        //        continue;
-        //    }
-
-        //    //logger.LogInformation(message: fileRecord.Content);
-
-        //    //var oneTemplate = JsonSerializer.Deserialize<KrizaljkaTemplateJson>(fileRecord.Content, Options);
-
-        //    //if (oneTemplate is null)
-        //    //{
-        //    //    logger.LogWarning(message: "Template file doesn't contain one JSON template.");
-        //    //}
-
-        //}
+        await using var scope = scopeFactory.CreateAsyncScope();
+        var appDispatcher = scope.ServiceProvider.GetRequiredService<AppDispatcher>();
 
 
+        foreach (var template in list)
+        {
+            var insertKrizaljkaResult = await appDispatcher.DispatchAsync(new InsertKrizaljkaTemplateServiceRequest(template.Rows, template.Name), cancellationToken);
 
-        // Your processing logic here.
+            if (insertKrizaljkaResult is not SuccessInsert<long>)
+            {
+                logger.LogWarning(message: "Template not saved {name}",
+                    string.IsNullOrWhiteSpace(template.Name) ? "<no name>" : template.Name);
+            }
+        }
+
+
         await Task.CompletedTask;
     }
 
