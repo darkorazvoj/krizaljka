@@ -1,11 +1,10 @@
-﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
-using Krizaljka.Domain.Template;
+﻿using Krizaljka.Domain.Template;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading.Channels;
 using Krizaljka.Domain.Core.Stuff.Services;
-using Krizaljka.Domain.Template.Handlers;
+using Krizaljka.Domain.Template.Services;
 
 namespace Krizaljka.WebApi.Workers;
 
@@ -48,12 +47,14 @@ public sealed class BatchLoadTemplatesWorker(
         }
 
         await using var scope = scopeFactory.CreateAsyncScope();
-        var appDispatcher = scope.ServiceProvider.GetRequiredService<AppDispatcher>();
+        var insertTemplateService = scope.ServiceProvider.GetRequiredService<InsertTemplateService>();
 
 
         foreach (var template in list)
         {
-            var insertKrizaljkaResult = await appDispatcher.DispatchAsync(new InsertKrizaljkaTemplateServiceRequest(template.Rows, template.Name), cancellationToken);
+            // TODO - SERVICE USER ID
+            var insertKrizaljkaResult =
+                await insertTemplateService.InvokeAsync(template.Rows, template.Name, 7, cancellationToken);
 
             if (insertKrizaljkaResult is not SuccessInsert<long>)
             {

@@ -1,6 +1,7 @@
 ﻿using Krizaljka.Domain.Core.Stuff;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.Template.Services;
 
 namespace Krizaljka.Domain.Template.Handlers;
 
@@ -10,66 +11,10 @@ public record InsertKrizaljkaTemplateServiceRequest(
 
 internal class InsertKrizaljkaTemplateHandler(
     IAuthUser authUser,
-    IKrizaljkaTemplateRepo repo)
+    InsertTemplateService insertTemplateService)
     : IAppRequestHandler<InsertKrizaljkaTemplateServiceRequest>
 {
-    public async Task<IServiceResult> HandleAsync(InsertKrizaljkaTemplateServiceRequest request, CancellationToken ct)
-    {
-        if (request.Matrix is null)
-        {
-            return new InvalidRequestWithReason("Missing matrix");
-        }
-
-        if (request.Matrix.Length <= 0 || request.Matrix[0].Length <=0)
-        {
-            return new InvalidRequestWithReason("Matrix can't be empty");
-        }
-
-        var rowsCount = request.Matrix.Length;
-        var columnsCount = request.Matrix[0].Length;
-
-        var areColumnsConsistent = true;
-        for (var r = 0; r < rowsCount; r++)
-        {
-            if (request.Matrix[r].Length != columnsCount)
-            {
-                areColumnsConsistent = false;
-                break;
-            }
-        }
-
-        if (!areColumnsConsistent)
-        {
-            return new InvalidRequestWithReason("Inconsistent number of columns");
-        }
-
-        try
-        {
-            var matrixKey = MatrixKeyManager.CreateKey(request.Matrix);
-
-            var existing = await repo.GetByMatrixKeyAsync(matrixKey, ct);
-            if (existing is not null)
-            {
-                return new RecordExists();
-            }
-
-            var id = await repo.InsertAsync(
-                request.Matrix,
-                matrixKey,
-                request.Name,
-                rowsCount,
-                columnsCount,
-                authUser.Id,
-                DateTimeOffset.UtcNow,
-                ct);
-
-            return new SuccessInsert<long>(id);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error inserting krizaljka template. {e.Message}");
-            return new Error("InsertKrizaljkaTemplateFailed");
-        }
-    }
+    public Task<IServiceResult> HandleAsync(InsertKrizaljkaTemplateServiceRequest request, CancellationToken ct) =>
+        insertTemplateService.InvokeAsync(request.Matrix, request.Name, authUser.Id, ct);
 }
 

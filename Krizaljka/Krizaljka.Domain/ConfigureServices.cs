@@ -1,13 +1,14 @@
 ﻿
-using System.Threading.Channels;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Dummies;
 using Krizaljka.Domain.Core.Stuff.Extensions;
 using Krizaljka.Domain.Core.Stuff.Hashers;
 using Krizaljka.Domain.Core.Stuff.Utils;
 using Krizaljka.Domain.Template;
+using Krizaljka.Domain.Template.Services;
 using Krizaljka.Domain.User.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Channels;
 
 namespace Krizaljka.Domain;
 
@@ -26,6 +27,8 @@ public static class ConfigureServices
         services.AddScoped<AppDispatcher>();
 
         services.AddScoped<GetUserByCredentialsService>();
+        services.AddScoped<InsertTemplateService>();
+
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
 
         // Dummies
