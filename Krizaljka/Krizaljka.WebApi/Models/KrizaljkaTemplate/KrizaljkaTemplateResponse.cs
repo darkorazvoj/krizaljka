@@ -1,4 +1,5 @@
-﻿namespace Krizaljka.WebApi.Models.KrizaljkaTemplate;
+﻿
+namespace Krizaljka.WebApi.Models.KrizaljkaTemplate;
 
 public record KrizaljkaTemplateResponse(
     long Id,
@@ -6,6 +7,8 @@ public record KrizaljkaTemplateResponse(
     int[][] Matrix,
     int RowsCount,
     int ColumnsCount,
+    int NumZeroBlocks,
+    List<TemplateBlockResponse> ZeroBlocks,
     bool IsActive,
     long CreatedById,
     DateTimeOffset? CreatedOn,

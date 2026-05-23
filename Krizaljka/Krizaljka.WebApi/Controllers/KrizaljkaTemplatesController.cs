@@ -54,6 +54,8 @@ public sealed class KrizaljkaTemplatesController(
                 successResult.Data.Matrix,
                 successResult.Data.RowsCount,
                 successResult.Data.ColumnsCount,
+                successResult.Data.NumZeroBlocks,
+                successResult.Data.ZeroBlocks.Select(x => new TemplateBlockResponse(x.Height, x.Width)).ToList(),
                 successResult.Data.IsActive,
                 successResult.Data.CreatedById,
                 successResult.Data.CreatedOn,
