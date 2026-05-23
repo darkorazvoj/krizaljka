@@ -21,6 +21,7 @@ public static class ConfigureServices
         // Postgres's timestampz maps to DateTime. This handler maps it to DateTimeOffset.
         SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         SqlMapper.AddTypeHandler(new IntJaggedArrayHandler());
+        SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<TemplateBlock>>());
 
         KrizaljkaPostgresOptions opts = new();
         options.Invoke(opts);

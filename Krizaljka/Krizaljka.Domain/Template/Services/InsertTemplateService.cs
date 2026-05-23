@@ -50,12 +50,16 @@ public class InsertTemplateService(IKrizaljkaTemplateRepo repo)
                 return new RecordExists();
             }
 
+            var zeroBlocks = TemplateUtils.GetZeroBlocks(matrix);
+
             var id = await repo.InsertAsync(
                 matrix,
                 matrixKey,
                 name,
                 rowsCount,
                 columnsCount,
+                zeroBlocks.Count,
+                zeroBlocks,
                 ranById,
                 DateTimeOffset.UtcNow,
                 ct);

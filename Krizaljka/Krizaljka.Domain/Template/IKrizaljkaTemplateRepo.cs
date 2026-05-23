@@ -11,6 +11,8 @@ public interface IKrizaljkaTemplateRepo
         string? name,
         int numOfRows,
         int numOfColumns,
+        int numZeroBlocks,
+        List<TemplateBlock> zeroBlocks,
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct);

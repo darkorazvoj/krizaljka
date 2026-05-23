@@ -17,17 +17,21 @@ internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> co
         string? name,
         int numOfRows,
         int numOfColumns,
+        int numZeroBlocks,
+        List<TemplateBlock> zeroBlocks,
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct) =>
         await BaseExecuteWithOutAsync<long>(
-            $"call {Procs.TemplateInsert} (@name, @matrix, @matrixKey, @numRows, @numColumns, @isActive, @createdOn, @RanById, null);",
+            $"call {Procs.TemplateInsert} (@name, @matrix, @matrixKey, @numRows, @numColumns, @numZeroBlocks, @zeroBlocks, @isActive, @createdOn, @RanById, null);",
             new SqlParams()
                 .Add("name", name)
-                .AddJsonb("matrix", matrix)
+                .AddMatrix("matrix", matrix)
                 .Add("matrixKey", matrixKey)
                 .Add("numRows", numOfRows)
                 .Add("numColumns", numOfColumns)
+                .Add("@numZeroBlocks", numZeroBlocks)
+                .AddZeroBlocks("@zeroBlocks", zeroBlocks)
                 .Add("isactive", true)
                 .Add("createdOn", createdOn)
                 .Add("ranById", ranById)

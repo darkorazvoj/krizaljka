@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Text.Json;
 using Dapper;
+using Krizaljka.Domain.Template;
 using Krizaljka.PostgreSql.Postgres.Stuff.Helpers;
 using Npgsql;
 using NpgsqlTypes;
@@ -71,9 +72,19 @@ public sealed class SqlParams : SqlMapper.IDynamicParameters
         return this;
     }
 
-    public SqlParams AddJsonb(string name, int[][] value)
+    public SqlParams AddMatrix(string name, int[][] value)
     {
         _npgsqlParams.Add(new NpgsqlParameter<string>(name, JsonSerializer.Serialize(value))
+        {
+            NpgsqlDbType = NpgsqlDbType.Jsonb
+        });
+
+        return this;
+    }
+
+    public SqlParams AddZeroBlocks(string name, List<TemplateBlock> blocks)
+    {
+        _npgsqlParams.Add(new NpgsqlParameter<string>(name, JsonSerializer.Serialize(blocks))
         {
             NpgsqlDbType = NpgsqlDbType.Jsonb
         });
