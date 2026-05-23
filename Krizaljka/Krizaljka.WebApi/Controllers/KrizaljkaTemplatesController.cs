@@ -78,7 +78,9 @@ public sealed class KrizaljkaTemplatesController(
                     x.Id,
                     x.Name,
                     x.RowsCount,
-                    x.ColumnsCount, x.IsActive))
+                    x.ColumnsCount, 
+                    x.NumZeroBlocks,
+                    x.IsActive))
                 .ToList();
 
             return Ok(new PaginationOffsetResponse<List<KrizaljkaTemplateListItemResponse>>(

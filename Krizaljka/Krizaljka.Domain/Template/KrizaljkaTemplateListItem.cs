@@ -5,4 +5,5 @@ public record KrizaljkaTemplateListItem(
     string? Name,
     int RowsCount,
     int ColumnsCount,
+    int NumZeroBlocks,
     bool IsActive);

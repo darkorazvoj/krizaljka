@@ -8,6 +8,8 @@ public record KrizaljkaTemplate(
     string MatrixKey,
     int RowsCount,
     int ColumnsCount,
+    int NumZeroBlocks,
+    List<TemplateBlock> ZeroBlocks,
     bool IsActive,
     long CreatedById,
     DateTimeOffset? CreatedOn,

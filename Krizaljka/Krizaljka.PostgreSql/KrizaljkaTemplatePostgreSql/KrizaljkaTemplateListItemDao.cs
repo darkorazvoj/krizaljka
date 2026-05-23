@@ -10,6 +10,7 @@ internal record KrizaljkaTemplateListItemDao(
     string? Name,
     int NumRows,
     int NumColumns,
+    int NumZeroBlocks,
     bool IsActive)
 : IDao
 {
@@ -24,6 +25,7 @@ internal record KrizaljkaTemplateListItemDao(
                 { "name", new DaoColumn("name", typeof(string)) },
                 { "numrows", new DaoColumn("numrows", typeof(int)) },
                 { "numcolumns", new DaoColumn("numcolumns", typeof(int)) },
+                { "numzeroblocks", new DaoColumn("numzeroblocks", typeof(int)) },
                 { "isactive", new DaoColumn("isactive", typeof(bool)) }
             },
             new Dictionary<string, DaoColumn>
@@ -31,6 +33,7 @@ internal record KrizaljkaTemplateListItemDao(
                 { "name", new DaoColumn("name", typeof(string)) },
                 { "numrows", new DaoColumn("numrows", typeof(int)) },
                 { "numcolumns", new DaoColumn("numcolumns", typeof(int)) },
+                { "numzeroblocks", new DaoColumn("numzeroblocks", typeof(int)) },
                 { "isactive", new DaoColumn("isactive", typeof(bool)) }
             });
 
@@ -43,6 +46,7 @@ internal record KrizaljkaTemplateListItemDao(
                 Name,
                 NumRows,
                 NumColumns,
+                NumZeroBlocks,
                 IsActive);
             return (TCoreModel)result;
         }
