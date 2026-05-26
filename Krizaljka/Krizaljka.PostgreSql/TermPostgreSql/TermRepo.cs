@@ -1,8 +1,9 @@
-﻿using System.Data;
+﻿using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Terms;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using Krizaljka.PostgreSql.Sql;
+using System.Data;
 
 namespace Krizaljka.PostgreSql.TermPostgreSql;
 
@@ -40,4 +41,13 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
         "newId",
         ConnStrings.Core,
         ct);
+
+    public Task<PaginatedResult<List<TermListItem>>> GetListAsync(IPaginationCore paginationCore,
+        CancellationToken ct) =>
+        BaseGetPaginatedListAsync<TermListItem, TermListItemDao>(
+            paginationCore,
+            Procs.TermView,
+            TermListItemDao.ToDaoPaginationParameters,
+            ConnStrings.Core,
+            ct);
 }

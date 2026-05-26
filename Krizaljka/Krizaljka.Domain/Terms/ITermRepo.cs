@@ -1,4 +1,6 @@
-﻿namespace Krizaljka.Domain.Terms;
+﻿using Krizaljka.Domain.Core.Stuff.Pagination;
+
+namespace Krizaljka.Domain.Terms;
 
 public interface ITermRepo
 {
@@ -15,4 +17,6 @@ public interface ITermRepo
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct);
+
+    Task<PaginatedResult<List<TermListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct);
 }

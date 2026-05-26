@@ -1,14 +1,24 @@
-﻿using Krizaljka.WebApi.Workers.Models;
+﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+using Krizaljka.Domain.Core.Stuff.Pagination;
+using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.Template.Handlers;
+using Krizaljka.Domain.Terms;
+using Krizaljka.WebApi.Models;
+using Krizaljka.WebApi.PaginationUtils;
+using Krizaljka.WebApi.Workers.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Channels;
-using Krizaljka.Domain.Terms;
+using Krizaljka.Domain.Terms.Handlers;
+using Krizaljka.WebApi.Models.Term;
 
 namespace Krizaljka.WebApi.Controllers;
 
 [Authorize]
 [ApiController]
-public class TermsController(ChannelWriter<IFileBatch> channelWriter) : BaseController
+public class TermsController(
+    AppDispatcher dispatcher,
+    ChannelWriter<IFileBatch> channelWriter) : BaseController
 {
     private const string BaseRute = "terms";
 
@@ -60,6 +70,33 @@ public class TermsController(ChannelWriter<IFileBatch> channelWriter) : BaseCont
         {
             queued = fileRecords.Count
         });
+    }
+
+    [Route(BaseRute)]
+    [HttpGet]
+    public async Task<IActionResult> GetPaginatedListAsync([FromQuery] string? pg, CancellationToken ct)
+    {
+        var paginationCore = PaginationParser.Parse(pg);
+        var result =
+            await dispatcher.DispatchAsync(new GetTermsPaginatedListServiceRequest(paginationCore), ct);
+
+        if (result is Success<PaginatedResult<List<TermListItem>>> successResult)
+        {
+            var list = successResult.Data.List
+                .Select(x => new TermListItemResponse(
+                    x.Id,
+                    x.LanguageId,
+                    x.RawValue,
+                    x.Length, 
+                    x.IsActive))
+                .ToList();
+
+            return Ok(new PaginationOffsetResponse<List<TermListItemResponse>>(
+                list,
+                successResult.Data.TotalRows));
+        }
+
+        return MapResult(result);
     }
 
 }

@@ -19,4 +19,5 @@ internal static class Procs
     public static string TemplateUpdateIsActive => "cr.templateUpdateIsActive_v1";
 
     public static string TermInsert => "cr.terminsert_v1";
+    public static string TermView  => "cr.termView_V1";
 }
