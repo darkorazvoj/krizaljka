@@ -1,7 +1,4 @@
-﻿using System.IO.Compression;
-using System.Text.Json;
-using System.Threading.Channels;
-using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Template;
@@ -9,8 +6,12 @@ using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.WebApi.Models;
 using Krizaljka.WebApi.Models.KrizaljkaTemplate;
 using Krizaljka.WebApi.PaginationUtils;
+using Krizaljka.WebApi.Workers.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IO.Compression;
+using System.Text.Json;
+using System.Threading.Channels;
 
 namespace Krizaljka.WebApi.Controllers;
 
@@ -18,7 +19,7 @@ namespace Krizaljka.WebApi.Controllers;
 [ApiController]
 public sealed class KrizaljkaTemplatesController(
     AppDispatcher dispatcher,
-    ChannelWriter<List<FileRecord>> channelWriter) : BaseController
+    ChannelWriter<IFileBatch> channelWriter) : BaseController
 {
     private const string BaseRute = "templates";
 
@@ -125,7 +126,7 @@ public sealed class KrizaljkaTemplatesController(
             return BadRequest("no_files");
         }
 
-        List<FileRecord> fileRecords = [];
+        List<FileContent> fileRecords = [];
 
         foreach (var file in files)
         {
@@ -143,12 +144,12 @@ public sealed class KrizaljkaTemplatesController(
                 continue;
             }
 
-            fileRecords.Add(new FileRecord(content));
+            fileRecords.Add(new FileContent(content));
         }
 
         if (fileRecords.Count > 0)
         {
-            await channelWriter.WriteAsync(fileRecords, cancellationToken);
+            await channelWriter.WriteAsync(new TemplateFileBatch(fileRecords), cancellationToken);
         }
 
         return Accepted(new

@@ -3,8 +3,8 @@ using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Dummies;
 using Krizaljka.Domain.Core.Stuff.Extensions;
 using Krizaljka.Domain.Core.Stuff.Hashers;
+using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Core.Stuff.Utils;
-using Krizaljka.Domain.Template;
 using Krizaljka.Domain.Template.Services;
 using Krizaljka.Domain.User.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,16 +35,16 @@ public static class ConfigureServices
         services.AddSingleton<IDatabaseUtils, DummyDatabaseUtils>();
 
          // Channels
-         var channel = Channel.CreateBounded<List<FileRecord>>(
-             new BoundedChannelOptions(100)
-             {
-                 FullMode = BoundedChannelFullMode.Wait,
-                 SingleReader = true,
-                 SingleWriter = false
-             });
+         //var channel = Channel.CreateBounded<List<IBatchFiles>>(
+         //    new BoundedChannelOptions(100)
+         //    {
+         //        FullMode = BoundedChannelFullMode.Wait,
+         //        SingleReader = true,
+         //        SingleWriter = false
+         //    });
 
-         services.AddSingleton(channel.Writer);
-         services.AddSingleton(channel.Reader);
+         //services.AddSingleton(channel.Writer);
+         //services.AddSingleton(channel.Reader);
 
         return services;
     }

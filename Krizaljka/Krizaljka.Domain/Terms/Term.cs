@@ -12,7 +12,6 @@ public interface IValidTerm : ITerm
     string DenseValue { get; }
     IReadOnlyList<string> Letters { get; }
     int Length { get; }
-    int CategoryId { get; }
     List<int> SpaceIndexes { get; }
     List<int> DashIndexes { get; }
 }

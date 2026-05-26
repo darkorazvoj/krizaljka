@@ -1,10 +1,12 @@
 using Krizaljka.Domain;
 using Krizaljka.Domain.Core.Stuff;
+using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.PostgreSql;
 using Krizaljka.WebApi.Auth;
 using Krizaljka.WebApi.Configs;
 using Krizaljka.WebApi.Csrf;
 using Krizaljka.WebApi.Workers;
+using Krizaljka.WebApi.Workers.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System.Threading.Channels;
 
 try
 {
@@ -147,7 +150,19 @@ try
     builder.Services.AddSingleton<ServiceUser>();
     builder.Services.AddSingleton<IServiceUser>(sp => sp.GetRequiredService<ServiceUser>());
 
-    builder.Services.AddHostedService<BatchLoadTemplatesWorker>();
+    // Channels
+    var channel = Channel.CreateBounded<IFileBatch>(
+        new BoundedChannelOptions(100)
+        {
+            FullMode = BoundedChannelFullMode.Wait,
+            SingleReader = true,
+            SingleWriter = false
+        });
+
+    builder.Services.AddSingleton(channel.Writer);
+    builder.Services.AddSingleton(channel.Reader);
+
+    builder.Services.AddHostedService<BatchLoadWorker>();
 
     var app = builder.Build();
 

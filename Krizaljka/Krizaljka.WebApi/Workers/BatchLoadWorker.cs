@@ -1,30 +1,56 @@
-﻿using Krizaljka.Domain.Template;
+﻿using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.Template;
+using Krizaljka.Domain.Template.Services;
+using Krizaljka.WebApi.Workers.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading.Channels;
-using Krizaljka.Domain.Core.Stuff.Services;
-using Krizaljka.Domain.Template.Services;
 
 namespace Krizaljka.WebApi.Workers;
 
-public sealed class BatchLoadTemplatesWorker(
-    ChannelReader<List<FileRecord>> channelReader,
+public sealed class BatchLoadWorker(
+    ChannelReader<IFileBatch> channelReader,
     IServiceScopeFactory scopeFactory,
-    ILogger<BatchLoadTemplatesWorker> logger) : BackgroundService
+    ILogger<BatchLoadWorker> logger) : BackgroundService
 {
     private static readonly JsonSerializerOptions Options = new()
         { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true  };
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        await foreach (var files in channelReader.ReadAllAsync(stoppingToken))
+        await foreach (var fileBatch in channelReader.ReadAllAsync(ct))
         {
             try
             {
-                await HandleAsync(files, stoppingToken);
+                switch (fileBatch)
+                {
+                    case TemplateFileBatch templateFileBatch :
+                        await HandleAsync(templateFileBatch, ct);
+                        break;
+                    default:
+                        logger.LogWarning(
+                            "Unsupported file batch type: {Type}",
+                            fileBatch.GetType().FullName);
+                        break;
+                }
+
+
+                //if (batchLoadList.Count == 0)
+                //{
+                //    continue;
+                //}
+
+                //switch (batchLoadList[0])
+                //{
+                //    case TemplatesFileRecord templateRecord:
+                //        await HandleAsync(templateRecord, stoppingToken);
+
+                //}
+
+                
             }
-            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
                 throw;
             }
@@ -36,10 +62,10 @@ public sealed class BatchLoadTemplatesWorker(
     }
 
     private async Task HandleAsync(
-        List<FileRecord> files,
-        CancellationToken cancellationToken)
+        TemplateFileBatch fileBatch,
+        CancellationToken ct)
     {
-        var list = GetTemplates(files);
+        var list = GetTemplates(fileBatch);
 
         if (list.Count == 0)
         {
@@ -54,7 +80,7 @@ public sealed class BatchLoadTemplatesWorker(
         {
             // TODO - SERVICE USER ID
             var insertKrizaljkaResult =
-                await insertTemplateService.InvokeAsync(template.Rows, template.Name, 7, cancellationToken);
+                await insertTemplateService.InvokeAsync(template.Rows, template.Name, 7, ct);
 
             if (insertKrizaljkaResult is not SuccessInsert<long>)
             {
@@ -67,11 +93,11 @@ public sealed class BatchLoadTemplatesWorker(
         await Task.CompletedTask;
     }
 
-    private List<KrizaljkaTemplateJson> GetTemplates(List<FileRecord> files)
+    private List<KrizaljkaTemplateJson> GetTemplates(TemplateFileBatch fileBatch)
     {   
         List<KrizaljkaTemplateJson> templates = [];
 
-        foreach (var fileRecord in files)
+        foreach (var fileRecord in fileBatch.Contents)
         {
             var one = TryDeserializeOne(fileRecord.Content);
 
