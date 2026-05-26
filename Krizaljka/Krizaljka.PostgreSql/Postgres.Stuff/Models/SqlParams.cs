@@ -92,6 +92,26 @@ public sealed class SqlParams : SqlMapper.IDynamicParameters
         return this;
     }
 
+    public SqlParams AddJsonList(string name, List<string> list)
+    {
+        _npgsqlParams.Add(new NpgsqlParameter<string>(name, JsonSerializer.Serialize(list))
+        {
+            NpgsqlDbType = NpgsqlDbType.Jsonb
+        });
+
+        return this;
+    }
+
+    public SqlParams AddJsonList(string name, List<int> list)
+    {
+        _npgsqlParams.Add(new NpgsqlParameter<string>(name, JsonSerializer.Serialize(list))
+        {
+            NpgsqlDbType = NpgsqlDbType.Jsonb
+        });
+
+        return this;
+    }
+
     public T? GetOutput<T>(string name)
     {
         var param = _npgsqlParams.Single(p => p.ParameterName == name);

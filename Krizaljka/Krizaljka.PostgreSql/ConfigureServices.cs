@@ -2,10 +2,12 @@
 using Dapper;
 using Krizaljka.Domain.Core.Stuff.Utils;
 using Krizaljka.Domain.Template;
+using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.User.Repo;
 using Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 using Krizaljka.PostgreSql.Postgres.Stuff.DapperSqlMappers;
 using Krizaljka.PostgreSql.Postgres.Stuff.DataProtection;
+using Krizaljka.PostgreSql.TermPostgreSql;
 using Krizaljka.PostgreSql.User;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,8 @@ public static class ConfigureServices
         SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         SqlMapper.AddTypeHandler(new IntJaggedArrayHandler());
         SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<TemplateBlock>>());
+        //SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<string>>());
+        //SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<int>>());
 
         KrizaljkaPostgresOptions opts = new();
         options.Invoke(opts);
@@ -34,6 +38,7 @@ public static class ConfigureServices
         services.AddSingleton<IDatabaseUtils, DatabaseUtils>();
 
         services.AddScoped<IKrizaljkaTemplateRepo, KrizaljkaTemplateRepo>();
+        services.AddScoped<ITermRepo, TermRepo>();
         services.AddScoped<IAppUserRepo, AppUserRepo>();
 
         services.AddSingleton<IReadOnlyDictionary<ConnStrings, string>>(
