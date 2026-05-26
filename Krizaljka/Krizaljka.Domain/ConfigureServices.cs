@@ -3,12 +3,11 @@ using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Dummies;
 using Krizaljka.Domain.Core.Stuff.Extensions;
 using Krizaljka.Domain.Core.Stuff.Hashers;
-using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Core.Stuff.Utils;
 using Krizaljka.Domain.Template.Services;
 using Krizaljka.Domain.User.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Channels;
+using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.Domain;
 
@@ -28,23 +27,12 @@ public static class ConfigureServices
 
         services.AddScoped<GetUserByCredentialsService>();
         services.AddScoped<InsertTemplateService>();
+        services.AddScoped<InsertTermService>();
 
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
 
         // Dummies
         services.AddSingleton<IDatabaseUtils, DummyDatabaseUtils>();
-
-         // Channels
-         //var channel = Channel.CreateBounded<List<IBatchFiles>>(
-         //    new BoundedChannelOptions(100)
-         //    {
-         //        FullMode = BoundedChannelFullMode.Wait,
-         //        SingleReader = true,
-         //        SingleWriter = false
-         //    });
-
-         //services.AddSingleton(channel.Writer);
-         //services.AddSingleton(channel.Reader);
 
         return services;
     }

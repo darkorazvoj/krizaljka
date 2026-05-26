@@ -10,7 +10,8 @@ public class StructureNewTermService
     public static ITerm Invoke(
         TermLanguage language, 
         string description, 
-        string term)
+        string term,
+        bool isPrivate)
     {
 
         var descCleaned = description.TrimExtra();
@@ -59,6 +60,7 @@ public class StructureNewTermService
             denseValue.ToUpperInvariant(),
             lettersDense,
             spaceIndexes,
-            dashIndexes);
+            dashIndexes,
+            isPrivate);
     }
 }

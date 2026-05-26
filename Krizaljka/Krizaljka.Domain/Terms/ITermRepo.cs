@@ -11,6 +11,7 @@ public interface ITermRepo
         List<int> spaceIndexes,
         List<int> dashIndexes,
         int length,
+        bool isPrivate,
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct);

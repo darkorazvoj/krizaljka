@@ -68,7 +68,7 @@ public class TermsLoader
 
         foreach (var rawTerm in parsedTermsFile)
         {
-            var term = StructureNewTermService.Invoke(TermLanguage.Croatian, rawTerm.Description, rawTerm.Term);
+            var term = StructureNewTermService.Invoke(TermLanguage.Croatian, rawTerm.Description, rawTerm.Term, false);
 
             if (term is INewTerm validTerm)
             {

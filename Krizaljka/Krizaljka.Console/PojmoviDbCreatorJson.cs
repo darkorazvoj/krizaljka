@@ -87,7 +87,8 @@ public static class PojmoviDbCreatorJson
                 validTerm.DenseValue,
                 validTerm.Letters,
                 validTerm.SpaceIndexes,
-                validTerm.DashIndexes));
+                validTerm.DashIndexes,
+                validTerm.IsPrivate));
             newTerms++;
             currentBatchSize++;
 

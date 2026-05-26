@@ -9,6 +9,7 @@ internal class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logg
         TermLanguage? language,
         string? description,
         string? term,
+        bool isPrivate,
         long ranById,
         CancellationToken ct)
     {
@@ -22,7 +23,7 @@ internal class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logg
             return new InvalidRequestWithReason("Missing term");
         }
 
-        var structuredTerm = StructureNewTermService.Invoke(language.Value, description ?? string.Empty, term);
+        var structuredTerm = StructureNewTermService.Invoke(language.Value, description ?? string.Empty, term, isPrivate);
 
         if (structuredTerm is not INewTerm newTerm)
         {
@@ -41,6 +42,7 @@ internal class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logg
                 newTerm.SpaceIndexes,
                 newTerm.DashIndexes,
                 newTerm.Length,
+                isPrivate,
                 ranById,
                 DateTimeOffset.UtcNow,
                 ct);

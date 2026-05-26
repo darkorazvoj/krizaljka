@@ -13,6 +13,7 @@ public interface INewTerm : ITerm
     int Length { get; }
     List<int> SpaceIndexes { get; }
     List<int> DashIndexes { get; }
+    bool IsPrivate { get; }
 }
 
 
@@ -27,6 +28,7 @@ public interface IValidTerm : ITerm
     int Length { get; }
     List<int> SpaceIndexes { get; }
     List<int> DashIndexes { get; }
+    bool IsPrivate { get; }
 }
 
 public interface IInvalidTerm : ITerm
@@ -42,7 +44,8 @@ public record Term(
     string DenseValue,
     IReadOnlyList<string> Letters,
     List<int> SpaceIndexes,
-    List<int> DashIndexes) : IValidTerm
+    List<int> DashIndexes,
+    bool IsPrivate) : IValidTerm
 {
     public int Length => Letters.Count;
 }
@@ -54,7 +57,8 @@ public record NewTerm(
     string DenseValue,
     List<string> Letters,
     List<int> SpaceIndexes,
-    List<int> DashIndexes) : INewTerm
+    List<int> DashIndexes,
+    bool IsPrivate) : INewTerm
 {
     public int Length => Letters.Count;
 }
