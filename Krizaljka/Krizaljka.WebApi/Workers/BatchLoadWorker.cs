@@ -14,8 +14,7 @@ public sealed class BatchLoadWorker(
     IServiceScopeFactory scopeFactory,
     ILogger<BatchLoadWorker> logger) : BackgroundService
 {
-    private static readonly JsonSerializerOptions Options = new()
-        { WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true  };
+    
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
@@ -26,8 +25,17 @@ public sealed class BatchLoadWorker(
                 switch (fileBatch)
                 {
                     case TemplateFileBatch templateFileBatch :
-                        await HandleAsync(templateFileBatch, ct);
+                        //await HandleTemplatesAsync(templateFileBatch, ct);
+                        await TemplatesLoad.HandleTemplatesAsync(
+                            scopeFactory,
+                            templateFileBatch,
+                            logger, 
+                            ct);
+
                         break;
+                    //case TermFileBatch termFileBatch :
+                    //    await HandleTemplatesAsync(termFileBatch, ct);
+                    //    break;
                     default:
                         logger.LogWarning(
                             "Unsupported file batch type: {Type}",
@@ -44,7 +52,7 @@ public sealed class BatchLoadWorker(
                 //switch (batchLoadList[0])
                 //{
                 //    case TemplatesFileRecord templateRecord:
-                //        await HandleAsync(templateRecord, stoppingToken);
+                //        await HandleTemplatesAsync(templateRecord, stoppingToken);
 
                 //}
 
@@ -61,129 +69,129 @@ public sealed class BatchLoadWorker(
         }
     }
 
-    private async Task HandleAsync(
-        TemplateFileBatch fileBatch,
-        CancellationToken ct)
-    {
-        var list = GetTemplates(fileBatch);
+    //private async Task HandleTemplatesAsync(
+    //    TemplateFileBatch fileBatch,
+    //    CancellationToken ct)
+    //{
+    //    var list = GetTemplates(fileBatch);
 
-        if (list.Count == 0)
-        {
-            return;
-        }
+    //    if (list.Count == 0)
+    //    {
+    //        return;
+    //    }
 
-        await using var scope = scopeFactory.CreateAsyncScope();
-        var insertTemplateService = scope.ServiceProvider.GetRequiredService<InsertTemplateService>();
-
-
-        foreach (var template in list)
-        {
-            // TODO - SERVICE USER ID
-            var insertKrizaljkaResult =
-                await insertTemplateService.InvokeAsync(template.Rows, template.Name, 7, ct);
-
-            if (insertKrizaljkaResult is not SuccessInsert<long>)
-            {
-                logger.LogWarning(message: "Template not saved {name}",
-                    string.IsNullOrWhiteSpace(template.Name) ? "<no name>" : template.Name);
-            }
-        }
+    //    await using var scope = scopeFactory.CreateAsyncScope();
+    //    var insertTemplateService = scope.ServiceProvider.GetRequiredService<InsertTemplateService>();
 
 
-        await Task.CompletedTask;
-    }
+    //    foreach (var template in list)
+    //    {
+    //        // TODO - SERVICE USER ID
+    //        var insertKrizaljkaResult =
+    //            await insertTemplateService.InvokeAsync(template.Rows, template.Name, 7, ct);
 
-    private List<KrizaljkaTemplateJson> GetTemplates(TemplateFileBatch fileBatch)
-    {   
-        List<KrizaljkaTemplateJson> templates = [];
+    //        if (insertKrizaljkaResult is not SuccessInsert<long>)
+    //        {
+    //            logger.LogWarning(message: "Template not saved {name}",
+    //                string.IsNullOrWhiteSpace(template.Name) ? "<no name>" : template.Name);
+    //        }
+    //    }
 
-        foreach (var fileRecord in fileBatch.Contents)
-        {
-            var one = TryDeserializeOne(fileRecord.Content);
 
-            if (one is not null)
-            {
-                templates.Add(one);
-                continue;
-            }
+    //    await Task.CompletedTask;
+    //}
 
-            var list = TryDeserializeList(fileRecord.Content);
-            templates.AddRange(list);
+    //private List<KrizaljkaTemplateJson> GetTemplates(TemplateFileBatch fileBatch)
+    //{   
+    //    List<KrizaljkaTemplateJson> templates = [];
 
-        }
+    //    foreach (var fileRecord in fileBatch.Contents)
+    //    {
+    //        var one = TryDeserializeOne(fileRecord.Content);
 
-        return templates;
-    }
+    //        if (one is not null)
+    //        {
+    //            templates.Add(one);
+    //            continue;
+    //        }
 
-    private KrizaljkaTemplateJson? TryDeserializeOne(string json)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                logger.LogInformation(message:"Invalid JSON object {jsonStringTrimmed}", string.Empty);
-                return null;
-            }
+    //        var list = TryDeserializeList(fileRecord.Content);
+    //        templates.AddRange(list);
 
-            var one = JsonSerializer.Deserialize<KrizaljkaTemplateJson>(json, Options);
-            if (one?.Rows is null)
-            {
-                logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
-                    json.Substring(0, Math.Min(json.Length, 100)));
-                return null;
-            }
+    //    }
 
-            return one;
+    //    return templates;
+    //}
 
-        }
-        catch
-        {
-            logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
-                json.Substring(0, Math.Min(json.Length, 100)));
-            return null;
-        }
-    }
+    //private KrizaljkaTemplateJson? TryDeserializeOne(string json)
+    //{
+    //    try
+    //    {
+    //        if (string.IsNullOrWhiteSpace(json))
+    //        {
+    //            logger.LogInformation(message:"Invalid JSON object {jsonStringTrimmed}", string.Empty);
+    //            return null;
+    //        }
 
-    private List<KrizaljkaTemplateJson> TryDeserializeList(string json)
-    {
-        List<KrizaljkaTemplateJson> templates = [];
+    //        var one = JsonSerializer.Deserialize<KrizaljkaTemplateJson>(json, Options);
+    //        if (one?.Rows is null)
+    //        {
+    //            logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
+    //                json.Substring(0, Math.Min(json.Length, 100)));
+    //            return null;
+    //        }
 
-        try
-        {
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                logger.LogInformation(message:"Invalid JSON object {jsonStringTrimmed}", string.Empty);
-                return [];
-            }
+    //        return one;
 
-            var list = JsonSerializer.Deserialize<TemplatesJson?>(json, Options);
-            if (list is null)
-            {
-                logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
-                    json.Substring(0, Math.Min(json.Length, 200)));
-                return [];
-            }
+    //    }
+    //    catch
+    //    {
+    //        logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
+    //            json.Substring(0, Math.Min(json.Length, 100)));
+    //        return null;
+    //    }
+    //}
 
-            foreach (var template in list.Templates)
-            {
-                if (template.Rows is null)
-                {
-                    continue;
-                }
+    //private List<KrizaljkaTemplateJson> TryDeserializeList(string json)
+    //{
+    //    List<KrizaljkaTemplateJson> templates = [];
 
-                templates.Add(template);
-            }
+    //    try
+    //    {
+    //        if (string.IsNullOrWhiteSpace(json))
+    //        {
+    //            logger.LogInformation(message:"Invalid JSON object {jsonStringTrimmed}", string.Empty);
+    //            return [];
+    //        }
 
-            return templates;
+    //        var list = JsonSerializer.Deserialize<TemplatesJson?>(json, Options);
+    //        if (list is null)
+    //        {
+    //            logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
+    //                json.Substring(0, Math.Min(json.Length, 200)));
+    //            return [];
+    //        }
 
-        }
-        catch
-        {
-            logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
-                json.Substring(0, Math.Min(json.Length, 200)));
-            return [];
-        }
-    }
+    //        foreach (var template in list.Templates)
+    //        {
+    //            if (template.Rows is null)
+    //            {
+    //                continue;
+    //            }
 
-    private record TemplatesJson(List<KrizaljkaTemplateJson> Templates);
+    //            templates.Add(template);
+    //        }
+
+    //        return templates;
+
+    //    }
+    //    catch
+    //    {
+    //        logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
+    //            json.Substring(0, Math.Min(json.Length, 200)));
+    //        return [];
+    //    }
+    //}
+
+    //private record TemplatesJson(List<KrizaljkaTemplateJson> Templates);
 }
