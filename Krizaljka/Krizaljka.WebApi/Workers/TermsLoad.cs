@@ -1,6 +1,4 @@
-﻿using Krizaljka.Domain.Core.Stuff.Services;
-using Krizaljka.Domain.Template;
-using Krizaljka.Domain.Template.Services;
+﻿using Krizaljka.Domain.Terms;
 using Krizaljka.WebApi.Workers.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -8,19 +6,16 @@ using System.Text.Unicode;
 
 namespace Krizaljka.WebApi.Workers;
 
-internal static class TemplatesLoad
+internal static class TermsLoad
 {
     private static readonly JsonSerializerOptions Options = new()
     {
         WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true
     };
 
-    // ReSharper disable once ClassNeverInstantiated.Local
-    private record TemplatesJson(List<KrizaljkaTemplateJson> Templates);
-
-    public static async Task HandleTemplatesAsync(
+    public static async Task LoadAsync(
         IServiceScopeFactory scopeFactory,
-        TemplateFileBatch fileBatch,
+        TermFileBatch fileBatch,
         ILogger logger,
         CancellationToken ct)
     {
@@ -30,29 +25,11 @@ internal static class TemplatesLoad
         {
             return;
         }
-
-        await using var scope = scopeFactory.CreateAsyncScope();
-        var insertTemplateService = scope.ServiceProvider.GetRequiredService<InsertTemplateService>();
-
-        foreach (var template in list)
-        {
-            // TODO - SERVICE USER ID
-            var insertKrizaljkaResult =
-                await insertTemplateService.InvokeAsync(template.Rows, template.Name, 7, ct);
-
-            if (insertKrizaljkaResult is not SuccessInsert<long>)
-            {
-                logger.LogWarning(message: "Template not saved {name}",
-                    string.IsNullOrWhiteSpace(template.Name) ? "<no name>" : template.Name);
-            }
-        }
-
-        await Task.CompletedTask;
     }
 
-    private static List<KrizaljkaTemplateJson> GetTemplates(TemplateFileBatch fileBatch, ILogger logger)
+    private static List<TermJson> GetTemplates(TermFileBatch fileBatch, ILogger logger)
     {
-        List<KrizaljkaTemplateJson> templates = [];
+        List<TermJson> terms = [];
 
         foreach (var fileRecord in fileBatch.Contents)
         {
@@ -60,19 +37,19 @@ internal static class TemplatesLoad
 
             if (one is not null)
             {
-                templates.Add(one);
+                terms.Add(one);
                 continue;
             }
 
             var list = TryDeserializeList(fileRecord.Content, logger);
-            templates.AddRange(list);
+            terms.AddRange(list);
 
         }
 
-        return templates;
+        return terms;
     }
 
-    private static KrizaljkaTemplateJson? TryDeserializeOne(string json, ILogger logger)
+    private static TermJson? TryDeserializeOne(string json, ILogger logger)
     {
         try
         {
@@ -86,8 +63,8 @@ internal static class TemplatesLoad
                 return null;
             }
 
-            var one = JsonSerializer.Deserialize<KrizaljkaTemplateJson>(json, Options);
-            if (one?.Rows is null)
+            var one = JsonSerializer.Deserialize<TermJson>(json, Options);
+            if (one?.Term is null)
             {
                 if (logger.IsEnabled(LogLevel.Information))
                 {
@@ -113,9 +90,9 @@ internal static class TemplatesLoad
         }
     }
 
-    private static List<KrizaljkaTemplateJson> TryDeserializeList(string json, ILogger logger)
+    private static List<TermJson> TryDeserializeList(string json, ILogger logger)
     {
-        List<KrizaljkaTemplateJson> templates = [];
+        List<TermJson> termJsonList = [];
 
         try
         {
@@ -129,8 +106,8 @@ internal static class TemplatesLoad
                 return [];
             }
 
-            var list = JsonSerializer.Deserialize<TemplatesJson?>(json, Options);
-            if (list is null)
+            var list = JsonSerializer.Deserialize<List<TermJson>?>(json, Options);
+            if (list is null || list.Count == 0)
             {
                 if (logger.IsEnabled(LogLevel.Information))
                 {
@@ -141,17 +118,13 @@ internal static class TemplatesLoad
                 return [];
             }
 
-            foreach (var template in list.Templates)
+            foreach (var termJson in list)
             {
-                if (template.Rows is null)
-                {
-                    continue;
-                }
 
-                templates.Add(template);
+                termJsonList.Add(termJson);
             }
 
-            return templates;
+            return termJsonList;
 
         }
         catch
