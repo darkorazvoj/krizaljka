@@ -25,7 +25,7 @@ public class TermsController(ChannelWriter<IFileBatch> channelWriter) : BaseCont
             return BadRequest("no_files");
         }
 
-        if (!languageId.HasValue || !Enum.IsDefined<TermLanguage>((TermLanguage)languageId.Value))
+        if (!languageId.HasValue || !Enum.IsDefined((TermLanguage)languageId.Value))
         {
             return BadRequest("missing_or_invalid_language");
         }

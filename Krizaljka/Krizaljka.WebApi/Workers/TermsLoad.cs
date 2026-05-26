@@ -80,7 +80,7 @@ internal static class TermsLoad
             {
                 if (logger.IsEnabled(LogLevel.Information))
                 {
-                    logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}", string.Empty);
+                    logger.LogInformation(message: "It's not one TermsJson because string is null or empty {jsonStringTrimmed}", string.Empty);
                 }
 
                 return null;
@@ -91,7 +91,7 @@ internal static class TermsLoad
             {
                 if (logger.IsEnabled(LogLevel.Information))
                 {
-                    logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
+                    logger.LogInformation(message: "It's not one terms json object {jsonStringTrimmed}",
                         json[..Math.Min(json.Length, 100)]);
                 }
 
