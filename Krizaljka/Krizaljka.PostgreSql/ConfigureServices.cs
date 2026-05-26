@@ -24,8 +24,8 @@ public static class ConfigureServices
         SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         SqlMapper.AddTypeHandler(new IntJaggedArrayHandler());
         SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<TemplateBlock>>());
-        //SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<string>>());
-        //SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<int>>());
+        SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<string>>());
+        SqlMapper.AddTypeHandler(new JsonbTypeHandler<List<int>>());
 
         KrizaljkaPostgresOptions opts = new();
         options.Invoke(opts);

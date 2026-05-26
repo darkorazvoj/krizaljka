@@ -74,74 +74,74 @@ while (true)
             break;
 
         case "d":
-            var numOfTerms = await RebuildDatabaseAsync();
+            //var numOfTerms = await RebuildDatabaseAsync();
 
-            Console.WriteLine("Database Rebuilt!");
-            Console.WriteLine($"Number of terms: {numOfTerms.NumberOfTerms}");
-            Console.WriteLine($"Number of NEW terms: {numOfTerms.NumberOfNewTerms}");
-            Console.WriteLine("continue...");
-            Console.ReadKey();
-            break;
+            //Console.WriteLine("Database Rebuilt!");
+            //Console.WriteLine($"Number of terms: {numOfTerms.NumberOfTerms}");
+            //Console.WriteLine($"Number of NEW terms: {numOfTerms.NumberOfNewTerms}");
+            //Console.WriteLine("continue...");
+            //Console.ReadKey();
+            //break;
 
         case "at":
-            List<string> addedTerms = [];
-            Console.WriteLine("Add Term");
-            Console.WriteLine();
-            while (true)
-            {
-                Console.Write("Description (x for exit): ");
-                var description = Console.ReadLine();
-                if (IsExit(description))
-                {
-                    break;
-                }
+            //List<string> addedTerms = [];
+            //Console.WriteLine("Add Term");
+            //Console.WriteLine();
+            //while (true)
+            //{
+            //    Console.Write("Description (x for exit): ");
+            //    var description = Console.ReadLine();
+            //    if (IsExit(description))
+            //    {
+            //        break;
+            //    }
 
-                Console.Write("Term (x for exit): ");
-                var termText = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(termText))
-                {
-                    Console.WriteLine("Missing term!");
-                    Console.ReadLine();
-                    continue;
-                }
+            //    Console.Write("Term (x for exit): ");
+            //    var termText = Console.ReadLine();
+            //    if (string.IsNullOrWhiteSpace(termText))
+            //    {
+            //        Console.WriteLine("Missing term!");
+            //        Console.ReadLine();
+            //        continue;
+            //    }
 
-                if (IsExit(description))
-                {
-                    break;
-                }
+            //    if (IsExit(description))
+            //    {
+            //        break;
+            //    }
 
 
-                var isAdded = await PojmoviManager.AddTermAsync(description ?? "", termText);
-                if (isAdded)
-                {
-                    addedTerms.Add(termText);
-                }
-            }
+            //    var isAdded = await PojmoviManager.AddTermAsync(description ?? "", termText);
+            //    if (isAdded)
+            //    {
+            //        addedTerms.Add(termText);
+            //    }
+            //}
 
-            if (addedTerms.Count > 0)
-            {
-                var termsCount = await RebuildDatabaseAsync();
-                Console.WriteLine($"Number of NEW terms: {termsCount.NumberOfNewTerms}");
-                if (pojmoviDb?.Terms is null)
-                {
-                    Console.WriteLine("DB was not created!");
-                    continue;
-                }
+            //if (addedTerms.Count > 0)
+            //{
+            //    var termsCount = await RebuildDatabaseAsync();
+            //    Console.WriteLine($"Number of NEW terms: {termsCount.NumberOfNewTerms}");
+            //    if (pojmoviDb?.Terms is null)
+            //    {
+            //        Console.WriteLine("DB was not created!");
+            //        continue;
+            //    }
 
-                foreach (var addedTerm in addedTerms)
-                {
-                    var t = pojmoviDb.Terms
-                        .Where(x => x.RawValue.Contains(addedTerm, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                    foreach (var term in t)
-                    {
-                        Console.WriteLine($"ID: {term.Id} ({term.RawValue})");
-                    }
-                }
-            }
+            //    foreach (var addedTerm in addedTerms)
+            //    {
+            //        var t = pojmoviDb.Terms
+            //            .Where(x => x.RawValue.Contains(addedTerm, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            //        foreach (var term in t)
+            //        {
+            //            Console.WriteLine($"ID: {term.Id} ({term.RawValue})");
+            //        }
+            //    }
+            //}
 
-            Console.WriteLine();
-            Console.WriteLine("continue...");
-            Console.ReadLine();
+            //Console.WriteLine();
+            //Console.WriteLine("continue...");
+            //Console.ReadLine();
 
             break;
 
@@ -941,13 +941,13 @@ while (true)
 
     continue;
 
-    async Task<(long NumberOfTerms, long NumberOfNewTerms)> RebuildDatabaseAsync()
-    {
-        var numOfTerms = await PojmoviDbCreatorJson.CreateDatabaseAsync();
-        pojmoviDb = PojmoviManager.LoadTerms();
+    //async Task<(long NumberOfTerms, long NumberOfNewTerms)> RebuildDatabaseAsync()
+    //{
+    //    var numOfTerms = await PojmoviDbCreatorJson.CreateDatabaseAsync();
+    //    pojmoviDb = PojmoviManager.LoadTerms();
 
-        return numOfTerms;
-    }
+    //    return numOfTerms;
+    //}
 }
 
 Console.WriteLine("THE END");

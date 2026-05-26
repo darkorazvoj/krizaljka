@@ -1,0 +1,46 @@
+﻿using Krizaljka.PostgreSql.Postgres.Stuff.Models;
+using Krizaljka.Domain.Terms;
+
+namespace Krizaljka.PostgreSql.TermPostgreSql;
+
+internal record TermDao(
+    long Id,
+    int LanguageId,
+    string Description,
+    string RawValue,
+    string DenseValue,
+    List<string> Letters,
+    List<int> SpaceIndexes,
+    List<int> DashIndexes,
+    int TermLength,
+    bool IsActive,
+    bool IsPrivate,
+    long CreatedById,
+    DateTimeOffset CreatedOn,
+    string Changestamp) :IDao
+{
+    public TCoreModel MapTo<TCoreModel>()
+    {
+        if (typeof(TCoreModel) == typeof(Term))
+        {
+            object result = new Term(
+                Id,
+                (TermLanguage)LanguageId,
+                Description,
+                RawValue,
+                DenseValue,
+                Letters,
+                SpaceIndexes,
+                DashIndexes,
+                TermLength,
+                IsActive,
+                IsPrivate,
+                CreatedById,
+                CreatedOn,
+                Changestamp);
+            return (TCoreModel)result;
+        }
+
+        throw new InvalidOperationException($"Unsupported mapping to {typeof(TCoreModel).Name}");
+    }
+}

@@ -51,4 +51,12 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             "isPrivate = false",
             ConnStrings.Core,
             ct);
+
+    public Task<Term?> GetAsync(long id, CancellationToken ct) =>
+        BaseGetAsync<Term, TermDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(TermDao))} from {Procs.TermView} where id = @id",
+            new SqlParams()
+                .Add("id", id),
+            ConnStrings.Core,
+            ct);
 }

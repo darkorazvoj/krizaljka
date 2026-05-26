@@ -28,7 +28,11 @@ public interface IValidTerm : ITerm
     int Length { get; }
     List<int> SpaceIndexes { get; }
     List<int> DashIndexes { get; }
+    bool IsActive { get; }
     bool IsPrivate { get; }
+    long CreatedById { get; }
+    DateTimeOffset CreatedOn { get; }
+    string Changestamp { get; }
 }
 
 public interface IInvalidTerm : ITerm
@@ -45,10 +49,12 @@ public record Term(
     IReadOnlyList<string> Letters,
     List<int> SpaceIndexes,
     List<int> DashIndexes,
-    bool IsPrivate) : IValidTerm
-{
-    public int Length => Letters.Count;
-}
+    int Length,
+    bool IsActive,
+    bool IsPrivate,
+    long CreatedById,
+    DateTimeOffset CreatedOn,
+    string Changestamp) : IValidTerm;
 
 public record NewTerm(
     TermLanguage Language,

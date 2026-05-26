@@ -99,4 +99,33 @@ public class TermsController(
         return MapResult(result);
     }
 
+    [Route(BaseRute + "/{id:long}")]
+    [HttpGet]
+    public async Task<IActionResult> GetAsync([FromRoute] long id, CancellationToken ct)
+    {
+        var result = await dispatcher.DispatchAsync(new GetTermServiceRequest(id), ct);
+
+        if (result is Success<Term> successResult)
+        {
+            var term = successResult.Data;
+            return Ok(new TermResponse(
+                term.Id,
+                (int)term.Language,
+                term.Description,
+                term.RawValue,
+                term.DenseValue,
+                term.Letters,
+                term.SpaceIndexes,
+                term.DashIndexes,
+                term.Length,
+                term.IsActive,
+                term.IsPrivate,
+                term.CreatedById,
+                term.CreatedOn,
+                term.Changestamp));
+        }
+
+        return MapResult(result);
+    }
+
 }
