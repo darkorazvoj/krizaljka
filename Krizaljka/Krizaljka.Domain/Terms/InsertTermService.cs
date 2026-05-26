@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.Terms;
 
-internal class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logger)
+public class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logger)
 {
     public async Task<IServiceResult> InvokeAsync(
         TermLanguage? language,

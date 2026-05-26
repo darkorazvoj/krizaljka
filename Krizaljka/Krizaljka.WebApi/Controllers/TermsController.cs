@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Channels;
+using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.WebApi.Controllers;
 
@@ -16,11 +17,17 @@ public class TermsController(ChannelWriter<IFileBatch> channelWriter) : BaseCont
     [RequestSizeLimit(100 * 1024 * 1024)]
     public async Task<IActionResult> UploadJsonFiles(
         [FromForm] List<IFormFile>? files,
+        [FromForm] int? languageId,
         CancellationToken cancellationToken)
     {
         if (files is null || files.Count == 0)
         {
             return BadRequest("no_files");
+        }
+
+        if (!languageId.HasValue || !Enum.IsDefined<TermLanguage>((TermLanguage)languageId.Value))
+        {
+            return BadRequest("missing_or_invalid_language");
         }
 
         List<FileContent> fileRecords = [];
@@ -46,7 +53,7 @@ public class TermsController(ChannelWriter<IFileBatch> channelWriter) : BaseCont
 
         if (fileRecords.Count > 0)
         {
-            await channelWriter.WriteAsync(new TermFileBatch(fileRecords), cancellationToken);
+            await channelWriter.WriteAsync(new TermFileBatch((TermLanguage)languageId.Value, fileRecords), cancellationToken);
         }
 
         return Accepted(new

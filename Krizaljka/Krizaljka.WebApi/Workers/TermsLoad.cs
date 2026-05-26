@@ -3,6 +3,7 @@ using Krizaljka.WebApi.Workers.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Krizaljka.Domain.Core.Stuff.Services;
 
 namespace Krizaljka.WebApi.Workers;
 
@@ -24,6 +25,28 @@ internal static class TermsLoad
         if (list.Count == 0)
         {
             return;
+        }
+
+        await using var scope = scopeFactory.CreateAsyncScope();
+        var insertTermService = scope.ServiceProvider.GetRequiredService<InsertTermService>();
+
+        foreach (var termJson in list)
+        {
+            // TODO - SERVICE USER ID
+            var insertResult =
+                await insertTermService.InvokeAsync(
+                    fileBatch.Language,
+                    termJson.Description,
+                    termJson.Term,
+                    false,
+                    7,
+                    ct);
+
+            if (insertResult is not SuccessInsert<long>)
+            {
+                logger.LogWarning(message: "Term not saved {term}",
+                    string.IsNullOrWhiteSpace(termJson.Term) ? "<empty>" : termJson.Term);
+            }
         }
     }
 
