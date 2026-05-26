@@ -13,3 +13,4 @@ public record FileContents<TFile>(List<TFile> Files)
 public record FileContent(string Content) : IFileContent;
 
 public record TemplateFileBatch(List<FileContent> Contents) : IFileBatch;
+public record TermFileBatch(List<FileContent> Contents) : IFileBatch;
