@@ -3,20 +3,15 @@ using Krizaljka.Domain.WordsConverters;
 
 namespace Krizaljka.Domain.Terms;
 
-public class StructureTermService
+public class StructureNewTermService
 {
     private const int DescriptionMaxLength = 40;
 
     public static ITerm Invoke(
         TermLanguage language, 
         string description, 
-        string term, 
-        int category)
+        string term)
     {
-        //if (string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(term))
-        //{
-        //    return new InvalidTerm($"missing description and/or term. Description: {description}, Term: {term}");
-        //}
 
         var descCleaned = description.TrimExtra();
 
@@ -53,19 +48,16 @@ public class StructureTermService
 
         var lettersDense = letters
             .Where(s => !string.IsNullOrWhiteSpace(s) && s != "-")
-            .ToList()
-            .AsReadOnly();
+            .ToList();
 
         var denseValue = termTrimmed.RemoveWhiteSpaces();
 
-        return new Term(
-            IdGenerator.GetNextId(),
+        return new NewTerm(
             language,
             descCleaned,
             termTrimmed.ToUpperInvariant(),
             denseValue.ToUpperInvariant(),
             lettersDense,
-            category,
             spaceIndexes,
             dashIndexes);
     }

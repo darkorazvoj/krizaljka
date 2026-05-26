@@ -1,10 +1,11 @@
 ﻿
 
 using Krizaljka.Domain.Core.Stuff.Services;
+using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.Template.Services;
 
-public class InsertTemplateService(IKrizaljkaTemplateRepo repo)
+public class InsertTemplateService(IKrizaljkaTemplateRepo repo, ILogger<InsertTemplateService> logger)
 {
     public async Task<IServiceResult> InvokeAsync(
         int[][]? matrix,
@@ -68,7 +69,7 @@ public class InsertTemplateService(IKrizaljkaTemplateRepo repo)
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Error inserting krizaljka template. {e.Message}");
+            logger.LogError("Error inserting krizaljka template. {EMessage}", e.Message);
             return new Error("InsertKrizaljkaTemplateFailed");
         }
     }

@@ -1,7 +1,8 @@
-﻿using System.Text.Encodings.Web;
+﻿using Krizaljka.Domain;
+using Krizaljka.Domain.Terms;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using Krizaljka.Domain.Terms;
 
 namespace Krizaljka.Console;
 
@@ -78,7 +79,15 @@ public static class PojmoviDbCreatorJson
                 continue;
             }
 
-            validTermsBatch.Add(validTerm);
+            validTermsBatch.Add(new Term(
+                IdGenerator.GetNextId(),
+                validTerm.Language,
+                validTerm.Description,
+                validTerm.RawValue,
+                validTerm.DenseValue,
+                validTerm.Letters,
+                validTerm.SpaceIndexes,
+                validTerm.DashIndexes));
             newTerms++;
             currentBatchSize++;
 

@@ -11,19 +11,19 @@ public record TermsLoaderResult(
 
 public class TermsLoader
 {
-    public async Task<(List<Term> ValidTerms, List<string> invalidTerms, Dictionary<string, int> Categories)> LoadTermsAsync(string path)
+    public async Task<(List<NewTerm> ValidTerms, List<string> invalidTerms, Dictionary<string, int> Categories)> LoadTermsAsync(string path)
     {
         var termsFiles = Directory.GetFiles(path).Select(Path.GetFullPath).ToList();
         var categoriesNameId = LoadCategories(termsFiles);
-        var (validTerms, invalidTerms) =  await LoadAndStructureTermsAsync(termsFiles, categoriesNameId);
+        var (validTerms, invalidTerms) =  await LoadAndStructureTermsAsync(termsFiles);
 
         return (validTerms, invalidTerms, categoriesNameId);
     }
 
-    private async Task<(List<Term> ValidTerms, List<string> invalidTerms)>
-        LoadAndStructureTermsAsync(List<string> termsFiles, Dictionary<string, int> categoriesNameId)
+    private async Task<(List<NewTerm> ValidTerms, List<string> invalidTerms)>
+        LoadAndStructureTermsAsync(List<string> termsFiles)
     {
-        List<Term> validTerms = [];
+        List<NewTerm> validTerms = [];
         List<string> invalidTerms = [];
 
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -46,7 +46,7 @@ public class TermsLoader
                     continue;
                 }
 
-                var (valids, invalids) = StructureTermsFromFile(parsedTermsFile, categoriesNameId[Path.GetFileNameWithoutExtension(termsFile)]);
+                var (valids, invalids) = StructureTermsFromFile(parsedTermsFile);
                 validTerms.AddRange(valids);
                 invalidTerms.AddRange(invalids);
             }
@@ -61,20 +61,18 @@ public class TermsLoader
         return (validTerms, invalidTerms);
     }
 
-    private (List<Term> ValidTerms, List<string> invalidTerms) StructureTermsFromFile(List<TermJson> parsedTermsFile,
-        int categoryId)
+    private (List<NewTerm> ValidTerms, List<string> invalidTerms) StructureTermsFromFile(List<TermJson> parsedTermsFile)
     {
-        List<Term> validTerms = [];
+        List<NewTerm> validTerms = [];
         List<string> invalidTerms = [];
 
         foreach (var rawTerm in parsedTermsFile)
         {
-            var term = StructureTermService.Invoke(TermLanguage.Croatian, rawTerm.Description, rawTerm.Term,
-                categoryId);
+            var term = StructureNewTermService.Invoke(TermLanguage.Croatian, rawTerm.Description, rawTerm.Term);
 
-            if (term is IValidTerm validTerm)
+            if (term is INewTerm validTerm)
             {
-                validTerms.Add((Term)validTerm);
+                validTerms.Add((NewTerm)validTerm);
             }
 
             if (term is InvalidTerm invalidTerm)
