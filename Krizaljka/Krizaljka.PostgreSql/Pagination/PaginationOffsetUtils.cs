@@ -118,9 +118,10 @@ internal static class PaginationOffsetUtils
 
     internal static string GetSqlQuery(
         Type daoType,
-        string viewName, 
-        PaginationOffsetParameters paginationParameters) =>
-        $"{GetBaseSqlQuery(daoType, viewName)} {paginationParameters.WhereClause} {paginationParameters.OrderByClause} {paginationParameters.PagingClause}";
+        string viewName,
+        PaginationOffsetParameters paginationParameters,
+        string? fixedWhereClause = null) =>
+        $"{GetBaseSqlQuery(daoType, viewName)} { GetFinalWhereClause(paginationParameters.WhereClause, fixedWhereClause)} {paginationParameters.OrderByClause} {paginationParameters.PagingClause}";
 
     private static string GetBaseSqlQuery(Type? daoType, string viewName)
     {
@@ -130,7 +131,30 @@ internal static class PaginationOffsetUtils
 
     internal static string GetSqlQueryForTotal(
         string viewName,
-        PaginationOffsetParameters paginationParameters) =>
-        $"select count(*) as c from {viewName} {paginationParameters.WhereClause}";
+        PaginationOffsetParameters paginationParameters,
+        string? fixedWhereClause = null) =>
+        $"select count(*) as c from {viewName} {GetFinalWhereClause(paginationParameters.WhereClause, fixedWhereClause)}";
+
+    private static string GetFinalWhereClause(string? whereClause, string? fixedWhereClause)
+    {
+        var finalWhereClause = string.Empty;
+
+        if (!string.IsNullOrWhiteSpace(whereClause))
+        {
+            finalWhereClause = whereClause;
+
+            if (!string.IsNullOrWhiteSpace(fixedWhereClause))
+            {
+                return $"{finalWhereClause} AND {fixedWhereClause}";
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(fixedWhereClause))
+        {
+            finalWhereClause = $"WHERE {fixedWhereClause}";
+        }
+
+        return finalWhereClause;
+    }
 
 }

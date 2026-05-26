@@ -48,6 +48,7 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             paginationCore,
             Procs.TermView,
             TermListItemDao.ToDaoPaginationParameters,
+            "isPrivate = false",
             ConnStrings.Core,
             ct);
 }

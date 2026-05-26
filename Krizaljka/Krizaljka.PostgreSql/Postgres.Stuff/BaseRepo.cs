@@ -96,6 +96,7 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         IPaginationCore paginationCore,
         string viewName,
         Func<DaoPaginationParameters<TDao>> getDaoPaginationParameters,
+        string? fixedWhereCondition,
         TDbKey connKey,
         CancellationToken ct)
     where TDao: IDao
@@ -107,9 +108,8 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
 
         await using var conn = await GetOpenedConnectionAsync(connKey, ct);
 
-
         var listDao = (await conn.QueryAsync<TDao>(
-                PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters),
+                PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters, fixedWhereCondition),
                 paginationParameters.DynamicParameters))
             .ToList();
 
@@ -117,7 +117,7 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         if (paginationParameters.GetTotal)
         {
             total = await conn.ExecuteScalarAsync<long>(
-                PaginationOffsetUtils.GetSqlQueryForTotal(viewName, paginationParameters),
+                PaginationOffsetUtils.GetSqlQueryForTotal(viewName, paginationParameters, fixedWhereCondition),
                 paginationParameters.DynamicParameters);
         }
 
