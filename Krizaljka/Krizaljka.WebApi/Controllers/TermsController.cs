@@ -3,14 +3,15 @@ using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.Domain.Terms;
+using Krizaljka.Domain.Terms.Handlers;
 using Krizaljka.WebApi.Models;
+using Krizaljka.WebApi.Models.KrizaljkaTemplate;
+using Krizaljka.WebApi.Models.Term;
 using Krizaljka.WebApi.PaginationUtils;
 using Krizaljka.WebApi.Workers.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Channels;
-using Krizaljka.Domain.Terms.Handlers;
-using Krizaljka.WebApi.Models.Term;
 
 namespace Krizaljka.WebApi.Controllers;
 
@@ -126,6 +127,25 @@ public class TermsController(
         }
 
         return MapResult(result);
+    }
+
+    [Route(BaseRute + "/{id:long}/active")]
+    [HttpPut]
+    public async Task<IActionResult> UpdateActiveAsync(
+        [FromRoute] long id,
+        [FromBody] UpdateActiveTermRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateIsActiveTermServiceRequest(
+                id,
+                request.IsActive,
+                request.Changestamp),
+            ct));
     }
 
 }

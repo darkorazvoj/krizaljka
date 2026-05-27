@@ -59,4 +59,20 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
                 .Add("id", id),
             ConnStrings.Core,
             ct);
+
+    public Task<string?> UpdateIsActiveAsync(
+        long id, 
+        bool isActive, 
+        string changestamp, 
+        CancellationToken ct) =>
+        BaseExecuteWithOutAsync<string?>(
+            $"call {Procs.TermUpdateIsActive}(@id, @isactive, @changestamp,  null);",
+            new SqlParams()
+                .Add("id", id)
+                .Add("isactive", isActive)
+                .Add("changestamp", changestamp)
+                .AddOutput("newchangestamp", dbType: DbType.String),
+            "newchangestamp",
+            ConnStrings.Core,
+            ct);
 }

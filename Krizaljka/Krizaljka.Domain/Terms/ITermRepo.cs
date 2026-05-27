@@ -21,5 +21,10 @@ public interface ITermRepo
     Task<PaginatedResult<List<TermListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct);
 
     Task<Term?> GetAsync(long id, CancellationToken ct);
+    Task<string?> UpdateIsActiveAsync(
+        long id, 
+        bool isActive, 
+        string changestamp,
+        CancellationToken ct);
 
 }

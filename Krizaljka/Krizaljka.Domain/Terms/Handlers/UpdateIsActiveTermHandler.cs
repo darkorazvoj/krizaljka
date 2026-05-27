@@ -1,20 +1,20 @@
-﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+﻿using System.Data.Common;
+using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
-using Microsoft.Extensions.Logging;
-using System.Data.Common;
 using Krizaljka.Domain.Core.Stuff.Utils;
+using Microsoft.Extensions.Logging;
 
-namespace Krizaljka.Domain.Template.Handlers;
+namespace Krizaljka.Domain.Terms.Handlers;
 
-public record UpdateIsActiveKrizaljkaTemplateServiceRequest(long? Id, bool? IsActive, string? ChangeStamp) : IServiceRequest;
+public record UpdateIsActiveTermServiceRequest(long? Id, bool? IsActive, string? ChangeStamp) : IServiceRequest;
 
 internal class UpdateIsActiveTermHandler(
-    IKrizaljkaTemplateRepo repo,
+    ITermRepo repo,
     IDatabaseUtils dbUtils,
     ILogger<UpdateIsActiveTermHandler> logger)
-    : IAppRequestHandler<UpdateIsActiveKrizaljkaTemplateServiceRequest>
+    : IAppRequestHandler<UpdateIsActiveTermServiceRequest>
 {
-    public async Task<IServiceResult> HandleAsync(UpdateIsActiveKrizaljkaTemplateServiceRequest request, CancellationToken ct)
+    public async Task<IServiceResult> HandleAsync(UpdateIsActiveTermServiceRequest request, CancellationToken ct)
     {
         if (!request.Id.HasValue)
         {
@@ -57,7 +57,7 @@ internal class UpdateIsActiveTermHandler(
         {
             if (logger.IsEnabled(LogLevel.Error))
             {
-                logger.LogError(e, "IsActive Krizaljka Template failed");
+                logger.LogError(e, "IsActive Term update failed");
             }
 
             return new Error(string.Empty);
