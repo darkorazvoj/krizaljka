@@ -18,6 +18,7 @@ public abstract class BaseController : Controller
             InvalidChangestamp => StatusCode(428, null),
             RecordExists => Conflict(new ErrorDto("record exists")),
             NoData => NotFound(null),
+            ValidationErrors ve => BadRequest(ve),
             Error er => StatusCode(500, er.Message),
             _ => StatusCode(500)
         };

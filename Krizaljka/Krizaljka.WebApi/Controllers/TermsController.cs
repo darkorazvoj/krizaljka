@@ -1,11 +1,9 @@
 ﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
-using Krizaljka.Domain.Template.Handlers;
 using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.Terms.Handlers;
 using Krizaljka.WebApi.Models;
-using Krizaljka.WebApi.Models.KrizaljkaTemplate;
 using Krizaljka.WebApi.Models.Term;
 using Krizaljka.WebApi.PaginationUtils;
 using Krizaljka.WebApi.Workers.Models;
@@ -144,6 +142,32 @@ public class TermsController(
         return MapResult<string>(await dispatcher.DispatchAsync(new UpdateIsActiveTermServiceRequest(
                 id,
                 request.IsActive,
+                request.Changestamp),
+            ct));
+    }
+
+    [Route(BaseRute + "/{id:long}")]
+    [HttpPut]
+    public async Task<IActionResult> UpdateAsync(
+        [FromRoute] long id,
+        [FromBody] UpdateTermRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        if (!request.LanguageId.HasValue || !Enum.IsDefined((TermLanguage)request.LanguageId.Value))
+        {
+            return BadRequest("missing_or_invalid_language");
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateTermServiceRequest(
+                id,
+                (TermLanguage)request.LanguageId,
+                request.Description,
+                request.Term,
                 request.Changestamp),
             ct));
     }

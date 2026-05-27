@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Krizaljka.PostgreSql.Sql;
 
 internal static class Procs
@@ -21,4 +18,5 @@ internal static class Procs
     public static string TermInsert => "cr.terminsert_v1";
     public static string TermView  => "cr.termView_V1";
     public static string TermUpdateIsActive => "cr.termUpdateIsActive_v1";
+    public static string TermUpdate => "cr.termUpdate_v1";
 }

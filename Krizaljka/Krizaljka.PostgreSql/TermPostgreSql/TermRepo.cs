@@ -75,4 +75,34 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             "newchangestamp",
             ConnStrings.Core,
             ct);
+
+    public Task<string?> UpdateAsync(
+        long id,
+        int languageId,
+        string description,
+        string rawValue,
+        string denseValue,
+        List<string> letters,
+        List<int> spaceIndexes,
+        List<int> dashIndexes,
+        int length,
+        string changestamp,
+        CancellationToken ct) =>
+        BaseExecuteWithOutAsync<string?>(
+            $"call {Procs.TermUpdate}(@id, @languageid, @description, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @changestamp,  null);",
+            new SqlParams()
+                .Add("id", id)
+                .Add("languageid", languageId)
+                .Add("description", description)
+                .Add("rawValue", rawValue)
+                .Add("denseValue", denseValue)
+                .AddJsonList("lettersJson", letters)
+                .AddJsonList("spaceIndexesJson", spaceIndexes)
+                .AddJsonList("dashIndexesJson", dashIndexes)
+                .Add("length", length)
+                .Add("changestamp", changestamp)
+                .AddOutput("newchangestamp", dbType: DbType.String),
+            "newchangestamp",
+            ConnStrings.Core,
+            ct);
 }

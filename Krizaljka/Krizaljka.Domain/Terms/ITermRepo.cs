@@ -27,4 +27,16 @@ public interface ITermRepo
         string changestamp,
         CancellationToken ct);
 
+    Task<string?> UpdateAsync(
+        long id,
+        int languageId,
+        string description,
+        string rawValue,
+        string denseValue,
+        List<string> letters,
+        List<int> spaceIndexes,
+        List<int> dashIndexes,
+        int length,
+        string changestamp,
+        CancellationToken ct);
 }
