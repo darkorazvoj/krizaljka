@@ -72,6 +72,32 @@ public class TermsController(
         });
     }
 
+
+    [Route(BaseRute)]
+    [HttpPost]
+    public async Task<IActionResult> InsertAsync(
+        [FromBody] InsertTermRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        if (!request.LanguageId.HasValue || !Enum.IsDefined((TermLanguage)request.LanguageId.Value))
+        {
+            return BadRequest("missing_or_invalid_language");
+        }
+
+        var result = await dispatcher.DispatchAsync(new InsertTermServiceRequest(
+            (TermLanguage)request.LanguageId,
+            request.Description,
+            request.Term,
+            false), ct);
+
+        return MapResult<long>(result);
+    }
+
     [Route(BaseRute)]
     [HttpGet]
     public async Task<IActionResult> GetPaginatedListAsync([FromQuery] string? pg, CancellationToken ct)
