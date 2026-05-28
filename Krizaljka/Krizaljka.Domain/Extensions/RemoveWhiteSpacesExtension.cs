@@ -23,6 +23,25 @@ public static class RemoveWhiteSpacesExtension
         return sb.ToString();
     }
 
+    public static string RemoveDashes(this string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        var sb = new StringBuilder(value.Length);
+        foreach (var c in value)
+        {
+            if (c is not '-')
+            {
+                sb.Append(c);
+            }
+        }
+
+        return sb.ToString();
+    }
+
     public static string TrimExtra(this string value)
     {
         if (string.IsNullOrWhiteSpace(value))

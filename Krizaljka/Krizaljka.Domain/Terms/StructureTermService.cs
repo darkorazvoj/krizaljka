@@ -7,6 +7,12 @@ public class StructureTermService
 {
     public static ITerm Invoke(string term)
     {
+        if (string.IsNullOrWhiteSpace(term) ||
+            !term.IsValidRawTermValue())
+        {
+            return new InvalidTerm("empty_or_containing_invalid_characters");
+        }
+
         var termTrimmed = term.TrimExtra();
         if (termTrimmed.Length <= 0)
         {
@@ -37,7 +43,7 @@ public class StructureTermService
             .Where(s => !string.IsNullOrWhiteSpace(s) && s != "-")
             .ToList();
 
-        var denseValue = termTrimmed.RemoveWhiteSpaces();
+        var denseValue = termTrimmed.GetDenseTerm();
 
         return new TermComputed(
             termTrimmed.ToUpperInvariant(),

@@ -13,6 +13,12 @@ public class StructureNewTermService
         string term,
         bool isPrivate)
     {
+        if (string.IsNullOrWhiteSpace(term) ||
+            !term.IsValidRawTermValue())
+        {
+            return new InvalidTerm("empty_or_containing_invalid_characters");
+        }
+
 
         var descCleaned = description.TrimExtra();
 
@@ -51,7 +57,7 @@ public class StructureNewTermService
             .Where(s => !string.IsNullOrWhiteSpace(s) && s != "-")
             .ToList();
 
-        var denseValue = termTrimmed.RemoveWhiteSpaces();
+        var denseValue = termTrimmed.GetDenseTerm();
 
         return new NewTerm(
             language,
