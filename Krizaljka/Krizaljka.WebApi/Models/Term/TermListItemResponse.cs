@@ -6,5 +6,5 @@ public record TermListItemResponse(
     long Id,
     TermLanguage LanguageId,
     string RawValue,
-    int Length,
+    int TermLength,
     bool IsActive);
