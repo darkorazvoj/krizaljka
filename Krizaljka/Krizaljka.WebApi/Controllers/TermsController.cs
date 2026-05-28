@@ -21,7 +21,7 @@ public class TermsController(
 {
     private const string BaseRute = "terms";
 
-    [HttpPost(BaseRute +"/files")]
+    [HttpPost(BaseRute + "/files")]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(100 * 1024 * 1024)]
     public async Task<IActionResult> UploadJsonFiles(
@@ -62,7 +62,8 @@ public class TermsController(
 
         if (fileRecords.Count > 0)
         {
-            await channelWriter.WriteAsync(new TermFileBatch((TermLanguage)languageId.Value, fileRecords), cancellationToken);
+            await channelWriter.WriteAsync(new TermFileBatch((TermLanguage)languageId.Value, fileRecords),
+                cancellationToken);
         }
 
         return Accepted(new
@@ -86,7 +87,7 @@ public class TermsController(
                     x.Id,
                     x.LanguageId,
                     x.RawValue,
-                    x.Length, 
+                    x.Length,
                     x.IsActive))
                 .ToList();
 
@@ -165,4 +166,22 @@ public class TermsController(
             ct));
     }
 
+    [Route(BaseRute + "/{id:long}/term")]
+    [HttpPut]
+    public async Task<IActionResult> UpdateTermAsync(
+        [FromRoute] long id,
+        [FromBody] UpdateTermRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateTermServiceRequest(
+                id,
+                request.Term,
+                request.Changestamp),
+            ct));
+    }
 }

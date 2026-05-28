@@ -1,8 +1,4 @@
 ﻿
 namespace Krizaljka.WebApi.Models.Term;
 
-public record UpdateTermRequest(
-    int? LanguageId,
-    string? Description,
-    string? Term,
-    string? Changestamp);
+public record UpdateTermRequest(string? Term, string? Changestamp);

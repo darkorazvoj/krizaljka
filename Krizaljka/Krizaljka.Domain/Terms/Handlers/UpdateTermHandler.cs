@@ -10,8 +10,6 @@ namespace Krizaljka.Domain.Terms.Handlers;
 
 public record UpdateTermServiceRequest(
     long? Id,
-    TermLanguage? Language,
-    string? Description,
     string? Term,
     string? Changestamp) : IServiceRequest;
 
@@ -27,11 +25,6 @@ internal class UpdateTermHandler(
         if (!request.Id.HasValue)
         {
             errors.Add("missing_id");
-        }
-
-        if (!request.Language.HasValue || !Enum.IsDefined(request.Language.Value))
-        {
-            errors.Add("missing_or_invalid_language");
         }
 
         if (string.IsNullOrWhiteSpace(request.Term))
@@ -50,11 +43,10 @@ internal class UpdateTermHandler(
         }
 
         GuardNotNull.Required(request.Id);
-        GuardNotNull.Required(request.Language);
         GuardNotNull.Required(request.Term);
         GuardNotNull.Required(request.Changestamp);
 
-        var term = StructureTermService.Invoke(request.Language.Value, request.Description ?? string.Empty, request.Term);
+        var term = StructureTermService.Invoke(request.Term);
 
         if (term is not TermComputed termComputed)
         {
@@ -64,10 +56,8 @@ internal class UpdateTermHandler(
         try
         {
             var newChangestamp =
-                await repo.UpdateAsync(
+                await repo.UpdateTermAsync(
                     request.Id.Value,
-                    (int)request.Language.Value,
-                    termComputed.DescriptionCleaned,
                     termComputed.TermCleaned,
                     termComputed.DenseValue,
                     termComputed.Letters,

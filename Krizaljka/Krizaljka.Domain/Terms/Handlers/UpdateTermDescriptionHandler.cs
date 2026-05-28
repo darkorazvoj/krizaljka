@@ -19,6 +19,9 @@ internal class UpdateTermDescriptionHandler(
     IDatabaseUtils dbUtils,
     ILogger<UpdateTermHandler> logger) : IAppRequestHandler<UpdateTermDescriptionServiceRequest>
 {
+    private const int DescriptionMaxLength = 40;
+
+
     public async Task<IServiceResult> HandleAsync(UpdateTermDescriptionServiceRequest request, CancellationToken ct)
     {
         var errors = new List<string>();
@@ -31,6 +34,13 @@ internal class UpdateTermDescriptionHandler(
         if (string.IsNullOrWhiteSpace(request.Changestamp))
         {
             errors.Add("missing_changestamp");
+        }
+
+        var descCleaned = request.Description?.TrimExtra() ?? string.Empty;
+
+        if (descCleaned.Length > DescriptionMaxLength)
+        {
+            return new InvalidRequestWithReason("too_long");
         }
 
         if (errors.Count > 0)
@@ -46,7 +56,7 @@ internal class UpdateTermDescriptionHandler(
             var newChangestamp =
                 await repo.UpdateDescriptionAsync(
                     request.Id.Value,
-                    request.Description?.TrimExtra() ?? string.Empty,
+                    descCleaned,
                     request.Changestamp,
                     ct);
 

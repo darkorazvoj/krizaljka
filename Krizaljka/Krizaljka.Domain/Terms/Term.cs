@@ -72,7 +72,6 @@ public record NewTerm(
 public record InvalidTerm(string Error): IInvalidTerm;
 
 public record TermComputed(
-    string DescriptionCleaned,
     string TermCleaned,
     string DenseValue,
     List<string> Letters,

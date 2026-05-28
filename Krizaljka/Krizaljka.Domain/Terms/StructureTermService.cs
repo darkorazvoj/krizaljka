@@ -5,21 +5,8 @@ namespace Krizaljka.Domain.Terms;
 
 public class StructureTermService
 {
-    private const int DescriptionMaxLength = 40;
-
-    public static ITerm Invoke(
-        TermLanguage language, 
-        string description, 
-        string term)
+    public static ITerm Invoke(string term)
     {
-
-        var descCleaned = description.TrimExtra();
-
-        if (descCleaned.Length > DescriptionMaxLength)
-        {
-            return new InvalidTerm($"Description > {DescriptionMaxLength}, Length: {descCleaned.Length}, Description: {descCleaned}");
-        }
-
         var termTrimmed = term.TrimExtra();
         if (termTrimmed.Length <= 0)
         {
@@ -53,7 +40,6 @@ public class StructureTermService
         var denseValue = termTrimmed.RemoveWhiteSpaces();
 
         return new TermComputed(
-            descCleaned,
             termTrimmed.ToUpperInvariant(),
             denseValue.ToUpperInvariant(),
             lettersDense,

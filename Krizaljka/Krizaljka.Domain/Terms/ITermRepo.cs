@@ -33,10 +33,8 @@ public interface ITermRepo
         string changestamp,
         CancellationToken ct);
 
-    Task<string?> UpdateAsync(
+    Task<string?> UpdateTermAsync(
         long id,
-        int languageId,
-        string description,
         string rawValue,
         string denseValue,
         List<string> letters,

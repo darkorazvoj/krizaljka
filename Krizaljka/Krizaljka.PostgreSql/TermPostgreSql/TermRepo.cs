@@ -89,10 +89,8 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             ConnStrings.Core,
             ct);
 
-    public Task<string?> UpdateAsync(
+    public Task<string?> UpdateTermAsync(
         long id,
-        int languageId,
-        string description,
         string rawValue,
         string denseValue,
         List<string> letters,
@@ -102,11 +100,9 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
         string changestamp,
         CancellationToken ct) =>
         BaseExecuteWithOutAsync<string?>(
-            $"call {Procs.TermUpdate}(@id, @languageid, @description, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @changestamp,  null);",
+            $"call {Procs.TermUpdateTerm}(@id, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @changestamp,  null);",
             new SqlParams()
                 .Add("id", id)
-                .Add("languageid", languageId)
-                .Add("description", description)
                 .Add("rawValue", rawValue)
                 .Add("denseValue", denseValue)
                 .AddJsonList("lettersJson", letters)
