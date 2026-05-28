@@ -146,11 +146,11 @@ public class TermsController(
             ct));
     }
 
-    [Route(BaseRute + "/{id:long}")]
+    [Route(BaseRute + "/{id:long}/description")]
     [HttpPut]
-    public async Task<IActionResult> UpdateAsync(
+    public async Task<IActionResult> UpdateDescriptionAsync(
         [FromRoute] long id,
-        [FromBody] UpdateTermRequest? request,
+        [FromBody] UpdateTermDescriptionRequest? request,
         CancellationToken ct)
     {
         if (request is null)
@@ -158,16 +158,9 @@ public class TermsController(
             return BadRequestBodyMissing();
         }
 
-        if (!request.LanguageId.HasValue || !Enum.IsDefined((TermLanguage)request.LanguageId.Value))
-        {
-            return BadRequest("missing_or_invalid_language");
-        }
-
-        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateTermServiceRequest(
+        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateTermDescriptionServiceRequest(
                 id,
-                (TermLanguage)request.LanguageId,
                 request.Description,
-                request.Term,
                 request.Changestamp),
             ct));
     }

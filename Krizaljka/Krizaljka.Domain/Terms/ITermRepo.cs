@@ -27,6 +27,12 @@ public interface ITermRepo
         string changestamp,
         CancellationToken ct);
 
+    Task<string?> UpdateDescriptionAsync(
+        long id,
+        string description,
+        string changestamp,
+        CancellationToken ct);
+
     Task<string?> UpdateAsync(
         long id,
         int languageId,

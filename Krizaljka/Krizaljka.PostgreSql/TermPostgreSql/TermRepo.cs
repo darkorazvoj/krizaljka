@@ -76,6 +76,19 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             ConnStrings.Core,
             ct);
 
+    public Task<string?>
+        UpdateDescriptionAsync(long id, string description, string changestamp, CancellationToken ct) =>
+        BaseExecuteWithOutAsync<string?>(
+            $"call {Procs.TermDescriptionUpdate}(@id, @description, @changestamp,  null);",
+            new SqlParams()
+                .Add("id", id)
+                .Add("description", description)
+                .Add("changestamp", changestamp)
+                .AddOutput("newchangestamp", dbType: DbType.String),
+            "newchangestamp",
+            ConnStrings.Core,
+            ct);
+
     public Task<string?> UpdateAsync(
         long id,
         int languageId,
