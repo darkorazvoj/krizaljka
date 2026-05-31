@@ -60,6 +60,14 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             ConnStrings.Core,
             ct);
 
+    public Task<List<TermExport>> GetForExportAsync(int languageId, CancellationToken ct) =>
+        BaseGetListAsync<TermExport, TermExportDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(TermExportDao))} from {Procs.TermView} where languageId = @languageId and isPrivate = false",
+            new SqlParams()
+                .Add("languageId", languageId),
+            ConnStrings.Core,
+            ct);
+
     public Task<string?> UpdateIsActiveAsync(
         long id, 
         bool isActive, 

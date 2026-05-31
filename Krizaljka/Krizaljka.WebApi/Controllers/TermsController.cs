@@ -1,4 +1,6 @@
-﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+﻿using System.IO.Compression;
+using System.Text.Json;
+using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Terms;
@@ -209,5 +211,66 @@ public class TermsController(
                 request.Term,
                 request.Changestamp),
             ct));
+    }
+
+    [HttpPost(BaseRute + "/export")]
+    public async Task<IActionResult> ExportAsync(
+        [FromBody] TermsExportRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        if (!request.LanguageId.HasValue || !Enum.IsDefined((TermLanguage)request.LanguageId.Value))
+        {
+            return BadRequest("missing_or_invalid_language");
+        }
+
+        const int batchSize = 100000;
+        const string baseFileName = "KrizaljkaTermsDb";
+
+        var result =
+            await dispatcher.DispatchAsync(new GetTermsForExportServiceRequest((TermLanguage)request.LanguageId), ct);
+
+        if (result is not Success<List<TermExport>> successResult)
+        {
+            return StatusCode(500, "unknown");
+        }
+
+        MemoryStream zipStream = new();
+
+        await using (ZipArchive zip = new(zipStream, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            var fileIndex = 1;
+
+            foreach (var batch in successResult.Data.Chunk(batchSize))
+            {
+                var entry = zip.CreateEntry(
+                    $"{baseFileName}_{fileIndex}.json",
+                    CompressionLevel.Fastest);
+
+                await using var entryStream = await entry.OpenAsync(ct);
+
+                var exportFile = batch.Select(x =>
+                        new TermExportResponse(x.Id, x.Language, x.Description, x.RawValue, x.IsActive))
+                    .ToList();
+
+                await JsonSerializer.SerializeAsync(
+                    entryStream,
+                    exportFile,
+                    cancellationToken: ct);
+
+                fileIndex++;
+            }
+        }
+
+        zipStream.Position = 0;
+
+        return File(
+            zipStream,
+            "application/zip",
+            "KrizaljkaTermsDb.zip");
     }
 }
