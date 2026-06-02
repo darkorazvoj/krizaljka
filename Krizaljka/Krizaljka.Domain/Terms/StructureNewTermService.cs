@@ -19,13 +19,10 @@ public class StructureNewTermService
             return new InvalidTerm("empty_or_containing_invalid_characters");
         }
 
-
-        var descCleaned = description.TrimExtra();
-
-        if (descCleaned.Length > DescriptionMaxLength)
-        {
-            return new InvalidTerm($"Description > {DescriptionMaxLength}, Length: {descCleaned.Length}, Description: {descCleaned}");
-        }
+        var descTrimmed = description.TrimExtra();
+        var descCleaned = descTrimmed.Length > DescriptionMaxLength
+            ? descTrimmed[..(DescriptionMaxLength - 3)] + "<>!"
+            : descTrimmed;
 
         var termTrimmed = term.TrimExtra();
         if (termTrimmed.Length <= 0)
