@@ -14,6 +14,7 @@ public interface ITermRepo
         List<int> dashIndexes,
         int length,
         bool isPrivate,
+        long? batchId,
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct);

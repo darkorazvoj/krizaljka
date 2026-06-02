@@ -1,16 +1,17 @@
-﻿using System.IO.Compression;
-using System.Text.Json;
-using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.Terms.Handlers;
+using Krizaljka.WebApi.Auth;
 using Krizaljka.WebApi.Models;
 using Krizaljka.WebApi.Models.Term;
 using Krizaljka.WebApi.PaginationUtils;
 using Krizaljka.WebApi.Workers.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IO.Compression;
+using System.Text.Json;
 using System.Threading.Channels;
 
 namespace Krizaljka.WebApi.Controllers;
@@ -64,7 +65,17 @@ public class TermsController(
 
         if (fileRecords.Count > 0)
         {
-            await channelWriter.WriteAsync(new TermFileBatch((TermLanguage)languageId.Value, fileRecords),
+            var userId = GetAuthUserIdFromRequestService.Invoke(User);
+            if (!userId.HasValue)
+            {
+                return new UnauthorizedObjectResult(null);
+            }
+
+            await channelWriter.WriteAsync(
+                new TermFileBatch(
+                    (TermLanguage)languageId.Value,
+                    userId.Value,
+                    fileRecords),
                 cancellationToken);
         }
 

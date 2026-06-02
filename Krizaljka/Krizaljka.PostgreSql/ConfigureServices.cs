@@ -39,6 +39,7 @@ public static class ConfigureServices
 
         services.AddScoped<IKrizaljkaTemplateRepo, KrizaljkaTemplateRepo>();
         services.AddScoped<ITermRepo, TermRepo>();
+        services.AddScoped<ITermImportBatchRepo, TermImportBatchRepo>();
         services.AddScoped<IAppUserRepo, AppUserRepo>();
 
         services.AddSingleton<IReadOnlyDictionary<ConnStrings, string>>(

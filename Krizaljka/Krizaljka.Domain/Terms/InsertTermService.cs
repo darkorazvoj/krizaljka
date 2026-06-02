@@ -10,6 +10,7 @@ public class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logger
         string? description,
         string? term,
         bool isPrivate,
+        long? batchId,
         long ranById,
         CancellationToken ct)
     {
@@ -32,7 +33,6 @@ public class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logger
 
         try
         {
-            
             var id = await repo.InsertAsync(
                 (int)language.Value,
                 newTerm.Description,
@@ -43,6 +43,7 @@ public class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logger
                 newTerm.DashIndexes,
                 newTerm.Length,
                 isPrivate,
+                batchId,
                 ranById,
                 DateTimeOffset.UtcNow,
                 ct);

@@ -52,6 +52,7 @@ public record Term(
     int Length,
     bool IsActive,
     bool IsPrivate,
+    long? BatchId,
     long CreatedById,
     DateTimeOffset CreatedOn,
     string Changestamp) : IValidTerm;

@@ -16,6 +16,6 @@ internal class InsertTermHandler(
     InsertTermService insertTermService) : IAppRequestHandler<InsertTermServiceRequest>
 {
     public Task<IServiceResult> HandleAsync(InsertTermServiceRequest request, CancellationToken ct) =>
-        insertTermService.InvokeAsync(request.Language, request.Description, request.Term, request.IsPrivate ?? false, authUser.Id, ct);
+        insertTermService.InvokeAsync(request.Language, request.Description, request.Term, request.IsPrivate ?? false, null, authUser.Id, ct);
 
 }

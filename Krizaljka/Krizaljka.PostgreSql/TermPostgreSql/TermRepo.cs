@@ -20,10 +20,11 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
         List<int> dashIndexes,
         int length,
         bool isPrivate,
+        long? batchId,
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct) => BaseExecuteWithOutAsync<long>(
-        $"call {Procs.TermInsert} (@languageid, @description, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @isActive, @isPrivate, @createdOn, @RanById, null);",
+        $"call {Procs.TermInsert} (@languageid, @description, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @isActive, @isPrivate, @batchId, @createdOn, @RanById, null);",
         new SqlParams()
             .Add("languageid", languageId)
             .Add("description", description)
@@ -35,6 +36,7 @@ internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
             .Add("length", length)
             .Add("isactive", true)
             .Add("isprivate", isPrivate)
+            .Add("batchId", batchId)
             .Add("createdOn", createdOn)
             .Add("ranById", ranById)
             .AddOutput("newId", DbType.Int64),

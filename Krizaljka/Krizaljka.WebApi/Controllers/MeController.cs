@@ -1,8 +1,8 @@
-﻿using System.Security.Claims;
-using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
+﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.User.Handlers;
 using Krizaljka.Domain.User.Models;
+using Krizaljka.WebApi.Auth;
 using Krizaljka.WebApi.Models.Me;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,24 +21,18 @@ public sealed class MeController(
     [Route(BaseRoute)]
     public async Task<IActionResult> Get(CancellationToken ct)
     {
-        var idString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(idString))
-        {
-            return new UnauthorizedObjectResult(null);
-        }
-
-        if(!long.TryParse(idString, out var id ))
+        var id = GetAuthUserIdFromRequestService.Invoke(User);
+        if (!id.HasValue)
         {
             if (logger.IsEnabled(LogLevel.Critical))
             {
-                logger.LogCritical("GetMe ID parse failed! idString: {IdString}", idString);
+                logger.LogCritical("ClaimsPrincipal (HttpContext.User) ID parse failed!");
             }
-            return new UnauthorizedObjectResult(null);
 
+            return new UnauthorizedObjectResult(null); 
         }
 
-        var result = await dispatcher.DispatchAsync(new GetMeServiceRequest(id), ct);
+        var result = await dispatcher.DispatchAsync(new GetMeServiceRequest(id.Value), ct);
         
         if (result is Success<AppUserMe> successResult)
         {

@@ -15,6 +15,7 @@ internal record TermDao(
     int TermLength,
     bool IsActive,
     bool IsPrivate,
+    long? BatchId,
     long CreatedById,
     DateTimeOffset CreatedOn,
     string Changestamp) :IDao
@@ -35,6 +36,7 @@ internal record TermDao(
                 TermLength,
                 IsActive,
                 IsPrivate,
+                BatchId,
                 CreatedById,
                 CreatedOn,
                 Changestamp);

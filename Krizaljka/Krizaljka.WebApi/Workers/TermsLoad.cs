@@ -28,18 +28,21 @@ internal static class TermsLoad
         }
 
         await using var scope = scopeFactory.CreateAsyncScope();
+        var batchRepo = scope.ServiceProvider.GetRequiredService<ITermImportBatchRepo>();
         var insertTermService = scope.ServiceProvider.GetRequiredService<InsertTermService>();
+        
+        var batchId = await batchRepo.InsertAsync(fileBatch.RanById, DateTimeOffset.UtcNow, ct);
 
         foreach (var termJson in list)
         {
-            // TODO - SERVICE USER ID
             var insertResult =
                 await insertTermService.InvokeAsync(
                     fileBatch.Language,
                     termJson.Description,
                     termJson.Term,
                     false,
-                    7,
+                    batchId,
+                    fileBatch.RanById,
                     ct);
 
             if (insertResult is not SuccessInsert<long>)
