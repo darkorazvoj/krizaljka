@@ -740,28 +740,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
             theKrizaljka.State.LettersByCell.Remove(cell);
         }
     }
-
-    //private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
-    //{
-    //    var pattern = GetSlotPattern(slot);
-    //    var cacheKey = (slot.Id, pattern);
-
-    //    if (_cache.MatchingTermsCache.TryGetValue(cacheKey, out var cached))
-    //    {
-    //        return cached;
-    //    }
-
-    //    if (_cache.MatchingTermsCache.Count >= MaxMatchingTermsCacheEntries)
-    //    {
-    //        _cache.MatchingTermsCache.Clear();
-    //    }
-
-    //    var result = GetIndexedMatchingTermsCore(slot);
-    //    _cache.MatchingTermsCache[cacheKey] = result;
-
-    //    return result;
-    //}
-
     private IReadOnlyList<Term> GetIndexedMatchingTerms(KrizaljkaSlot slot)
     {
         var pattern = GetSlotPattern(slot);
@@ -794,8 +772,6 @@ public sealed class KrizaljkaCreator(TheKrizaljka theKrizaljka)
 
         return result;
     }
-
-    
 
     private string GetSlotPattern(KrizaljkaSlot slot)
     {
