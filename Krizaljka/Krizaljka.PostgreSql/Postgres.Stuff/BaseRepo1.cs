@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.PostgreSql.Pagination;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
@@ -6,38 +7,24 @@ using Npgsql;
 
 namespace Krizaljka.PostgreSql.Postgres.Stuff;
 
-public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> connections)
+public abstract class BaseRepo1<TDbKey>(IDbSession<TDbKey> dbSession)
 {
-   
-
-    protected async Task<NpgsqlConnection> GetOpenedConnectionAsync(
-        TDbKey connKey,
-        CancellationToken ct)
-    {
-        var conn = new NpgsqlConnection(GetConnectionString(connKey));
-        await conn.OpenAsync(ct);
-        return conn;
-    }
-
-    private string GetConnectionString(TDbKey connKey)
-    {
-        if (!connections.TryGetValue(connKey, out var connectionString))
-        {
-            throw new InvalidOperationException(
-                $"No connection string registered for connKey '{connKey}'");
-        }
-
-        return connectionString;
-    }
+    protected async Task<NpgsqlConnection?> GetConnectionAsync(TDbKey connKey, CancellationToken ct) =>
+        (NpgsqlConnection?)await dbSession.OpenConnectionAsync(connKey, ct);
 
     protected async Task<T?> BaseExecuteWithOutAsync<T>(
-        string sql, 
+        string sql,
         SqlParams parameters,
         string outParamName,
         TDbKey connKey,
         CancellationToken cancellationToken)
     {
-        await using var conn = await GetOpenedConnectionAsync(connKey, cancellationToken);
+        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+
+        if (conn is null)
+        {
+            return default;
+        }
 
         await conn.ExecuteAsync(sql, parameters);
         return parameters.GetOutput<T?>(outParamName);
@@ -50,7 +37,12 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         CancellationToken cancellationToken)
         where TDao : IDao
     {
-        await using var conn = await GetOpenedConnectionAsync(connKey, cancellationToken);
+        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+
+        if (conn is null)
+        {
+            return default;
+        }
 
         var dao =
             await conn.QuerySingleOrDefaultAsync<TDao>(sql, parameters);
@@ -65,7 +57,12 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         CancellationToken cancellationToken)
         where TDao : IDao
     {
-        await using var conn = await GetOpenedConnectionAsync(connKey, cancellationToken);
+        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+
+        if (conn is null)
+        {
+            return [];
+        }
 
         var listDao =
             (await conn.QueryAsync<TDao>(sql, parameters))
@@ -78,12 +75,18 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
     }
 
     protected async Task BaseExecuteAsync(
-        string sql, 
+        string sql,
         SqlParams? parameters,
         TDbKey connKey,
         CancellationToken cancellationToken)
     {
-        await using var conn = await GetOpenedConnectionAsync(connKey, cancellationToken);
+        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+
+        if (conn is null)
+        {
+            return;
+        }
+
         await conn.ExecuteAsync(sql, parameters);
     }
 
@@ -94,14 +97,19 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         string? fixedWhereCondition,
         TDbKey connKey,
         CancellationToken ct)
-    where TDao: IDao
+    where TDao : IDao
     {
         var daoPaginationParameters = getDaoPaginationParameters();
         var paginationParameters = PaginationUtils.GetPaginationParameters(
             paginationCore,
             daoPaginationParameters);
 
-        await using var conn = await GetOpenedConnectionAsync(connKey, ct);
+        await using var conn = await GetConnectionAsync(connKey, ct);
+
+        if (conn is null)
+        {
+            return new PaginatedResult<List<TCoreModel>>([], null);
+        }
 
         var listDao = (await conn.QueryAsync<TDao>(
                 PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters, fixedWhereCondition),
@@ -119,6 +127,6 @@ public abstract class BaseRepo<TDbKey>(IReadOnlyDictionary<TDbKey, string> conne
         var list = listDao.Select(x => x.MapTo<TCoreModel>())
             .ToList();
 
-       return new PaginatedResult<List<TCoreModel>>(list, total);
+        return new PaginatedResult<List<TCoreModel>>(list, total);
     }
 }

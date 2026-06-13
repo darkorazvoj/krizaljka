@@ -4,11 +4,12 @@ using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using Krizaljka.PostgreSql.Sql;
 using System.Data;
+using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 
 namespace Krizaljka.PostgreSql.TermPostgreSql;
 
-internal class TermRepo(IReadOnlyDictionary<ConnStrings, string> conns)
-    : BaseRepo<ConnStrings>(conns), ITermRepo
+internal class TermRepo(IDbSession<ConnStrings> dbSession)
+    : BaseRepo1<ConnStrings>(dbSession), ITermRepo
 {
     public Task<long> InsertAsync(
         int languageId,

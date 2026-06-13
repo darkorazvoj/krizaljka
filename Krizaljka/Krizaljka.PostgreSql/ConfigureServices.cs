@@ -45,12 +45,20 @@ public static class ConfigureServices
         services.AddScoped<ITermImportBatchRepo, TermImportBatchRepo>();
         services.AddScoped<IAppUserRepo, AppUserRepo>();
 
+
+        services.AddSingleton<ConnectionStrings>(_ => new ConnectionStrings(new Dictionary<ConnStrings, string>
+        {
+            { ConnStrings.Core, opts.ConnectionStringCore },
+            { ConnStrings.Au, opts.ConnectionStringAu },
+
+        }));
+
         services.AddSingleton<IReadOnlyDictionary<ConnStrings, string>>(
             _ => new Dictionary<ConnStrings, string>
             {
                 { ConnStrings.Core , opts.ConnectionStringCore},
                 { ConnStrings.Au , opts.ConnectionStringAu},
-          
+
             });
 
         return services;

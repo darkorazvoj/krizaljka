@@ -3,13 +3,14 @@ using Krizaljka.Domain.Template;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using System.Data;
+using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.PostgreSql.Sql;
 
 namespace Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 
-internal class KrizaljkaTemplateRepo(IReadOnlyDictionary<ConnStrings, string> conns)
-    : BaseRepo<ConnStrings>(conns), IKrizaljkaTemplateRepo
+internal class KrizaljkaTemplateRepo(IDbSession<ConnStrings> dbSession)
+    : BaseRepo1<ConnStrings>(dbSession), IKrizaljkaTemplateRepo
 {
     public async Task<long> InsertAsync(
         int[][] matrix,

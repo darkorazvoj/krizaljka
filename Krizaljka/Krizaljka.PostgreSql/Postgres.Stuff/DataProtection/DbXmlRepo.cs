@@ -1,15 +1,15 @@
 ﻿using System.Xml.Linq;
 using Dapper;
 using Microsoft.AspNetCore.DataProtection.Repositories;
+using Npgsql;
 
 namespace Krizaljka.PostgreSql.Postgres.Stuff.DataProtection;
 
-internal sealed class DbXmlRepo(IReadOnlyDictionary<ConnStrings, string> conns)
-    : BaseRepo<ConnStrings>(conns), IXmlRepository 
+internal sealed class DbXmlRepo(ConnectionStrings connectionStrings) :IXmlRepository 
 {
     public IReadOnlyCollection<XElement> GetAllElements()
     {
-        using var conn = GetOpenedConnection(ConnStrings.Au);
+        using var conn = GetOpenedConnection(connectionStrings.GetConnectionString(ConnStrings.Au));
         var rows = conn.Query<string>(
             "select xml from au.DataProtectionKeys");
 
@@ -18,7 +18,7 @@ internal sealed class DbXmlRepo(IReadOnlyDictionary<ConnStrings, string> conns)
 
     public void StoreElement(XElement element, string friendlyName)
     {
-        using var conn = GetOpenedConnection(ConnStrings.Au);
+        using var conn = GetOpenedConnection(connectionStrings.GetConnectionString(ConnStrings.Au));
         conn.Execute(
             """
                         insert into au.dataprotectionkeys (friendlyName, xml)
@@ -29,5 +29,12 @@ internal sealed class DbXmlRepo(IReadOnlyDictionary<ConnStrings, string> conns)
                 name = friendlyName,
                 xml = element.ToString(SaveOptions.DisableFormatting)
             });
+    }
+
+    private static NpgsqlConnection GetOpenedConnection(string connectionString)
+    {
+        var conn = new NpgsqlConnection(connectionString);
+        conn.Open();
+        return conn;
     }
 }
