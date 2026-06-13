@@ -10,7 +10,7 @@ using Krizaljka.PostgreSql.Sql;
 namespace Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 
 internal class KrizaljkaTemplateRepo(IDbSession<ConnStrings> dbSession)
-    : BaseRepo1<ConnStrings>(dbSession), IKrizaljkaTemplateRepo
+    : BaseRepo<ConnStrings>(dbSession), IKrizaljkaTemplateRepo
 {
     public async Task<long> InsertAsync(
         int[][] matrix,

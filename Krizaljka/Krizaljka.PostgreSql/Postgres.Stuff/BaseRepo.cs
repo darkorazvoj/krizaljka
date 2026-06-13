@@ -7,7 +7,7 @@ using Npgsql;
 
 namespace Krizaljka.PostgreSql.Postgres.Stuff;
 
-public abstract class BaseRepo1<TDbKey>(IDbSession<TDbKey> dbSession)
+public abstract class BaseRepo<TDbKey>(IDbSession<TDbKey> dbSession)
 {
     protected async Task<NpgsqlConnection?> GetConnectionAsync(TDbKey connKey, CancellationToken ct) =>
         (NpgsqlConnection?)await dbSession.OpenConnectionAsync(connKey, ct);

@@ -9,7 +9,7 @@ using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 namespace Krizaljka.PostgreSql.TermPostgreSql;
 
 internal class TermRepo(IDbSession<ConnStrings> dbSession)
-    : BaseRepo1<ConnStrings>(dbSession), ITermRepo
+    : BaseRepo<ConnStrings>(dbSession), ITermRepo
 {
     public Task<long> InsertAsync(
         int languageId,

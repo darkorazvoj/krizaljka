@@ -8,7 +8,7 @@ using Krizaljka.PostgreSql.Sql;
 namespace Krizaljka.PostgreSql.User;
 
 internal class AppUserRepo(IDbSession<ConnStrings> dbSession) 
-    : BaseRepo1<ConnStrings>(dbSession), IAppUserRepo{
+    : BaseRepo<ConnStrings>(dbSession), IAppUserRepo{
     public  Task<AppUserAuth?> GetByLoginEmailAsync(string username, CancellationToken ct) =>
         BaseGetAsync<AppUserAuth, AppUserAuthDao>(
             $"select {DaoUtils.GetSelectColumns(typeof(AppUserAuthDao))} from {Procs.AppUserLoginGet} (@username)",

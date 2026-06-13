@@ -8,7 +8,7 @@ using System.Data;
 namespace Krizaljka.PostgreSql.TermPostgreSql;
 
 internal class TermImportBatchRepo(IDbSession<ConnStrings> dbSession)
-    : BaseRepo1<ConnStrings>(dbSession), ITermImportBatchRepo
+    : BaseRepo<ConnStrings>(dbSession), ITermImportBatchRepo
 {
     public Task<long> InsertAsync(
         long ranById,
