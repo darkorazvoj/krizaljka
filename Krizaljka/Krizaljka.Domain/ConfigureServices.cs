@@ -1,13 +1,14 @@
 ﻿
+using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Dummies;
 using Krizaljka.Domain.Core.Stuff.Extensions;
 using Krizaljka.Domain.Core.Stuff.Hashers;
-using Krizaljka.Domain.Core.Stuff.Utils;
 using Krizaljka.Domain.Template.Services;
+using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.User.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Krizaljka.Domain.Terms;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Krizaljka.Domain;
 
@@ -32,7 +33,8 @@ public static class ConfigureServices
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
 
         // Dummies
-        services.AddSingleton<IDatabaseUtils, DummyDatabaseUtils>();
+        services.TryAddSingleton<IDatabaseUtils, DummyDatabaseUtils>();
+        services.TryAddScoped(typeof(IDbSession<>), typeof(DummyDbSession<>));
 
         return services;
     }

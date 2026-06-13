@@ -1,4 +1,4 @@
-﻿using Krizaljka.Domain.Core.Stuff.Utils;
+﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 
 namespace Krizaljka.PostgreSql;
 

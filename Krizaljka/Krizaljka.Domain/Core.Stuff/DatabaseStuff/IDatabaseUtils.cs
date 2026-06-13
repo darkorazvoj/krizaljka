@@ -1,5 +1,4 @@
-﻿
-namespace Krizaljka.Domain.Core.Stuff.Utils;
+﻿namespace Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 
 public interface IDatabaseUtils
 {

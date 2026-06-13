@@ -2,7 +2,7 @@
 using Krizaljka.Domain.Core.Stuff.Services;
 using Microsoft.Extensions.Logging;
 using System.Data.Common;
-using Krizaljka.Domain.Core.Stuff.Utils;
+using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 
 namespace Krizaljka.Domain.Template.Handlers;
 

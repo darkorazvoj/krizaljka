@@ -1,15 +1,17 @@
-﻿using Krizaljka.Domain.Core.Stuff.Services;
+﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
+using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.PostgreSql.Postgres.Stuff.Utils;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using System.Data.Common;
 
 namespace Krizaljka.PostgreSql.Postgres.Stuff;
 
-public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connections, ILogger<DbSession<TDbKey>> logger) : IAsyncDisposable
+public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connections, ILogger<DbSession<TDbKey>> logger) : IDbSession<TDbKey>
 {
     public  NpgsqlConnection? TransactionConnection { get; private set; }
 
-    public NpgsqlTransaction? Transaction { get; private set; }
+    public DbTransaction? Transaction { get; private set; }
 
     public bool HasTransaction => TransactionConnection is not null && Transaction is not null;
 
@@ -57,7 +59,7 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
         }
     }
 
-    public async Task<NpgsqlConnection?> OpenConnectionAsync(TDbKey connKey, CancellationToken ct)
+    public async Task<DbConnection?> OpenConnectionAsync(TDbKey connKey, CancellationToken ct)
     {
         if (TransactionConnection is not null)
         {
