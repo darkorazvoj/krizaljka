@@ -1,6 +1,6 @@
 ﻿namespace Krizaljka.PostgreSql.Postgres.Stuff;
 
-internal class ConnectionStrings(IReadOnlyDictionary<ConnStrings, string> connectionStrings)
+public class ConnectionStrings(IReadOnlyDictionary<ConnStrings, string> connectionStrings)
 {
     public string GetConnectionString(ConnStrings connKey)
     {

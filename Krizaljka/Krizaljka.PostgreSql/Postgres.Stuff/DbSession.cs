@@ -7,7 +7,7 @@ using System.Data.Common;
 
 namespace Krizaljka.PostgreSql.Postgres.Stuff;
 
-public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connections, ILogger<DbSession<TDbKey>> logger) : IDbSession<TDbKey>
+public sealed class DbSession(ConnectionStrings connectionStrings, ILogger<DbSession> logger) : IDbSession<ConnStrings>
 {
     public  NpgsqlConnection? TransactionConnection { get; private set; }
 
@@ -17,7 +17,7 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
 
     public async Task<IServiceResult> ExecuteInTransactionAsync(
         Func<CancellationToken, Task<IServiceResult>> action,
-        TDbKey connKey,
+        ConnStrings connKey,
         CancellationToken ct)
     {
 
@@ -59,7 +59,7 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
         }
     }
 
-    public async Task<DbConnection?> OpenConnectionAsync(TDbKey connKey, CancellationToken ct)
+    public async Task<DbConnection?> OpenConnectionAsync(ConnStrings connKey, CancellationToken ct)
     {
         if (TransactionConnection is not null)
         {
@@ -68,7 +68,7 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
 
         try
         {
-            var connection = new NpgsqlConnection(GetConnectionString(connKey));
+            var connection = new NpgsqlConnection(connectionStrings.GetConnectionString(connKey));
             await connection.OpenAsync(ct);
 
             return connection;
@@ -84,7 +84,7 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
         }
     }
 
-    public async Task<bool> BeginTransactionAsync(TDbKey connKey, CancellationToken ct)
+    public async Task<bool> BeginTransactionAsync(ConnStrings connKey, CancellationToken ct)
     {
         if (HasTransaction)
         {
@@ -93,7 +93,7 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
 
         try
         {
-            TransactionConnection = new NpgsqlConnection(GetConnectionString(connKey));
+            TransactionConnection = new NpgsqlConnection(connectionStrings.GetConnectionString(connKey));
             await TransactionConnection.OpenAsync(ct);
 
             Transaction = await TransactionConnection.BeginTransactionAsync(ct);
@@ -188,17 +188,6 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
                 logger.LogWarning("Dispose transaction call(s) failed. Transaction and connection set to NULL.");
             }
         }
-    }
-
-    private string GetConnectionString(TDbKey connKey)
-    {
-        if (!connections.TryGetValue(connKey, out var connectionString))
-        {
-            throw new InvalidOperationException(
-                $"No connection string registered for connKey '{connKey}'");
-        }
-
-        return connectionString;
     }
 
     public async ValueTask DisposeAsync() => await DisposeTransactionAsync();

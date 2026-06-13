@@ -38,7 +38,7 @@ public static class ConfigureServices
         services.AddSingleton<IXmlRepository, DbXmlRepo>();
         services.AddSingleton<IDatabaseUtils, DatabaseUtils>();
 
-        services.AddScoped<IDbSession<ConnStrings>, DbSession<ConnStrings>>();
+        services.AddScoped<IDbSession<ConnStrings>, DbSession>();
 
         services.AddScoped<IKrizaljkaTemplateRepo, KrizaljkaTemplateRepo>();
         services.AddScoped<ITermRepo, TermRepo>();
