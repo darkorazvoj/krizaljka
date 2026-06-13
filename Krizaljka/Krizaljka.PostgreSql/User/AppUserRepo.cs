@@ -1,4 +1,5 @@
-﻿using Krizaljka.Domain.User.Models;
+﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
+using Krizaljka.Domain.User.Models;
 using Krizaljka.Domain.User.Repo;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
@@ -6,8 +7,8 @@ using Krizaljka.PostgreSql.Sql;
 
 namespace Krizaljka.PostgreSql.User;
 
-internal class AppUserRepo(IReadOnlyDictionary<ConnStrings, string> conns) 
-    : BaseRepo<ConnStrings>(conns), IAppUserRepo{
+internal class AppUserRepo(IDbSession<ConnStrings> dbSession) 
+    : BaseRepo1<ConnStrings>(dbSession), IAppUserRepo{
     public  Task<AppUserAuth?> GetByLoginEmailAsync(string username, CancellationToken ct) =>
         BaseGetAsync<AppUserAuth, AppUserAuthDao>(
             $"select {DaoUtils.GetSelectColumns(typeof(AppUserAuthDao))} from {Procs.AppUserLoginGet} (@username)",
