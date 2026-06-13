@@ -138,7 +138,7 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
         }
     }
 
-    private async Task<bool> RollbackAsync(CancellationToken ct)
+    private async Task RollbackAsync(CancellationToken ct)
     {
         try
         {
@@ -148,7 +148,6 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
             }
 
             await DisposeTransactionAsync();
-            return true;
         }
         catch (Exception e)
         {
@@ -158,7 +157,6 @@ public sealed class DbSession<TDbKey>(IReadOnlyDictionary<TDbKey, string> connec
             }
 
             await DisposeTransactionAsync();
-            return false;
         }
     }
 
