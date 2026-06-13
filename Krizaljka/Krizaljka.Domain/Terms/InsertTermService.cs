@@ -48,6 +48,11 @@ public class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logger
                 DateTimeOffset.UtcNow,
                 ct);
 
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                // TODO insert description.
+            }
+
             return new SuccessInsert<long>(id);
         }
         catch (Exception e)
