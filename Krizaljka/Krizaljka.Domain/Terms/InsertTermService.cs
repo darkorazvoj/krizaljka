@@ -1,9 +1,10 @@
-﻿using Krizaljka.Domain.Core.Stuff.Services;
+﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
+using Krizaljka.Domain.Core.Stuff.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.Terms;
 
-public class InsertTermService(ITermRepo repo, ILogger<InsertTermService> logger)
+public class InsertTermService(ITermRepo repo, IDbSession<ConnStrings> dbSession, ILogger<InsertTermService> logger)
 {
     public async Task<IServiceResult> InvokeAsync(
         TermLanguage? language,

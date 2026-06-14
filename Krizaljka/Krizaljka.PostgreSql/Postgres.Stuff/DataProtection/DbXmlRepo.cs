@@ -1,5 +1,6 @@
 ﻿using System.Xml.Linq;
 using Dapper;
+using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Npgsql;
 

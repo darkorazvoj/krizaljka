@@ -1,4 +1,6 @@
-﻿namespace Krizaljka.PostgreSql.Postgres.Stuff;
+﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
+
+namespace Krizaljka.PostgreSql.Postgres.Stuff;
 
 public class ConnectionStrings(IReadOnlyDictionary<ConnStrings, string> connectionStrings)
 {
