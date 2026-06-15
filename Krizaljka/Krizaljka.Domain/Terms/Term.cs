@@ -43,6 +43,7 @@ public interface IInvalidTerm : ITerm
 public record Term(
     long Id,
     TermLanguage Language,
+    long NumOfDesc,
     string Description,
     string RawValue,
     string DenseValue,

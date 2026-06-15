@@ -36,6 +36,5 @@ public class InsertTermDescriptionService(ITermRepo repo, ILogger<InsertTermDesc
             logger.LogError("Error inserting a term description. {Message}", e.Message);
             return new Error("InsertTermDescriptionServiceFailed");
         }
-
     }
 }

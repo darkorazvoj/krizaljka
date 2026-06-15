@@ -30,6 +30,11 @@ public interface ITermRepo
 
     Task<Term?> GetAsync(long id, CancellationToken ct);
 
+    Task<Term?> GetByLanguageAndLettersAsync(
+        int languageId,
+        List<string> letters,
+        CancellationToken ct);
+
     Task<List<TermExport>> GetForExportAsync(int languageId, CancellationToken ct);
     Task<string?> UpdateIsActiveAsync(
         long id, 

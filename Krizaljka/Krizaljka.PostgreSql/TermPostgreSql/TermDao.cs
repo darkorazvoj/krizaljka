@@ -6,6 +6,7 @@ namespace Krizaljka.PostgreSql.TermPostgreSql;
 internal record TermDao(
     long Id,
     int LanguageId,
+    long NumOfDesc,
     string Description,
     string RawValue,
     string DenseValue,
@@ -27,6 +28,7 @@ internal record TermDao(
             object result = new Term(
                 Id,
                 (TermLanguage)LanguageId,
+                NumOfDesc,
                 Description,
                 RawValue,
                 DenseValue,

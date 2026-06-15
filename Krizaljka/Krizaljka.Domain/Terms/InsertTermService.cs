@@ -45,6 +45,12 @@ public class InsertTermService(
 
         return await dbSession.ExecuteInTransactionAsync(async cancellationToken =>
         {
+            var existingTerm = await repo.GetByLanguageAndLettersAsync(languageId, newTerm.Letters, cancellationToken);
+            if (existingTerm is not null)
+            {
+                return new RecordExists();
+            }
+
             var termInsertResult =
                 await InsertTermAsync(languageId, isPrivate, newTerm, batchId, ranById, cancellationToken);
 
@@ -67,7 +73,7 @@ public class InsertTermService(
 
             return successTermInsertResult;
 
-        }, ConnStrings.Au, ct);
+        }, ConnStrings.Core, ct);
 
     }
 

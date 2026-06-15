@@ -72,6 +72,18 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
             ConnStrings.Core,
             ct);
 
+    public Task<Term?> GetByLanguageAndLettersAsync(
+        int languageId,
+        List<string> letters,
+        CancellationToken ct) =>
+        BaseGetAsync<Term, TermDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(TermDao))} from {Procs.TermView} where languageid = @languageId AND letters = @lettersJson",
+            new SqlParams()
+                .Add("languageId", languageId)
+                .AddJsonList("lettersJson", letters),
+            ConnStrings.Core,
+            ct);
+
     public Task<Term?> GetAsync(long id, CancellationToken ct) =>
         BaseGetAsync<Term, TermDao>(
             $"select {DaoUtils.GetSelectColumns(typeof(TermDao))} from {Procs.TermView} where id = @id",
