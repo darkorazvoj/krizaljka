@@ -24,7 +24,6 @@ public record EmailNotVerified: IServiceResult;
 
 public record DatabaseOperationFailed : IServiceResult;
 
-
 public class ValidationErrors(List<string>? errors = null) : IServiceResult
 {
     public List<string> Errors { get; } = errors ?? [];

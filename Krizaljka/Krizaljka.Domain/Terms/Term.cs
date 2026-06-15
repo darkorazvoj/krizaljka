@@ -6,7 +6,7 @@ public interface ITerm;
 public interface INewTerm : ITerm
 {
     TermLanguage Language { get; }
-    string Description { get; }
+ //   string Description { get; }
     string RawValue { get; }
     string DenseValue { get; }
     List<string> Letters { get; }
@@ -66,7 +66,7 @@ public record TermExport(
 
 public record NewTerm(
     TermLanguage Language,
-    string Description,
+  //  string Description,
     string RawValue,
     string DenseValue,
     List<string> Letters,

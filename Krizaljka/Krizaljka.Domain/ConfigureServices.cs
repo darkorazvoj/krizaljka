@@ -28,6 +28,7 @@ public static class ConfigureServices
 
         services.AddScoped<GetUserByCredentialsService>();
         services.AddScoped<InsertTemplateService>();
+        services.AddScoped<InsertTermDescriptionService>();
         services.AddScoped<InsertTermService>();
 
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();

@@ -3,13 +3,11 @@ using Krizaljka.Domain.WordsConverters;
 
 namespace Krizaljka.Domain.Terms;
 
-public class StructureNewTermService
+public static class StructureNewTermService
 {
-    private const int DescriptionMaxLength = 40;
 
     public static ITerm Invoke(
         TermLanguage language, 
-        string description, 
         string term,
         bool isPrivate)
     {
@@ -18,11 +16,6 @@ public class StructureNewTermService
         {
             return new InvalidTerm("empty_or_containing_invalid_characters");
         }
-
-        var descTrimmed = description.TrimExtra();
-        var descCleaned = descTrimmed.Length > DescriptionMaxLength
-            ? descTrimmed[..(DescriptionMaxLength - 3)] + "<>!"
-            : descTrimmed;
 
         var termTrimmed = term.TrimExtra();
         if (termTrimmed.Length <= 0)
@@ -58,7 +51,6 @@ public class StructureNewTermService
 
         return new NewTerm(
             language,
-            descCleaned,
             termTrimmed.ToUpperInvariant(),
             denseValue.ToUpperInvariant(),
             lettersDense,

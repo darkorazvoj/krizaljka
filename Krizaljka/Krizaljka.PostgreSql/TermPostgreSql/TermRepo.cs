@@ -13,7 +13,6 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
 {
     public Task<long> InsertAsync(
         int languageId,
-        string description,
         string rawValue,
         string denseValue,
         List<string> letters,
@@ -25,10 +24,9 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct) => BaseExecuteWithOutAsync<long>(
-        $"call {Procs.TermInsert} (@languageid, @description, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @isActive, @isPrivate, @batchId, @createdOn, @RanById, null);",
+        $"call {Procs.TermInsert} (@languageid, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @isActive, @isPrivate, @batchId, @createdOn, @RanById, null);",
         new SqlParams()
             .Add("languageid", languageId)
-            .Add("description", description)
             .Add("rawValue", rawValue)
             .Add("denseValue", denseValue)
             .AddJsonList("lettersJson", letters)
@@ -37,6 +35,25 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
             .Add("length", length)
             .Add("isactive", true)
             .Add("isprivate", isPrivate)
+            .Add("batchId", batchId)
+            .Add("createdOn", createdOn)
+            .Add("ranById", ranById)
+            .AddOutput("newId", DbType.Int64),
+        "newId",
+        ConnStrings.Core,
+        ct);
+
+    public Task<long> InsertDescriptionAsync(
+        long termId,
+        string description,
+        long? batchId,
+        long ranById,
+        DateTimeOffset createdOn,
+        CancellationToken ct) => BaseExecuteWithOutAsync<long>(
+        $"call {Procs.TermDescriptionInsert} (@termId, @description, @batchId, @createdOn, @RanById, null);",
+        new SqlParams()
+            .Add("termId", termId)
+            .Add("description", description)
             .Add("batchId", batchId)
             .Add("createdOn", createdOn)
             .Add("ranById", ranById)

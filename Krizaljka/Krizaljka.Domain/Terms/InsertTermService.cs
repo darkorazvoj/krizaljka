@@ -4,7 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.Terms;
 
-public class InsertTermService(ITermRepo repo, IDbSession<ConnStrings> dbSession, ILogger<InsertTermService> logger)
+public class InsertTermService(
+    ITermRepo repo, 
+    IDbSession<ConnStrings> dbSession, 
+    InsertTermDescriptionService insertTermDescriptionService,
+    ILogger<InsertTermService> logger)
 {
     public async Task<IServiceResult> InvokeAsync(
         TermLanguage? language,
@@ -20,23 +24,65 @@ public class InsertTermService(ITermRepo repo, IDbSession<ConnStrings> dbSession
             return new InvalidRequestWithReason("Missing language");
         }
 
+        var languageId = (int)language.Value;
+
         if (string.IsNullOrWhiteSpace(term))
         {
             return new InvalidRequestWithReason("Missing term");
         }
 
-        var structuredTerm = StructureNewTermService.Invoke(language.Value, description ?? string.Empty, term, isPrivate);
+        var structuredTerm = StructureNewTermService.Invoke(language.Value, term, isPrivate);
 
         if (structuredTerm is not INewTerm newTerm)
         {
             return new InvalidRequestWithReason("Invalid term");
         }
 
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return await InsertTermAsync(languageId, isPrivate, newTerm, batchId, ranById, ct);
+        }
+
+        return await dbSession.ExecuteInTransactionAsync(async cancellationToken =>
+        {
+            var termInsertResult =
+                await InsertTermAsync(languageId, isPrivate, newTerm, batchId, ranById, cancellationToken);
+
+            if (termInsertResult is not SuccessInsert<long> successTermInsertResult)
+            {
+                return termInsertResult;
+            }
+
+            var descriptionInsertResult = await insertTermDescriptionService.InvokeAsync(
+                successTermInsertResult.Id,
+                description,
+                batchId,
+                ranById,
+                cancellationToken);
+
+            if (descriptionInsertResult is not SuccessInsert<long>)
+            {
+                return descriptionInsertResult;
+            }
+
+            return successTermInsertResult;
+
+        }, ConnStrings.Au, ct);
+
+    }
+
+    private async Task<IServiceResult> InsertTermAsync(
+        int languageId, 
+        bool isPrivate, 
+        INewTerm newTerm, 
+        long? batchId, 
+        long ranById,
+        CancellationToken ct)
+    {
         try
         {
             var id = await repo.InsertAsync(
-                (int)language.Value,
-                newTerm.Description,
+                languageId,
                 newTerm.RawValue,
                 newTerm.DenseValue,
                 newTerm.Letters,
@@ -49,11 +95,6 @@ public class InsertTermService(ITermRepo repo, IDbSession<ConnStrings> dbSession
                 DateTimeOffset.UtcNow,
                 ct);
 
-            if (!string.IsNullOrWhiteSpace(description))
-            {
-                // TODO insert description.
-            }
-
             return new SuccessInsert<long>(id);
         }
         catch (Exception e)
@@ -61,6 +102,5 @@ public class InsertTermService(ITermRepo repo, IDbSession<ConnStrings> dbSession
             logger.LogError("Error inserting a term. {EMessage}", e.Message);
             return new Error("InsertTermServiceFailed");
         }
-
     }
 }

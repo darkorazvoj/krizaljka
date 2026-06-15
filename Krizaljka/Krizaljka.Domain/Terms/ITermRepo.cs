@@ -6,7 +6,6 @@ public interface ITermRepo
 {
     Task<long> InsertAsync(
         int languageId,
-        string description,
         string rawValue,
         string denseValue,
         List<string> letters,
@@ -14,6 +13,14 @@ public interface ITermRepo
         List<int> dashIndexes,
         int length,
         bool isPrivate,
+        long? batchId,
+        long ranById,
+        DateTimeOffset createdOn,
+        CancellationToken ct);
+
+    Task<long> InsertDescriptionAsync(
+        long termId,
+        string description,
         long? batchId,
         long ranById,
         DateTimeOffset createdOn,

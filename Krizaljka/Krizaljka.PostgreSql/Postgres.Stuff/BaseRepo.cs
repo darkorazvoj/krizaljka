@@ -17,77 +17,124 @@ public abstract class BaseRepo<TDbKey>(IDbSession<TDbKey> dbSession)
         SqlParams parameters,
         string outParamName,
         TDbKey connKey,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+        var conn = await GetConnectionAsync(connKey, ct);
 
         if (conn is null)
         {
             return default;
         }
 
-        await conn.ExecuteAsync(sql, parameters);
-        return parameters.GetOutput<T?>(outParamName);
+        try
+        {
+            await conn.ExecuteAsync(
+                new CommandDefinition(
+                    sql,
+                    parameters,
+                    transaction: dbSession.Transaction,
+                    cancellationToken: ct
+                ));
+            return parameters.GetOutput<T?>(outParamName);
+        }
+        finally
+        {
+            await DisposeConnectionIfNeeded(conn);
+        }
     }
+
 
     protected async Task<TCoreModel?> BaseGetAsync<TCoreModel, TDao>(
         string sql,
         SqlParams parameters,
         TDbKey connKey,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
         where TDao : IDao
     {
-        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+        var conn = await GetConnectionAsync(connKey, ct);
 
         if (conn is null)
         {
             return default;
         }
 
-        var dao =
-            await conn.QuerySingleOrDefaultAsync<TDao>(sql, parameters);
-
-        return dao is null ? default : dao.MapTo<TCoreModel>();
+        try
+        {
+            var dao =
+                await conn.QuerySingleOrDefaultAsync<TDao>(
+                    new CommandDefinition(
+                        sql, parameters,
+                        transaction: dbSession.Transaction,
+                        cancellationToken: ct));
+            
+            return dao is null ? default : dao.MapTo<TCoreModel>();
+        }
+        finally
+        {
+            await DisposeConnectionIfNeeded(conn);
+        }
     }
 
     protected async Task<List<TCoreModel>> BaseGetListAsync<TCoreModel, TDao>(
         string sql,
         SqlParams parameters,
         TDbKey connKey,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
         where TDao : IDao
     {
-        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+        var conn = await GetConnectionAsync(connKey, ct);
 
         if (conn is null)
         {
             return [];
         }
 
-        var listDao =
-            (await conn.QueryAsync<TDao>(sql, parameters))
-            .ToList();
+        try
+        {
+            var listDao =
+                (await conn.QueryAsync<TDao>(new CommandDefinition(
+                    sql,
+                    parameters,
+                    transaction: dbSession.Transaction,
+                    cancellationToken: ct)))
+                .ToList();
 
-        var list = listDao.Select(x => x.MapTo<TCoreModel>())
-            .ToList();
+            var list = listDao.Select(x => x.MapTo<TCoreModel>())
+                .ToList();
 
-        return list;
+            return list;
+        }
+        finally
+        {
+            await DisposeConnectionIfNeeded(conn);
+        }
     }
 
     protected async Task BaseExecuteAsync(
         string sql,
         SqlParams? parameters,
         TDbKey connKey,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        await using var conn = await GetConnectionAsync(connKey, cancellationToken);
+        var conn = await GetConnectionAsync(connKey, ct);
 
         if (conn is null)
         {
             return;
         }
 
-        await conn.ExecuteAsync(sql, parameters);
+        try
+        {
+            await conn.ExecuteAsync(new CommandDefinition(
+                sql,
+                parameters,
+                transaction: dbSession.Transaction,
+                cancellationToken: ct));
+        }
+        finally
+        {
+            await DisposeConnectionIfNeeded(conn);
+        }
     }
 
     internal async Task<PaginatedResult<List<TCoreModel>>> BaseGetPaginatedListAsync<TCoreModel, TDao>(
@@ -97,36 +144,58 @@ public abstract class BaseRepo<TDbKey>(IDbSession<TDbKey> dbSession)
         string? fixedWhereCondition,
         TDbKey connKey,
         CancellationToken ct)
-    where TDao : IDao
+        where TDao : IDao
     {
         var daoPaginationParameters = getDaoPaginationParameters();
         var paginationParameters = PaginationUtils.GetPaginationParameters(
             paginationCore,
             daoPaginationParameters);
 
-        await using var conn = await GetConnectionAsync(connKey, ct);
+        var conn = await GetConnectionAsync(connKey, ct);
 
         if (conn is null)
         {
             return new PaginatedResult<List<TCoreModel>>([], null);
         }
 
-        var listDao = (await conn.QueryAsync<TDao>(
-                PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters, fixedWhereCondition),
-                paginationParameters.DynamicParameters))
-            .ToList();
-
-        long? total = null;
-        if (paginationParameters.GetTotal)
+        try
         {
-            total = await conn.ExecuteScalarAsync<long>(
-                PaginationOffsetUtils.GetSqlQueryForTotal(viewName, paginationParameters, fixedWhereCondition),
-                paginationParameters.DynamicParameters);
+            var listDao = (await conn.QueryAsync<TDao>(new CommandDefinition(
+                    PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters,
+                        fixedWhereCondition),
+                    paginationParameters.DynamicParameters,
+                    transaction: dbSession.Transaction,
+                    cancellationToken: ct)))
+                .ToList();
+
+            long? total = null;
+            if (paginationParameters.GetTotal)
+            {
+                total = await conn.ExecuteScalarAsync<long>(
+                    new CommandDefinition(
+                        PaginationOffsetUtils.GetSqlQueryForTotal(viewName, paginationParameters, fixedWhereCondition),
+                        paginationParameters.DynamicParameters,
+                        transaction: dbSession.Transaction,
+                        cancellationToken: ct));
+            }
+
+            var list = listDao.Select(x => x.MapTo<TCoreModel>())
+                .ToList();
+
+            return new PaginatedResult<List<TCoreModel>>(list, total);
         }
+        finally
+        {
+            await DisposeConnectionIfNeeded(conn);
 
-        var list = listDao.Select(x => x.MapTo<TCoreModel>())
-            .ToList();
+        }
+    }
 
-        return new PaginatedResult<List<TCoreModel>>(list, total);
+    private async Task DisposeConnectionIfNeeded(NpgsqlConnection conn)
+    {
+        if (!dbSession.HasTransaction)
+        {
+            await conn.DisposeAsync();
+        }
     }
 }
