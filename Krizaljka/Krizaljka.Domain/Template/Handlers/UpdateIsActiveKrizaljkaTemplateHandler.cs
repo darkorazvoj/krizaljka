@@ -49,9 +49,7 @@ internal class UpdateIsActiveTermHandler(
                 logger.LogWarning("Update failed, database error. {sqlState}, {message}", e.SqlState, e.Message);
             }
 
-            return e.SqlState == IDatabaseUtils.InvalidChangestampCode
-                ? new InvalidChangestamp()
-                : new InvalidRequestWithReason(dbUtils.MapSqlStateToError(e.SqlState));
+            return dbUtils.GetSqlErrorResult(e.SqlState);
         }
         catch (Exception e)
         {

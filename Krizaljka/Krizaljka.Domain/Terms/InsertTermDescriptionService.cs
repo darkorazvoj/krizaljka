@@ -1,9 +1,14 @@
-﻿using Krizaljka.Domain.Core.Stuff.Services;
+﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
+using Krizaljka.Domain.Core.Stuff.Services;
 using Microsoft.Extensions.Logging;
+using System.Data.Common;
 
 namespace Krizaljka.Domain.Terms;
 
-public class InsertTermDescriptionService(ITermRepo repo, ILogger<InsertTermDescriptionService> logger)
+public class InsertTermDescriptionService(
+    ITermRepo repo, 
+    IDatabaseUtils dbUtils,
+    ILogger<InsertTermDescriptionService> logger)
 {
     public async Task<IServiceResult> InvokeAsync(
         long termId,
@@ -30,6 +35,15 @@ public class InsertTermDescriptionService(ITermRepo repo, ILogger<InsertTermDesc
                 ct);
 
             return new SuccessInsert<long>(id);
+        }
+        catch (DbException e)
+        {
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("Database error. {sqlState}, {message}", e.SqlState, e.Message);
+            }
+
+            return dbUtils.GetSqlErrorResult(e.SqlState);
         }
         catch (Exception e)
         {
