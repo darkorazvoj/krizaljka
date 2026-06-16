@@ -11,7 +11,7 @@ public record InsertTermServiceRequest(
     string? Term,
     bool? IsPrivate) : IServiceRequest;
 
-internal class InsertTermHandler(
+internal class InsertTermDescriptionHandler(
     IAuthUser authUser,
     InsertTermService insertTermService) : IAppRequestHandler<InsertTermServiceRequest>
 {

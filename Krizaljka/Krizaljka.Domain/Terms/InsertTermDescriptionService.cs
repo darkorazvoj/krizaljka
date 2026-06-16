@@ -11,12 +11,17 @@ public class InsertTermDescriptionService(
     ILogger<InsertTermDescriptionService> logger)
 {
     public async Task<IServiceResult> InvokeAsync(
-        long termId,
+        long? termId,
         string? description,
         long? batchId,
         long ranById,
         CancellationToken ct)
     {
+        if (!termId.HasValue)
+        {
+            return new InvalidRequestWithReason("missing_termId");
+        }
+
         var preparedDescription = PrepareDescriptionService.Invoke(description);
 
         if (string.IsNullOrWhiteSpace(preparedDescription))
@@ -27,7 +32,7 @@ public class InsertTermDescriptionService(
         try
         {
             var id = await repo.InsertDescriptionAsync(
-                termId,
+                termId.Value,
                 preparedDescription,
                 batchId,
                 ranById,
