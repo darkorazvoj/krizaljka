@@ -145,7 +145,7 @@ while (true)
 
             break;
 
-            static bool IsExit(string? s) => s is not null && s.ToUpper() == "X";
+            //static bool IsExit(string? s) => s is not null && s.ToUpper() == "X";
 
         case "wl":
             if (pojmoviDb?.Terms is null)

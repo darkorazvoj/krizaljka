@@ -1,5 +1,5 @@
 ﻿using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
-using Krizaljka.Domain.TermDescription;
+using Krizaljka.Domain.TermDescription.Handlers;
 using Krizaljka.WebApi.Models.TermDescription;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

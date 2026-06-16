@@ -1,9 +1,8 @@
 ﻿using Krizaljka.Domain.Core.Stuff;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
-using Krizaljka.Domain.Terms;
 
-namespace Krizaljka.Domain.TermDescription;
+namespace Krizaljka.Domain.TermDescription.Handlers;
 
 
 public record InsertTermDescriptionServiceRequest(

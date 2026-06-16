@@ -43,25 +43,6 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         ConnStrings.Core,
         ct);
 
-    public Task<long> InsertDescriptionAsync(
-        long termId,
-        string description,
-        long? batchId,
-        long ranById,
-        DateTimeOffset createdOn,
-        CancellationToken ct) => BaseExecuteWithOutAsync<long>(
-        $"call {Procs.TermDescriptionInsert} (@termId, @description, @batchId, @createdOn, @RanById, null);",
-        new SqlParams()
-            .Add("termId", termId)
-            .Add("description", description)
-            .Add("batchId", batchId)
-            .Add("createdOn", createdOn)
-            .Add("ranById", ranById)
-            .AddOutput("newId", DbType.Int64),
-        "newId",
-        ConnStrings.Core,
-        ct);
-
     public Task<PaginatedResult<List<TermListItem>>> GetListAsync(IPaginationCore paginationCore,
         CancellationToken ct) =>
         BaseGetPaginatedListAsync<TermListItem, TermListItemDao>(

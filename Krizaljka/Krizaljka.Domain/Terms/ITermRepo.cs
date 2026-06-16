@@ -18,14 +18,6 @@ public interface ITermRepo
         DateTimeOffset createdOn,
         CancellationToken ct);
 
-    Task<long> InsertDescriptionAsync(
-        long termId,
-        string description,
-        long? batchId,
-        long ranById,
-        DateTimeOffset createdOn,
-        CancellationToken ct);
-
     Task<PaginatedResult<List<TermListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct);
 
     Task<Term?> GetAsync(long id, CancellationToken ct);

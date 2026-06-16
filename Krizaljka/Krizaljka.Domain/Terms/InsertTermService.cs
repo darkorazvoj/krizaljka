@@ -1,5 +1,6 @@
 ﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.TermDescription;
 using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.Terms;

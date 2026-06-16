@@ -1,12 +1,13 @@
-﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
+﻿using System.Data.Common;
+using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.Terms;
 using Microsoft.Extensions.Logging;
-using System.Data.Common;
 
-namespace Krizaljka.Domain.Terms;
+namespace Krizaljka.Domain.TermDescription;
 
 public class InsertTermDescriptionService(
-    ITermRepo repo, 
+    ITermDescriptionRepo repo, 
     IDatabaseUtils dbUtils,
     ILogger<InsertTermDescriptionService> logger)
 {

@@ -5,6 +5,7 @@ using Krizaljka.Domain.Core.Stuff.Dummies;
 using Krizaljka.Domain.Core.Stuff.Extensions;
 using Krizaljka.Domain.Core.Stuff.Hashers;
 using Krizaljka.Domain.Template.Services;
+using Krizaljka.Domain.TermDescription;
 using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.User.Services;
 using Microsoft.Extensions.DependencyInjection;

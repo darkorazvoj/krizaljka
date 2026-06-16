@@ -2,12 +2,14 @@
 using Dapper;
 using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Template;
+using Krizaljka.Domain.TermDescription;
 using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.User.Repo;
 using Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.DapperSqlMappers;
 using Krizaljka.PostgreSql.Postgres.Stuff.DataProtection;
+using Krizaljka.PostgreSql.TermDescriptionPostgreSql;
 using Krizaljka.PostgreSql.TermPostgreSql;
 using Krizaljka.PostgreSql.User;
 using Microsoft.AspNetCore.DataProtection.Repositories;
@@ -41,6 +43,7 @@ public static class ConfigureServices
         services.AddScoped<IDbSession<ConnStrings>, DbSession>();
 
         services.AddScoped<IKrizaljkaTemplateRepo, KrizaljkaTemplateRepo>();
+        services.AddScoped<ITermDescriptionRepo, TermDescriptionRepo>();
         services.AddScoped<ITermRepo, TermRepo>();
         services.AddScoped<ITermImportBatchRepo, TermImportBatchRepo>();
         services.AddScoped<IAppUserRepo, AppUserRepo>();
