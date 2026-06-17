@@ -34,12 +34,6 @@ public interface ITermRepo
         string changestamp,
         CancellationToken ct);
 
-    Task<string?> UpdateDescriptionAsync(
-        long id,
-        string description,
-        string changestamp,
-        CancellationToken ct);
-
     Task<string?> UpdateTermAsync(
         long id,
         string rawValue,

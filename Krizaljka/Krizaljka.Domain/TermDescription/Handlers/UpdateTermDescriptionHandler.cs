@@ -4,9 +4,10 @@ using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.Extensions;
+using Krizaljka.Domain.Terms.Handlers;
 using Microsoft.Extensions.Logging;
 
-namespace Krizaljka.Domain.Terms.Handlers;
+namespace Krizaljka.Domain.TermDescription.Handlers;
 
 
 public record UpdateTermDescriptionServiceRequest(
@@ -15,12 +16,11 @@ public record UpdateTermDescriptionServiceRequest(
     string? Changestamp) : IServiceRequest;
 
 internal class UpdateTermDescriptionHandler(
-    ITermRepo repo,
+    ITermDescriptionRepo repo,
     IDatabaseUtils dbUtils,
     ILogger<UpdateTermHandler> logger) : IAppRequestHandler<UpdateTermDescriptionServiceRequest>
 {
     private const int DescriptionMaxLength = 40;
-
 
     public async Task<IServiceResult> HandleAsync(UpdateTermDescriptionServiceRequest request, CancellationToken ct)
     {
@@ -54,7 +54,7 @@ internal class UpdateTermDescriptionHandler(
         try
         {
             var newChangestamp =
-                await repo.UpdateDescriptionAsync(
+                await repo.UpdateAsync(
                     request.Id.Value,
                     descCleaned,
                     request.Changestamp,
@@ -69,15 +69,13 @@ internal class UpdateTermDescriptionHandler(
                 logger.LogWarning("Update failed, database error. {sqlState}, {message}", e.SqlState, e.Message);
             }
 
-            return e.SqlState == IDatabaseUtils.InvalidChangestampCode
-                ? new InvalidChangestamp()
-                : new InvalidRequestWithReason(dbUtils.MapSqlStateToError(e.SqlState));
+            return dbUtils.GetSqlErrorResult(e.SqlState);
         }
         catch (Exception e)
         {
             if (logger.IsEnabled(LogLevel.Error))
             {
-                logger.LogError(e, "Term update failed");
+                logger.LogError(e, "Term description update failed");
             }
 
             return new Error(string.Empty);

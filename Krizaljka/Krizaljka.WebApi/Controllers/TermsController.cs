@@ -186,25 +186,6 @@ public class TermsController(
             ct));
     }
 
-    [Route(BaseRute + "/{id:long}/description")]
-    [HttpPut]
-    public async Task<IActionResult> UpdateDescriptionAsync(
-        [FromRoute] long id,
-        [FromBody] UpdateTermDescriptionRequest? request,
-        CancellationToken ct)
-    {
-        if (request is null)
-        {
-            return BadRequestBodyMissing();
-        }
-
-        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateTermDescriptionServiceRequest(
-                id,
-                request.Description,
-                request.Changestamp),
-            ct));
-    }
-
     [Route(BaseRute + "/{id:long}/term")]
     [HttpPut]
     public async Task<IActionResult> UpdateTermAsync(

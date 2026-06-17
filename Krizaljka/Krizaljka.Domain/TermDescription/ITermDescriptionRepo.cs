@@ -18,4 +18,6 @@ public interface ITermDescriptionRepo
     Task<PaginatedResult<List<TermDescriptionListItem>>> GetListAsync(
         IPaginationCore paginationCore,
         CancellationToken ct);
+
+    Task<string?> UpdateAsync(long id, string description, string changestamp, CancellationToken ct);
 }

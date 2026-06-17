@@ -4,6 +4,7 @@ using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.TermDescription;
 using Krizaljka.Domain.TermDescription.Handlers;
 using Krizaljka.WebApi.Models;
+using Krizaljka.WebApi.Models.Term;
 using Krizaljka.WebApi.Models.TermDescription;
 using Krizaljka.WebApi.PaginationUtils;
 using Microsoft.AspNetCore.Authorization;
@@ -92,5 +93,24 @@ public class TermDescriptionsController(AppDispatcher dispatcher) : BaseControll
         }
 
         return MapResult(result);
+    }
+
+    [Route(BaseRute + "/{id:long}")]
+    [HttpPut]
+    public async Task<IActionResult> UpdateDescriptionAsync(
+        [FromRoute] long id,
+        [FromBody] UpdateTermDescriptionRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateTermDescriptionServiceRequest(
+                id,
+                request.Description,
+                request.Changestamp),
+            ct));
     }
 }
