@@ -10,4 +10,6 @@ public interface ITermDescriptionRepo
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct);
+
+    Task<TermDescription?> GetAsync(long id, CancellationToken ct);
 }

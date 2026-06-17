@@ -10,9 +10,9 @@ namespace Krizaljka.Domain.Terms.Handlers;
 public record GetTermServiceRequest(long Id) : IServiceRequest;
 
 
-internal class GetTermHandler(
+internal class GetTermDescriptionHandler(
     ITermRepo repo,
-    ILogger<GetTermHandler> logger)
+    ILogger<GetTermDescriptionHandler> logger)
     : IAppRequestHandler<GetTermServiceRequest>
 {
     public async Task<IServiceResult> HandleAsync(GetTermServiceRequest request, CancellationToken ct)

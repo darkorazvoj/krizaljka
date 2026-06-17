@@ -28,4 +28,12 @@ internal class TermDescriptionRepo(IDbSession<ConnStrings> dbSession)
         "newId",
         ConnStrings.Core,
         ct);
+
+    public Task<TermDescription?> GetAsync(long id, CancellationToken ct) =>
+        BaseGetAsync<TermDescription, TermDescriptionDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(TermDescriptionDao))} from {Procs.TermDescriptionView} where id = @id",
+            new SqlParams()
+                .Add("id", id),
+            ConnStrings.Core,
+            ct);
 }
