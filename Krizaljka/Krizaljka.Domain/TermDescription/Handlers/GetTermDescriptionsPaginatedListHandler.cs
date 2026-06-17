@@ -3,28 +3,28 @@ using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Krizaljka.Domain.Terms.Handlers;
+namespace Krizaljka.Domain.TermDescription.Handlers;
 
-public record GetTermsPaginatedListServiceRequest(IPaginationCore PaginationCore) : IServiceRequest;
+public record GetTermsDescriptionsPaginatedListServiceRequest(IPaginationCore PaginationCore) : IServiceRequest;
 
 
 internal class GetTermDescriptionsPaginatedListHandler(
-    ITermRepo repo,
+    ITermDescriptionRepo repo,
     ILogger<GetTermDescriptionsPaginatedListHandler> logger)
-    : IAppRequestHandler<GetTermsPaginatedListServiceRequest>
+    : IAppRequestHandler<GetTermsDescriptionsPaginatedListServiceRequest>
 {
-    public async Task<IServiceResult> HandleAsync(GetTermsPaginatedListServiceRequest request, CancellationToken ct)
+    public async Task<IServiceResult> HandleAsync(GetTermsDescriptionsPaginatedListServiceRequest request, CancellationToken ct)
     {
         try
         {
             var list = await repo.GetListAsync(request.PaginationCore, ct);
-            return new Success<PaginatedResult<List<TermListItem>>>(list);
+            return new Success<PaginatedResult<List<TermDescriptionListItem>>>(list);
         }
         catch (Exception e)
         {
             if (logger.IsEnabled(LogLevel.Error))
             {
-                logger.LogError(e, "Get terms failed");
+                logger.LogError(e, "Get term descriptions failed");
             }
 
             return new Error(string.Empty);

@@ -1,6 +1,7 @@
 ﻿using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using System.Data;
+using Krizaljka.Domain.Core.Stuff.Pagination;
 using Krizaljka.Domain.TermDescription;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using Krizaljka.PostgreSql.Sql;
@@ -34,6 +35,17 @@ internal class TermDescriptionRepo(IDbSession<ConnStrings> dbSession)
             $"select {DaoUtils.GetSelectColumns(typeof(TermDescriptionDao))} from {Procs.TermDescriptionView} where id = @id",
             new SqlParams()
                 .Add("id", id),
+            ConnStrings.Core,
+            ct);
+
+    public Task<PaginatedResult<List<TermDescriptionListItem>>> GetListAsync(
+        IPaginationCore paginationCore,
+        CancellationToken ct) =>
+        BaseGetPaginatedListAsync<TermDescriptionListItem, TermDescriptionListItemDao>(
+            paginationCore,
+            Procs.TermDescriptionView,
+            TermDescriptionListItemDao.ToDaoPaginationParameters,
+            null,
             ConnStrings.Core,
             ct);
 }
