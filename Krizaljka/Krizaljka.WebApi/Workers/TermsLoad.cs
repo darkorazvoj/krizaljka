@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.TermDescription;
 
 namespace Krizaljka.WebApi.Workers;
 
@@ -20,7 +21,7 @@ internal static class TermsLoad
         ILogger logger,
         CancellationToken ct)
     {
-        var list = GetTemplates(fileBatch, logger);
+        var list = GetTerms(fileBatch, logger);
 
         if (list.Count == 0)
         {
@@ -30,6 +31,7 @@ internal static class TermsLoad
         await using var scope = scopeFactory.CreateAsyncScope();
         var batchRepo = scope.ServiceProvider.GetRequiredService<ITermImportBatchRepo>();
         var insertTermService = scope.ServiceProvider.GetRequiredService<InsertTermService>();
+        var insertTermDescriptionService = scope.ServiceProvider.GetRequiredService<InsertTermDescriptionService>();
         
         var batchId = await batchRepo.InsertAsync(fileBatch.RanById, DateTimeOffset.UtcNow, ct);
 
@@ -45,7 +47,38 @@ internal static class TermsLoad
                     fileBatch.RanById,
                     ct);
 
-            if (insertResult is not SuccessInsert<long>)
+            if (insertResult is RecordExists recordExists)
+            {
+                if (recordExists.ExistingId is null)
+                {
+                    logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Could NOT get term ID.", termJson.Term);
+                    continue;
+                }
+                
+                var existingId =  Convert.ToInt64(recordExists.ExistingId);
+                if (existingId > 0)
+                {
+                    var insertDescriptionResult = await insertTermDescriptionService.InvokeAsync(
+                        existingId,
+                        termJson.Description,
+                        batchId,
+                        fileBatch.RanById,
+                        ct);
+
+                    if (insertDescriptionResult is not SuccessInsert<long>)
+                    {
+                        logger.LogWarning(message: "Term '{term}' exists, description NOT saved.", termJson.Term);
+                        
+                    }
+                }
+                else
+                {
+                    logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Invalid term ID {termId}",
+                        termJson.Term, existingId);
+                }
+                
+            }
+            else if (insertResult is not SuccessInsert<long>)
             {
                 logger.LogWarning(message: "Term not saved {term}",
                     string.IsNullOrWhiteSpace(termJson.Term) ? "<empty>" : termJson.Term);
@@ -53,7 +86,7 @@ internal static class TermsLoad
         }
     }
 
-    private static List<TermJson> GetTemplates(TermFileBatch fileBatch, ILogger logger)
+    private static List<TermJson> GetTerms(TermFileBatch fileBatch, ILogger logger)
     {
         List<TermJson> terms = [];
 
@@ -69,7 +102,6 @@ internal static class TermsLoad
 
             var list = TryDeserializeList(fileRecord.Content, logger);
             terms.AddRange(list);
-
         }
 
         return terms;

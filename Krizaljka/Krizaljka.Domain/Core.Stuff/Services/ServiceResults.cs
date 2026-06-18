@@ -11,7 +11,7 @@ public record SuccessInsert<T>(T Id) : IServiceResult, ICommittableResult;
 public record Success<T>(T Data) : IServiceResult, ICommittableResult;
 public record UpdateSuccessChangestamp<T>(T Changestamp) : IServiceResult, ICommittableResult;
 
-public record RecordExists : IServiceResult;
+public record RecordExists(object? ExistingId = null) : IServiceResult;
 public record NoData : IServiceResult, ICommittableResult;
 
 public record Error(string Message) : IServiceResult;

@@ -49,7 +49,7 @@ public class InsertTermService(
             var existingTerm = await repo.GetByLanguageAndLettersAsync(languageId, newTerm.Letters, cancellationToken);
             if (existingTerm is not null)
             {
-                return new RecordExists();
+                return new RecordExists(existingTerm.Id);
             }
 
             var termInsertResult =
