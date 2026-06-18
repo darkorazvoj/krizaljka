@@ -264,7 +264,8 @@ while (true)
                 foreach (var validTerm in result)
                 {
                     subCounter++;
-                    Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}, ({validTerm.Description})");
+                    //Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}, ({validTerm.Description})");
+                    Console.WriteLine($"{validTerm.Id} - {validTerm.RawValue}");
 
                     if (subCounter >= maxWordsPerPage)
                     {

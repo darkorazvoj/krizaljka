@@ -21,7 +21,6 @@ public interface IValidTerm : ITerm
 {
     long Id { get; }
     TermLanguage Language { get; }
-    string Description { get; }
     string RawValue { get; }
     string DenseValue { get; }
     IReadOnlyList<string> Letters { get; }
@@ -44,7 +43,6 @@ public record Term(
     long Id,
     TermLanguage Language,
     long NumOfDesc,
-    string Description,
     string RawValue,
     string DenseValue,
     IReadOnlyList<string> Letters,
