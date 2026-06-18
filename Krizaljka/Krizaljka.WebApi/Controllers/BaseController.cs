@@ -9,6 +9,7 @@ public abstract class BaseController : Controller
     protected IActionResult MapResult<T>(IServiceResult? serviceResult) =>
         serviceResult switch
         {
+            Success => NoContent(),
             Success<T> successData => Ok(successData.Data),
             SuccessInsert<T> successInsert => Created(successInsert.Id?.ToString(), null),
             UpdateSuccessChangestamp<T> updateSuccessChangestamp => Ok(new

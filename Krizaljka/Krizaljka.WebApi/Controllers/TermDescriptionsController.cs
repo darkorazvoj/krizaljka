@@ -4,7 +4,6 @@ using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.TermDescription;
 using Krizaljka.Domain.TermDescription.Handlers;
 using Krizaljka.WebApi.Models;
-using Krizaljka.WebApi.Models.Term;
 using Krizaljka.WebApi.Models.TermDescription;
 using Krizaljka.WebApi.PaginationUtils;
 using Microsoft.AspNetCore.Authorization;
@@ -16,9 +15,9 @@ namespace Krizaljka.WebApi.Controllers;
 [ApiController]
 public class TermDescriptionsController(AppDispatcher dispatcher) : BaseController
 {
-    private const string BaseRute = "term-descriptions";
+    private const string BaseRoute = "term-descriptions";
 
-    [Route(BaseRute)]
+    [Route(BaseRoute)]
     [HttpPost]
     public async Task<IActionResult> InsertAsync(
         [FromBody] InsertTermDescriptionRequest? request,
@@ -46,7 +45,7 @@ public class TermDescriptionsController(AppDispatcher dispatcher) : BaseControll
         return MapResult<long>(result);
     }
 
-    [Route(BaseRute + "/{id:long}")]
+    [Route(BaseRoute + "/{id:long}")]
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromRoute] long id, CancellationToken ct)
     {
@@ -68,7 +67,7 @@ public class TermDescriptionsController(AppDispatcher dispatcher) : BaseControll
         return MapResult(result);
     }
 
-    [Route(BaseRute)]
+    [Route(BaseRoute)]
     [HttpGet]
     public async Task<IActionResult> GetPaginatedListAsync([FromQuery] string? pg, CancellationToken ct)
     {
@@ -95,11 +94,11 @@ public class TermDescriptionsController(AppDispatcher dispatcher) : BaseControll
         return MapResult(result);
     }
 
-    [Route(BaseRute + "/{id:long}")]
+    [Route(BaseRoute + "/{id:long}")]
     [HttpPut]
     public async Task<IActionResult> UpdateDescriptionAsync(
         [FromRoute] long id,
-        [FromBody] UpdateTermDescriptionRequest? request,
+        [FromBody] TermDescriptionUpdateRequest? request,
         CancellationToken ct)
     {
         if (request is null)
@@ -113,4 +112,18 @@ public class TermDescriptionsController(AppDispatcher dispatcher) : BaseControll
                 request.Changestamp),
             ct));
     }
+
+    [Route(BaseRoute + "/{id:long}")]
+    [HttpDelete]
+    public async Task<IActionResult> DeleteAsync(
+        [FromRoute] long id,
+        [FromBody] TermDescriptionDeleteRequest? request,
+        CancellationToken ct) =>
+        request is null
+            ? BadRequestBodyMissing()
+            : MapResult(await dispatcher.DispatchAsync(new DeleteTermDescriptionServiceRequest(
+                    id,
+                    request.Changestamp),
+                ct));
+
 }

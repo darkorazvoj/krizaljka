@@ -20,4 +20,9 @@ public interface ITermDescriptionRepo
         CancellationToken ct);
 
     Task<string?> UpdateAsync(long id, string description, string changestamp, CancellationToken ct);
+
+    Task DeleteAsync(
+        long id,
+        string changestamp,
+        CancellationToken ct);
 }

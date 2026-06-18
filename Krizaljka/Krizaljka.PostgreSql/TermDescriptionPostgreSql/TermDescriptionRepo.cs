@@ -61,4 +61,16 @@ internal class TermDescriptionRepo(IDbSession<ConnStrings> dbSession)
             "newchangestamp",
             ConnStrings.Core,
             ct);
+
+    public Task DeleteAsync(
+        long id,
+        string changestamp,
+        CancellationToken ct) =>
+        BaseExecuteAsync(
+            $"call {Procs.TermDescriptionDelete}(@id, @changestamp);",
+            new SqlParams()
+                .Add("id", id)
+                .Add("changestamp", changestamp),
+            ConnStrings.Core,
+            ct);
 }

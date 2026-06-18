@@ -3,26 +3,22 @@ using Krizaljka.Domain.Core.Stuff;
 using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
-using Krizaljka.Domain.Extensions;
-using Krizaljka.Domain.Terms.Handlers;
 using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.TermDescription.Handlers;
 
 
-public record UpdateTermDescriptionServiceRequest(
+public record DeleteTermDescriptionServiceRequest(
     long? Id,
-    string? Description,
     string? Changestamp) : IServiceRequest;
 
-internal class UpdateTermDescriptionHandler(
+internal class DeleteTermDescriptionHandler(
     ITermDescriptionRepo repo,
     IDatabaseUtils dbUtils,
-    ILogger<UpdateTermDescriptionHandler> logger) : IAppRequestHandler<UpdateTermDescriptionServiceRequest>
-{
-    private const int DescriptionMaxLength = 40;
+    ILogger<DeleteTermDescriptionHandler> logger) : IAppRequestHandler<DeleteTermDescriptionServiceRequest>
+{   
 
-    public async Task<IServiceResult> HandleAsync(UpdateTermDescriptionServiceRequest request, CancellationToken ct)
+    public async Task<IServiceResult> HandleAsync(DeleteTermDescriptionServiceRequest request, CancellationToken ct)
     {
         var errors = new List<string>();
 
@@ -36,13 +32,6 @@ internal class UpdateTermDescriptionHandler(
             errors.Add("missing_changestamp");
         }
 
-        var descCleaned = request.Description?.TrimExtra() ?? string.Empty;
-
-        if (descCleaned.Length > DescriptionMaxLength)
-        {
-            return new InvalidRequestWithReason("too_long");
-        }
-
         if (errors.Count > 0)
         {
             return new ValidationErrors(errors);
@@ -53,20 +42,18 @@ internal class UpdateTermDescriptionHandler(
         
         try
         {
-            var newChangestamp =
-                await repo.UpdateAsync(
-                    request.Id.Value,
-                    descCleaned,
-                    request.Changestamp,
-                    ct);
+            await repo.DeleteAsync(
+                request.Id.Value,
+                request.Changestamp,
+                ct);
 
-            return newChangestamp is null ? new Success(): new UpdateSuccessChangestamp<string>(newChangestamp);
+            return new Success();
         }
         catch (DbException e)
         {
             if (logger.IsEnabled(LogLevel.Warning))
             {
-                logger.LogWarning("Update failed, database error. {sqlState}, {message}", e.SqlState, e.Message);
+                logger.LogWarning("delete failed, database error. {sqlState}, {message}", e.SqlState, e.Message);
             }
 
             return dbUtils.GetSqlErrorResult(e.SqlState);
@@ -75,7 +62,7 @@ internal class UpdateTermDescriptionHandler(
         {
             if (logger.IsEnabled(LogLevel.Error))
             {
-                logger.LogError(e, "Term description update failed");
+                logger.LogError(e, "Term description delete failed");
             }
 
             return new Error(string.Empty);

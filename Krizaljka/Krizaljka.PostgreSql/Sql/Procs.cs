@@ -23,6 +23,6 @@ internal static class Procs
     public static string TermDescriptionInsert => "cr.termDescriptionInsert_v1";
     public static string TermDescriptionView => "cr.TermDescriptionView_V1";
     public static string TermDescriptionUpdate => "cr.termupdatedescription_v1";
-
+    public static string TermDescriptionDelete => "cr.TermDescriptionDelete_V1 ";
     public static string TermImportBatchInsert => "cr.termimportbatchinsert_v1";
 }
