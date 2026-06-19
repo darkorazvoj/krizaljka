@@ -150,6 +150,7 @@ public class TermsController(
             return Ok(new TermResponse(
                 term.Id,
                 (int)term.Language,
+                term.NumOfDesc,
                 term.RawValue,
                 term.DenseValue,
                 term.Letters,

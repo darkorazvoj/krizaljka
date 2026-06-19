@@ -3,6 +3,7 @@
 public record TermResponse(
     long Id,
     int Language,
+    long NumOfDesc,
     string RawValue,
     string DenseValue,
     IReadOnlyList<string> Letters,
