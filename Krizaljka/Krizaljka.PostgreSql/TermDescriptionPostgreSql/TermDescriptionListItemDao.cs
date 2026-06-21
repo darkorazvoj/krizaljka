@@ -9,7 +9,8 @@ internal record TermDescriptionListItemDao(
     long TermId,
     string Description,
     long BatchId,
-    long CreatedById) : IDao
+    long CreatedById,
+    string Changestamp) : IDao
 {
     private static readonly DaoColumn IdColumn = new("id", typeof(long));
 
@@ -36,7 +37,7 @@ internal record TermDescriptionListItemDao(
     {
         if (typeof(TCoreModel) == typeof(TermDescriptionListItem))
         {
-            object result = new TermDescriptionListItem(Id, TermId, Description, BatchId, CreatedById);
+            object result = new TermDescriptionListItem(Id, TermId, Description, BatchId, CreatedById, Changestamp);
             return (TCoreModel)result;
         }
 

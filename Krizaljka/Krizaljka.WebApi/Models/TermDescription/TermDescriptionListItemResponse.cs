@@ -5,4 +5,5 @@ public record TermDescriptionListItemResponse(
     long TermId,
     string Description,
     long BatchId,
-    long CreatedById);
+    long CreatedById,
+    string Changestamp);

@@ -83,7 +83,8 @@ public class TermDescriptionsController(AppDispatcher dispatcher) : BaseControll
                     x.TermId,
                     x.Description,
                     x.BatchId,
-                    x.CreatedById))
+                    x.CreatedById,
+                    x.Changestamp))
                 .ToList();
 
             return Ok(new PaginationOffsetResponse<List<TermDescriptionListItemResponse>>(
