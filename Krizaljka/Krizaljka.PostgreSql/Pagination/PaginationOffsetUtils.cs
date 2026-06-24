@@ -70,6 +70,10 @@ internal static class PaginationOffsetUtils
                         whereConditions.Add($"{columnNameInQuery} like {parameterName}");
                         dynamicParameters.Add(parameterName, "%" + searchTermParsedValue + "%");
                         break;
+                    case SearchType.Characters:
+                        whereConditions.Add($"{columnNameInQuery} like {parameterName}");
+                        dynamicParameters.Add(parameterName, searchTermParsedValue);
+                        break;
                 }
                 counter++;
             }

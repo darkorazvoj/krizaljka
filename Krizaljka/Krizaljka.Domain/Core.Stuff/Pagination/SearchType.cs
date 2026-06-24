@@ -6,5 +6,6 @@ public enum SearchType
     Equal, 
     NotEqual, 
     StartsWith,
-    Contains
+    Contains,
+    Characters
 }

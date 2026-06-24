@@ -196,6 +196,7 @@ internal static class PaginationParser
             "ne" => SearchType.NotEqual,
             "sw" => SearchType.StartsWith,
             "c" => SearchType.Contains,
+            "ch" => SearchType.Characters,
             _ => null
         };
 }
