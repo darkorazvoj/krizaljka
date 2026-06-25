@@ -226,7 +226,7 @@ public class TermsController(
         var result =
             await dispatcher.DispatchAsync(new GetTermsForExportServiceRequest((TermLanguage)request.LanguageId), ct);
 
-        if (result is not Success<List<TermExportJsonItem>> successResult)
+        if (result is not Success<List<TermExportImportJsonItem>> successResult)
         {
             return StatusCode(500, "unknown");
         }
@@ -245,13 +245,9 @@ public class TermsController(
 
                 await using var entryStream = await entry.OpenAsync(ct);
 
-                var exportFile = batch.Select(x =>
-                        new TermExportResponse(x.Id, x.Term, x.Descriptions))
-                    .ToList();
-
                 await JsonSerializer.SerializeAsync(
                     entryStream,
-                    exportFile,
+                    batch,
                     cancellationToken: ct);
 
                 fileIndex++;

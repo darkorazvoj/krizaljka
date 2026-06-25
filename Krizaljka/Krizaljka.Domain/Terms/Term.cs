@@ -61,10 +61,7 @@ public record TermExportItem(
     string Term,
     string Description);
 
-public record TermExportJsonItem(
-    long Id,
-    string Term,
-    List<string> Descriptions);
+
 
 public record NewTerm(
     TermLanguage Language,

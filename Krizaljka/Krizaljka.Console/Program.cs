@@ -68,10 +68,10 @@ while (true)
 
     switch (where)
     {
-        case "hrl":
-            HrRijeciLoader.Load();
-            Console.ReadKey();
-            break;
+        //case "hrl":
+        //    HrRijeciLoader.Load();
+        //    Console.ReadKey();
+        //    break;
 
         case "d":
             //var numOfTerms = await RebuildDatabaseAsync();

@@ -39,36 +39,36 @@ public static class PojmoviManager
         return new PojmoviJsonDb(terms);
     }
 
-    public static async Task<bool> AddTermAsync(string description, string termString)
-    {
-        if (!string.IsNullOrWhiteSpace(description) &&
-            description.TrimExtra().Length > 40)
-        {
-            return false;
-        }
+    //public static async Task<bool> AddTermAsync(string description, string termString)
+    //{
+    //    if (!string.IsNullOrWhiteSpace(description) &&
+    //        description.TrimExtra().Length > 40)
+    //    {
+    //        return false;
+    //    }
 
-        List<TermJson>? addedPojmovi;
+    //    List<TermJson>? addedPojmovi;
 
-        if (!File.Exists(AddedPojmoviFullPath))
-        {
-            await File.WriteAllTextAsync(AddedPojmoviFullPath, "[]");
-        }
+    //    if (!File.Exists(AddedPojmoviFullPath))
+    //    {
+    //        await File.WriteAllTextAsync(AddedPojmoviFullPath, "[]");
+    //    }
 
-        var addedPojmoviJson = await File.ReadAllTextAsync(AddedPojmoviFullPath);
-        if (string.IsNullOrWhiteSpace(addedPojmoviJson))
-        {
-            addedPojmovi = [];
-        }
-        else
-        {
-            addedPojmovi = JsonSerializer.Deserialize<List<TermJson>>(addedPojmoviJson, Options) ?? [];
-        }
+    //    var addedPojmoviJson = await File.ReadAllTextAsync(AddedPojmoviFullPath);
+    //    if (string.IsNullOrWhiteSpace(addedPojmoviJson))
+    //    {
+    //        addedPojmovi = [];
+    //    }
+    //    else
+    //    {
+    //        addedPojmovi = JsonSerializer.Deserialize<List<TermJson>>(addedPojmoviJson, Options) ?? [];
+    //    }
 
-        addedPojmovi.Add(new TermJson(description, termString));
+    //    addedPojmovi.Add(new TermJson(description, termString));
 
-        var addedPojmoviJsonNew = JsonSerializer.Serialize(addedPojmovi, Options);
-        await File.WriteAllTextAsync(AddedPojmoviFullPath, addedPojmoviJsonNew);
+    //    var addedPojmoviJsonNew = JsonSerializer.Serialize(addedPojmovi, Options);
+    //    await File.WriteAllTextAsync(AddedPojmoviFullPath, addedPojmoviJsonNew);
 
-        return true;
-    }
+    //    return true;
+    //}
 }

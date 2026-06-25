@@ -1,10 +1,4 @@
-﻿using Krizaljka.Domain.Core.Stuff.Services;
-using Krizaljka.Domain.Template;
-using Krizaljka.Domain.Template.Services;
-using Krizaljka.WebApi.Workers.Models;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
+﻿using Krizaljka.WebApi.Workers.Models;
 using System.Threading.Channels;
 
 namespace Krizaljka.WebApi.Workers;

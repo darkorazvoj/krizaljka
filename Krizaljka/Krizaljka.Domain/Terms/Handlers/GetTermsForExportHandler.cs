@@ -18,13 +18,12 @@ internal class GetTermsForExportHandler(
             var list = await repo.GetForExportAsync((int)request.LanguageId, ct);
 
             var exportList = list.GroupBy(x => new { x.Id, x.Term })
-                .Select(x => new TermExportJsonItem(
-                    x.Key.Id,
+                .Select(x => new TermExportImportJsonItem(
                     x.Key.Term,
                     x.Select(d => d.Description).ToList()))
                 .ToList();
 
-            return new Success<List<TermExportJsonItem>>(exportList);
+            return new Success<List<TermExportImportJsonItem>>(exportList);
         }
         catch (Exception e)
         {
