@@ -2,7 +2,5 @@
 
 public record TermExportResponse(
     long Id,
-    int Lang,
-    string O,
     string W,
-    bool IsActive);
+    List<string> Os);

@@ -73,9 +73,9 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
             ConnStrings.Core,
             ct);
 
-    public Task<List<TermExport>> GetForExportAsync(int languageId, CancellationToken ct) =>
-        BaseGetListAsync<TermExport, TermExportDao>(
-            $"select {DaoUtils.GetSelectColumns(typeof(TermExportDao))} from {Procs.TermView} where languageId = @languageId and isPrivate = false",
+    public Task<List<TermExportItem>> GetForExportAsync(int languageId, CancellationToken ct) =>
+        BaseGetListAsync<TermExportItem, TermExportDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(TermExportDao))} from {Procs.TermExportView} where languageId = @languageId;",
             new SqlParams()
                 .Add("languageId", languageId),
             ConnStrings.Core,

@@ -27,7 +27,7 @@ public interface ITermRepo
         List<string> letters,
         CancellationToken ct);
 
-    Task<List<TermExport>> GetForExportAsync(int languageId, CancellationToken ct);
+    Task<List<TermExportItem>> GetForExportAsync(int languageId, CancellationToken ct);
     Task<string?> UpdateIsActiveAsync(
         long id, 
         bool isActive, 

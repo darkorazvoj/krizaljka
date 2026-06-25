@@ -5,21 +5,18 @@ namespace Krizaljka.PostgreSql.TermPostgreSql;
 
 internal record TermExportDao(
     long Id,
-    int LanguageId,
-    string Description,
-    string RawValue,
-    bool IsActive) :IDao
+    string Term,
+    string Description
+) : IDao
 {
     public TCoreModel MapTo<TCoreModel>()
     {
-        if (typeof(TCoreModel) == typeof(TermExport))
+        if (typeof(TCoreModel) == typeof(TermExportItem))
         {
-            object result = new TermExport(
+            object result = new TermExportItem(
                 Id,
-                LanguageId,
-                Description,
-                RawValue,
-                IsActive);
+                Term,
+                Description);
             return (TCoreModel)result;
         }
 

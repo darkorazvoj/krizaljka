@@ -56,16 +56,18 @@ public record Term(
     DateTimeOffset CreatedOn,
     string Changestamp) : IValidTerm;
 
-public record TermExport(
+public record TermExportItem(
     long Id,
-    int Language,
-    string Description,
-    string RawValue,
-    bool IsActive);
+    string Term,
+    string Description);
+
+public record TermExportJsonItem(
+    long Id,
+    string Term,
+    List<string> Descriptions);
 
 public record NewTerm(
     TermLanguage Language,
-  //  string Description,
     string RawValue,
     string DenseValue,
     List<string> Letters,
