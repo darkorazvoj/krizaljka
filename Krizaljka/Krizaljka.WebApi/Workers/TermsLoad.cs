@@ -53,11 +53,6 @@ internal static class TermsLoad
             NumberOfTerms = list.Count
         };
 
-        //var numOfTerms = list.Count;
-    //    var insertedTerms = 0;
-    //    var numOfDescriptions = 0;
-    //    var insertedDescriptions = 0;
-
         foreach (var termBatchImport in list)
         {
             var oneDescription = termBatchImport.Descriptions.Count == 1 ? termBatchImport.Descriptions[0] : null;
@@ -74,13 +69,11 @@ internal static class TermsLoad
 
             if (insertResult is SuccessInsert<long> successTermInsert)
             {
-                counters.InsertedTerms++;//  insertedTerms++;
+                counters.InsertedTerms++;
                 if (oneDescription is not null)
                 {
                     counters.NumberOfDescriptions++;
-                    //numOfDescriptions++;
                     counters.InsertedDescriptions++;
-                   // insertedDescriptions++;
                 }
                 else if (termBatchImport.Descriptions.Count > 1)
                 {
@@ -95,43 +88,6 @@ internal static class TermsLoad
                     await InsertDescriptionsAsync(existingId, termBatchImport.Descriptions);
                 }
             }
-
-            //if (insertResult is RecordExists recordExists)
-            //{
-            //    //if (recordExists.ExistingId is null)
-            //    //{
-            //    //    logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Could NOT get term ID.", termBatchImport.Term);
-            //    //    continue;
-            //    //}
-                
-            //    var existingId =  Convert.ToInt64(recordExists.ExistingId);
-            //    if (existingId > 0)
-            //    {
-            //        var insertDescriptionResult = await insertTermDescriptionService.InvokeAsync(
-            //            existingId,
-            //            termBatchImport.Description,
-            //            batchId,
-            //            fileBatch.RanById,
-            //            ct);
-
-            //        if (insertDescriptionResult is not SuccessInsert<long>)
-            //        {
-            //            logger.LogWarning(message: "Term '{term}' exists, description NOT saved.", termBatchImport.Term);
-                        
-            //        }
-            //    }
-            //    else
-            //    {
-            //        logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Invalid term ID {termId}",
-            //            termBatchImport.Term, existingId);
-            //    }
-                
-            //}
-            //else if (insertResult is not SuccessInsert<long>)
-            //{
-            //    logger.LogWarning(message: "Term not saved {term}",
-            //        string.IsNullOrWhiteSpace(termBatchImport.Term) ? "<empty>" : termBatchImport.Term);
-            //}
         }
 
         if (logger.IsEnabled(LogLevel.Information))
@@ -149,7 +105,6 @@ internal static class TermsLoad
             foreach (var description in descriptions)
             {
                 counters.NumberOfDescriptions++;
-                //numOfDescriptions++;
 
                 var insertDescriptionResult = await insertTermDescriptionService.InvokeAsync(
                     id,
@@ -161,7 +116,6 @@ internal static class TermsLoad
                 if (insertDescriptionResult is SuccessInsert<long>)
                 {
                     counters.InsertedDescriptions++;
-                    //insertedDescriptions++;
                 }
             }
         }
