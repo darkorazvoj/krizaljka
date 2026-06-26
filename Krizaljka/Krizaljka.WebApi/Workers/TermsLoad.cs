@@ -15,6 +15,14 @@ internal static class TermsLoad
         WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true
     };
 
+    private sealed class Counters
+    {
+        public int NumberOfTerms { get; init; }
+        public int InsertedTerms { get; set; }
+        public int NumberOfDescriptions { get; set; }
+        public int InsertedDescriptions { get; set; }
+    }
+
     public static async Task LoadAsync(
         IServiceScopeFactory scopeFactory,
         TermFileBatch fileBatch,
@@ -35,60 +43,128 @@ internal static class TermsLoad
         
         var batchId = await batchRepo.InsertAsync(fileBatch.RanById, DateTimeOffset.UtcNow, ct);
 
-        foreach (var termJson in list)
+        Counters counters = new()
         {
+            NumberOfTerms = list.Count
+        };
+
+        //var numOfTerms = list.Count;
+    //    var insertedTerms = 0;
+    //    var numOfDescriptions = 0;
+    //    var insertedDescriptions = 0;
+
+        foreach (var termBatchImport in list)
+        {
+            var oneDescription = termBatchImport.Descriptions.Count == 1 ? termBatchImport.Descriptions[0] : null;
+
             var insertResult =
                 await insertTermService.InvokeAsync(
                     fileBatch.Language,
-                    termJson.Description,
-                    termJson.Term,
+                    oneDescription,
+                    termBatchImport.Term,
                     false,
                     batchId,
                     fileBatch.RanById,
                     ct);
 
-            if (insertResult is RecordExists recordExists)
+            if (insertResult is SuccessInsert<long> successTermInsert)
             {
-                if (recordExists.ExistingId is null)
+                counters.InsertedTerms++;//  insertedTerms++;
+                if (oneDescription is not null)
                 {
-                    logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Could NOT get term ID.", termJson.Term);
-                    continue;
+                    counters.NumberOfDescriptions++;
+                    //numOfDescriptions++;
+                    counters.InsertedDescriptions++;
+                   // insertedDescriptions++;
                 }
-                
-                var existingId =  Convert.ToInt64(recordExists.ExistingId);
-                if (existingId > 0)
+                else if (termBatchImport.Descriptions.Count > 1)
                 {
-                    var insertDescriptionResult = await insertTermDescriptionService.InvokeAsync(
-                        existingId,
-                        termJson.Description,
-                        batchId,
-                        fileBatch.RanById,
-                        ct);
-
-                    if (insertDescriptionResult is not SuccessInsert<long>)
-                    {
-                        logger.LogWarning(message: "Term '{term}' exists, description NOT saved.", termJson.Term);
-                        
-                    }
+                    await InsertDescriptionsAsync(successTermInsert.Id, termBatchImport.Descriptions);
                 }
-                else
-                {
-                    logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Invalid term ID {termId}",
-                        termJson.Term, existingId);
-                }
-                
             }
-            else if (insertResult is not SuccessInsert<long>)
+            else if (insertResult is RecordExists recordExists)
             {
-                logger.LogWarning(message: "Term not saved {term}",
-                    string.IsNullOrWhiteSpace(termJson.Term) ? "<empty>" : termJson.Term);
+                var existingId =  Convert.ToInt64(recordExists.ExistingId);
+                if (existingId > 0 && termBatchImport.Descriptions.Count > 0)
+                {
+                    await InsertDescriptionsAsync(existingId, termBatchImport.Descriptions);
+                }
+            }
+
+            //if (insertResult is RecordExists recordExists)
+            //{
+            //    //if (recordExists.ExistingId is null)
+            //    //{
+            //    //    logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Could NOT get term ID.", termBatchImport.Term);
+            //    //    continue;
+            //    //}
+                
+            //    var existingId =  Convert.ToInt64(recordExists.ExistingId);
+            //    if (existingId > 0)
+            //    {
+            //        var insertDescriptionResult = await insertTermDescriptionService.InvokeAsync(
+            //            existingId,
+            //            termBatchImport.Description,
+            //            batchId,
+            //            fileBatch.RanById,
+            //            ct);
+
+            //        if (insertDescriptionResult is not SuccessInsert<long>)
+            //        {
+            //            logger.LogWarning(message: "Term '{term}' exists, description NOT saved.", termBatchImport.Term);
+                        
+            //        }
+            //    }
+            //    else
+            //    {
+            //        logger.LogWarning(message: "Term '{term}' exists, description NOT saved. Invalid term ID {termId}",
+            //            termBatchImport.Term, existingId);
+            //    }
+                
+            //}
+            //else if (insertResult is not SuccessInsert<long>)
+            //{
+            //    logger.LogWarning(message: "Term not saved {term}",
+            //        string.IsNullOrWhiteSpace(termBatchImport.Term) ? "<empty>" : termBatchImport.Term);
+            //}
+        }
+
+        if (logger.IsEnabled(LogLevel.Information))
+        {
+            logger.LogInformation(
+                "Number of Terms: {numOfTerms}, Inserted Terms: {insertedTerms}, Number of descriptions: {numOfDescriptions}, Inserted Descriptions: {insertedDescriptions}",
+                counters.NumberOfTerms, counters.InsertedTerms, counters.NumberOfDescriptions,
+                counters.InsertedDescriptions);
+        }
+
+        return;
+
+        async Task InsertDescriptionsAsync(long id, List<string> descriptions)
+        {
+            foreach (var description in descriptions)
+            {
+                counters.NumberOfDescriptions++;
+                //numOfDescriptions++;
+
+                var insertDescriptionResult = await insertTermDescriptionService.InvokeAsync(
+                    id,
+                    description,
+                    batchId,
+                    fileBatch.RanById,
+                    ct);
+
+                if (insertDescriptionResult is SuccessInsert<long>)
+                {
+                    counters.InsertedDescriptions++;
+                    //insertedDescriptions++;
+                }
             }
         }
     }
 
-    private static List<TermJson> GetTerms(TermFileBatch fileBatch, ILogger logger)
+    private static List<TermBatchImport> GetTerms(TermFileBatch fileBatch, ILogger logger)
     {
-        List<TermJson> terms = [];
+        List<TermBatchImport> terms = [];
 
         foreach (var fileRecord in fileBatch.Contents)
         {
@@ -107,7 +183,7 @@ internal static class TermsLoad
         return terms;
     }
 
-    private static TermJson? TryDeserializeOne(string json, ILogger logger)
+    private static TermBatchImport? TryDeserializeOne(string json, ILogger logger)
     {
         try
         {
@@ -133,7 +209,7 @@ internal static class TermsLoad
                 return null;
             }
 
-            return one;
+            return new TermBatchImport(one.Term, [one.Description]);
 
         }
         catch
@@ -148,9 +224,9 @@ internal static class TermsLoad
         }
     }
 
-    private static List<TermJson> TryDeserializeList(string json, ILogger logger)
+    private static List<TermBatchImport> TryDeserializeList(string json, ILogger logger)
     {
-        List<TermJson> termJsonList = [];
+        List<TermBatchImport> termJsonList = [];
 
         try
         {
@@ -179,7 +255,7 @@ internal static class TermsLoad
             foreach (var termJson in list)
             {
 
-                termJsonList.Add(termJson);
+                termJsonList.Add(new TermBatchImport(termJson.Term, [termJson.Description]));
             }
 
             return termJsonList;
@@ -196,4 +272,8 @@ internal static class TermsLoad
             return [];
         }
     }
+
+    private record TermBatchImport(string Term, List<string> Descriptions);
 }
+
+

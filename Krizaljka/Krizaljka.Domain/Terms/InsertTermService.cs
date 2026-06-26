@@ -39,11 +39,6 @@ public class InsertTermService(
             return new InvalidRequestWithReason("Invalid term");
         }
 
-        if (string.IsNullOrWhiteSpace(description))
-        {
-            return await InsertTermAsync(languageId, isPrivate, newTerm, batchId, ranById, ct);
-        }
-
         return await dbSession.ExecuteInTransactionAsync(async cancellationToken =>
         {
             var existingTerm = await repo.GetByLanguageAndLettersAsync(languageId, newTerm.Letters, cancellationToken);
@@ -58,6 +53,11 @@ public class InsertTermService(
             if (termInsertResult is not SuccessInsert<long> successTermInsertResult)
             {
                 return termInsertResult;
+            }
+
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                return successTermInsertResult;
             }
 
             var descriptionInsertResult = await insertTermDescriptionService.InvokeAsync(
