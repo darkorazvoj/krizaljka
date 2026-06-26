@@ -2,6 +2,7 @@
 using Krizaljka.WebApi.Workers.Models;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using Krizaljka.Domain.Core.Stuff.Services;
 using Krizaljka.Domain.TermDescription;
@@ -12,7 +13,11 @@ internal static class TermsLoad
 {
     private static readonly JsonSerializerOptions Options = new()
     {
-        WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), PropertyNameCaseInsensitive = true
+        WriteIndented = true, 
+        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), 
+        PropertyNameCaseInsensitive = true,
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+        RespectRequiredConstructorParameters = true
     };
 
     private sealed class Counters
@@ -177,7 +182,18 @@ internal static class TermsLoad
             }
 
             var list = TryDeserializeList(fileRecord.Content, logger);
-            terms.AddRange(list);
+            if (list.Count > 0)
+            {
+                terms.AddRange(list);
+                continue;
+            }
+
+            var listMultipleDescriptions = TryDeserializeMultipleDescriptionsList(fileRecord.Content, logger);
+            if (listMultipleDescriptions.Count > 0)
+            {
+                terms.AddRange(listMultipleDescriptions);
+            }
+
         }
 
         return terms;
@@ -200,13 +216,12 @@ internal static class TermsLoad
             var one = JsonSerializer.Deserialize<TermJson>(json, Options);
             if (one?.Term is null)
             {
-                if (logger.IsEnabled(LogLevel.Information))
-                {
-                    logger.LogInformation(message: "It's not one terms json object {jsonStringTrimmed}",
-                        json[..Math.Min(json.Length, 100)]);
-                }
-
                 return null;
+            }
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(message: "JSON file is one object");
             }
 
             return new TermBatchImport(one.Term, [one.Description]);
@@ -214,12 +229,6 @@ internal static class TermsLoad
         }
         catch
         {
-            if (logger.IsEnabled(LogLevel.Information))
-            {
-                logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
-                    json[..Math.Min(json.Length, 100)]);
-            }
-
             return null;
         }
     }
@@ -243,13 +252,12 @@ internal static class TermsLoad
             var list = JsonSerializer.Deserialize<List<TermJson>?>(json, Options);
             if (list is null || list.Count == 0)
             {
-                if (logger.IsEnabled(LogLevel.Information))
-                {
-                    logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
-                        json[..Math.Min(json.Length, 200)]);
-                }
-
                 return [];
+            }
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(message: "JSON file is 'one description record'");
             }
 
             foreach (var termJson in list)
@@ -263,12 +271,48 @@ internal static class TermsLoad
         }
         catch
         {
-            if (logger.IsEnabled(LogLevel.Information))
+            return [];
+        }
+    }
+
+    private static List<TermBatchImport> TryDeserializeMultipleDescriptionsList(string json, ILogger logger)
+    {
+        List<TermBatchImport> termJsonList = [];
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(json))
             {
-                logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}",
-                    json[..Math.Min(json.Length, 200)]);
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation(message: "Invalid JSON object {jsonStringTrimmed}", string.Empty);
+                }
+
+                return [];
             }
 
+            var list = JsonSerializer.Deserialize<List<TermMultipleDescriptionsJson>?>(json, Options);
+            if (list is null || list.Count == 0)
+            {
+                return [];
+            }
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(message: "JSON file is 'one description record'");
+            }
+
+            foreach (var termJson in list)
+            {
+
+                termJsonList.Add(new TermBatchImport(termJson.Term, termJson.Description));
+            }
+
+            return termJsonList;
+
+        }
+        catch
+        {
             return [];
         }
     }
