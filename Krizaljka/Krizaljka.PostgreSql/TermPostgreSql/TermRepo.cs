@@ -58,7 +58,7 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         List<string> letters,
         CancellationToken ct) =>
         BaseGetAsync<Term, TermDao>(
-            $"select {DaoUtils.GetSelectColumns(typeof(TermDao))} from {Procs.TermView} where languageid = @languageId AND letters = @lettersJson",
+            $"select {DaoUtils.GetSelectColumns(typeof(TermDao))} from {Procs.TermView} where languageid = @languageId AND lower(letters::text) = lower(@lettersJson::text)",
             new SqlParams()
                 .Add("languageId", languageId)
                 .AddJsonList("lettersJson", letters),

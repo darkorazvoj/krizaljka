@@ -23,7 +23,7 @@ public static class CroatianWordConverter
                     continue;
                 }
             }
-            letters.Add(value[i].ToString());
+            letters.Add(current.ToString());
         }
         return letters.AsReadOnly();
     }

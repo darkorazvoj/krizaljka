@@ -55,6 +55,11 @@ internal static class TermsLoad
 
         foreach (var termBatchImport in list)
         {
+            if (ct.IsCancellationRequested)
+            {
+                break;
+            }
+
             var oneDescription = termBatchImport.Descriptions.Count == 1 ? termBatchImport.Descriptions[0] : null;
 
             var insertResult =
