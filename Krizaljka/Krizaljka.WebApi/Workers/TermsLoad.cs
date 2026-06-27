@@ -11,6 +11,8 @@ namespace Krizaljka.WebApi.Workers;
 
 internal static class TermsLoad
 {
+    private const int UpdateStep = 1000;
+
     private static readonly JsonSerializerOptions Options = new()
     {
         WriteIndented = true, 
@@ -53,6 +55,9 @@ internal static class TermsLoad
             NumberOfTerms = list.Count
         };
 
+        var step = 0;
+        var currentStep = 0;
+
         foreach (var termBatchImport in list)
         {
             if (ct.IsCancellationRequested)
@@ -60,7 +65,24 @@ internal static class TermsLoad
                 break;
             }
 
-            var oneDescription = termBatchImport.Descriptions.Count == 1 ? termBatchImport.Descriptions[0] : null;
+            step++;
+            currentStep++;
+            if (currentStep >= UpdateStep)
+            {
+                currentStep = 0;
+                if (logger.IsEnabled(LogLevel.Information))
+                {
+                    logger.LogInformation(
+                        "CURRENT STATS: Processed: {step}, Number of Terms: {numOfTerms}, Inserted Terms: {insertedTerms}, Number of descriptions: {numOfDescriptions}, Inserted Descriptions: {insertedDescriptions}",
+                        step, counters.NumberOfTerms, counters.InsertedTerms, counters.NumberOfDescriptions,
+                        counters.InsertedDescriptions);
+                }
+            }
+
+            var oneDescription =
+                termBatchImport.Descriptions.Count == 1 && !string.IsNullOrWhiteSpace(termBatchImport.Descriptions[0])
+                    ? termBatchImport.Descriptions[0]
+                    : null;
 
             var insertResult =
                 await insertTermService.InvokeAsync(
@@ -109,6 +131,11 @@ internal static class TermsLoad
         {
             foreach (var description in descriptions)
             {
+                if (string.IsNullOrWhiteSpace(description))
+                {
+                    continue;
+                }
+
                 counters.NumberOfDescriptions++;
 
                 var insertDescriptionResult = await insertTermDescriptionService.InvokeAsync(
@@ -183,7 +210,9 @@ internal static class TermsLoad
                 logger.LogInformation(message: "JSON file is one object");
             }
 
-            return new TermBatchImport(one.Term, [one.Description]);
+            var descriptions = string.IsNullOrWhiteSpace(one.Description) ? new List<string>() : [one.Description];
+
+            return new TermBatchImport(one.Term, descriptions);
 
         }
         catch
@@ -221,8 +250,8 @@ internal static class TermsLoad
 
             foreach (var termJson in list)
             {
-
-                termJsonList.Add(new TermBatchImport(termJson.Term, [termJson.Description]));
+                var descriptions = string.IsNullOrWhiteSpace(termJson.Description) ? new List<string>() : [termJson.Description];
+                termJsonList.Add(new TermBatchImport(termJson.Term, descriptions));
             }
 
             return termJsonList;
