@@ -253,7 +253,7 @@ internal static class TermsLoad
 
             if (logger.IsEnabled(LogLevel.Information))
             {
-                logger.LogInformation(message: "JSON file is 'one description record'");
+                logger.LogInformation(message: "JSON file is 'multiple descriptions record'");
             }
 
             foreach (var termJson in list)

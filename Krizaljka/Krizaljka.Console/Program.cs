@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Krizaljka.Console.FileFormatConverters;
 using Krizaljka.Domain;
 using Krizaljka.Domain.Caches;
 using Krizaljka.Domain.Core.Stuff;
@@ -50,6 +51,7 @@ var mainMenu = sbMainMenu.AppendLine("Where?")
     .AppendLine("kmts -> Run krizaljka templateBasic finder and creator for theme words")
     .AppendLine("st => Check processed templates")
     .AppendLine("blt => Batch load templates")
+    .AppendLine("c1to1 => Convert 1 word file to one description JSON format.")
     .ToString();
 
 
@@ -68,6 +70,14 @@ while (true)
 
     switch (where)
     {
+        case "c1to1":
+            Console.Write("Full file path:");
+            var fullFilePath = Console.ReadLine();
+            OneWordFileToTermJsonConverter.Load(fullFilePath ?? "");
+            Console.WriteLine("continue...");
+            Console.ReadKey();
+            break;
+
         //case "hrl":
         //    HrRijeciLoader.Load();
         //    Console.ReadKey();
