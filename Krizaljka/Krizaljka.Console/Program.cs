@@ -73,7 +73,23 @@ while (true)
         case "c1to1":
             Console.Write("Full file path:");
             var fullFilePath = Console.ReadLine();
-            OneWordFileToTermJsonConverter.Load(fullFilePath ?? "");
+            Console.Write("Separator:");
+            var separator = Console.ReadLine();
+
+            int? termOrdinalNumber = null;
+            if (!string.IsNullOrWhiteSpace(separator))
+            {
+                Console.Write("Term ordinal number:");
+                var ordinalNumberString = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(ordinalNumberString) &&
+                    int.TryParse(ordinalNumberString, out var termOrdinalNumberParsed))
+                {
+                    termOrdinalNumber = termOrdinalNumberParsed;
+                }
+            }
+
+
+            OneWordFileToTermJsonConverter.Load(fullFilePath ?? "", separator, termOrdinalNumber);
             Console.WriteLine("continue...");
             Console.ReadKey();
             break;
