@@ -153,6 +153,7 @@ public class TermsController(
                 term.NumOfDesc,
                 term.RawValue,
                 term.DenseValue,
+                term.SearchValue,
                 term.Letters,
                 term.SpaceIndexes,
                 term.DashIndexes,

@@ -1,4 +1,6 @@
 ﻿
+using System.Buffers;
+
 namespace Krizaljka.Domain.Terms;
 
 public interface ITerm;
@@ -23,6 +25,7 @@ public interface IValidTerm : ITerm
     TermLanguage Language { get; }
     string RawValue { get; }
     string DenseValue { get; }
+    string SearchValue { get; }
     IReadOnlyList<string> Letters { get; }
     int Length { get; }
     List<int> SpaceIndexes { get; }
@@ -45,6 +48,7 @@ public record Term(
     long NumOfDesc,
     string RawValue,
     string DenseValue,
+    string SearchValue,
     IReadOnlyList<string> Letters,
     List<int> SpaceIndexes,
     List<int> DashIndexes,

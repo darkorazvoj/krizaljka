@@ -6,6 +6,7 @@ public record TermResponse(
     long NumOfDesc,
     string RawValue,
     string DenseValue,
+    string SearchValue,
     IReadOnlyList<string> Letters,
     List<int> SpaceIndexes,
     List<int> DashIndexes,
