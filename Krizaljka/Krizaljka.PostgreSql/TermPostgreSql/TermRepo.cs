@@ -15,6 +15,7 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         int languageId,
         string rawValue,
         string denseValue,
+        string searchValue,
         List<string> letters,
         List<int> spaceIndexes,
         List<int> dashIndexes,
@@ -24,11 +25,12 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct) => BaseExecuteWithOutAsync<long>(
-        $"call {Procs.TermInsert} (@languageid, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @isActive, @isPrivate, @batchId, @createdOn, @RanById, null);",
+        $"call {Procs.TermInsert} (@languageid, @rawValue, @denseValue, @searchValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @isActive, @isPrivate, @batchId, @createdOn, @RanById, null);",
         new SqlParams()
             .Add("languageid", languageId)
             .Add("rawValue", rawValue)
             .Add("denseValue", denseValue)
+            .Add("searchValue", searchValue)
             .AddJsonList("lettersJson", letters)
             .AddJsonList("spaceIndexesJson", spaceIndexes)
             .AddJsonList("dashIndexesJson", dashIndexes)
@@ -103,6 +105,7 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         long id,
         string rawValue,
         string denseValue,
+        string searchValue,
         List<string> letters,
         List<int> spaceIndexes,
         List<int> dashIndexes,
@@ -110,11 +113,12 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         string changestamp,
         CancellationToken ct) =>
         BaseExecuteWithOutAsync<string?>(
-            $"call {Procs.TermUpdateTerm}(@id, @rawValue, @denseValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @changestamp,  null);",
+            $"call {Procs.TermUpdateTerm}(@id, @rawValue, @denseValue, @searchValue, @lettersJson, @spaceIndexesJson, @dashIndexesJson, @length, @changestamp,  null);",
             new SqlParams()
                 .Add("id", id)
                 .Add("rawValue", rawValue)
                 .Add("denseValue", denseValue)
+                .Add("searchValue", searchValue)
                 .AddJsonList("lettersJson", letters)
                 .AddJsonList("spaceIndexesJson", spaceIndexes)
                 .AddJsonList("dashIndexesJson", dashIndexes)

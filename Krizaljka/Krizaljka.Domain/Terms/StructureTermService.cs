@@ -1,4 +1,5 @@
 ﻿using Krizaljka.Domain.Extensions;
+using Krizaljka.Domain.Terms.LetterNormalizers;
 using Krizaljka.Domain.WordsConverters;
 
 namespace Krizaljka.Domain.Terms;
@@ -43,11 +44,14 @@ public class StructureTermService
             .Where(s => !string.IsNullOrWhiteSpace(s) && s != "-")
             .ToList();
 
-        var denseValue = termTrimmed.GetDenseTerm();
+        var denseValue = termTrimmed.GetDenseTerm().ToUpperInvariant();
+        var searchValue = CroatianLettersNormalizer.NormalizeTerm(denseValue);
+
 
         return new TermComputed(
             termTrimmed.ToUpperInvariant(),
-            denseValue.ToUpperInvariant(),
+            denseValue,
+            searchValue,
             lettersDense,
             spaceIndexes,
             dashIndexes,

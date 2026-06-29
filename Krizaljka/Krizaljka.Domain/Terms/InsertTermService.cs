@@ -92,6 +92,7 @@ public class InsertTermService(
                 languageId,
                 newTerm.RawValue,
                 newTerm.DenseValue,
+                newTerm.SearchValue,
                 newTerm.Letters,
                 newTerm.SpaceIndexes,
                 newTerm.DashIndexes,

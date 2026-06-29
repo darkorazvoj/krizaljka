@@ -6,9 +6,9 @@ public interface ITerm;
 public interface INewTerm : ITerm
 {
     TermLanguage Language { get; }
- //   string Description { get; }
     string RawValue { get; }
     string DenseValue { get; }
+    string SearchValue { get; }
     List<string> Letters { get; }
     int Length { get; }
     List<int> SpaceIndexes { get; }
@@ -67,6 +67,7 @@ public record NewTerm(
     TermLanguage Language,
     string RawValue,
     string DenseValue,
+    string SearchValue,
     List<string> Letters,
     List<int> SpaceIndexes,
     List<int> DashIndexes,
@@ -80,6 +81,7 @@ public record InvalidTerm(string Error): IInvalidTerm;
 public record TermComputed(
     string TermCleaned,
     string DenseValue,
+    string SearchValue,
     List<string> Letters,
     List<int> SpaceIndexes,
     List<int> DashIndexes,

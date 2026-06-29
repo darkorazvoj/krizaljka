@@ -60,6 +60,7 @@ internal class UpdateTermHandler(
                     request.Id.Value,
                     termComputed.TermCleaned,
                     termComputed.DenseValue,
+                    termComputed.SearchValue,
                     termComputed.Letters,
                     termComputed.SpaceIndexes,
                     termComputed.DashIndexes,
