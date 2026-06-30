@@ -49,7 +49,7 @@ public static class StructureNewTermService
             .ToList();
 
         var denseValue = termTrimmed.GetDenseTerm().ToUpperInvariant();
-        var searchValue = CroatianLettersNormalizer.NormalizeTerm(denseValue);
+        var searchValue = LettersNormalizer.NormalizeTerm(denseValue);
 
         return new NewTerm(
             language,

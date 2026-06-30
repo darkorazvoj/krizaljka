@@ -5,6 +5,8 @@ using Krizaljka.PostgreSql.Postgres.Stuff.Extensions;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using Krizaljka.PostgreSql.Postgres.Stuff.Utils;
 using System.ComponentModel;
+using System.Text.Json;
+using Krizaljka.Domain.Terms.LetterNormalizers;
 
 namespace Krizaljka.PostgreSql.Pagination;
 
@@ -71,8 +73,9 @@ internal static class PaginationOffsetUtils
                         dynamicParameters.Add(parameterName, "%" + searchTermParsedValue + "%");
                         break;
                     case SearchType.Characters:
+                        var parsedJsonArray = ParseJsonArrayToSearchValue(searchTermParsedValue);
                         whereConditions.Add($"{columnNameInQuery} like {parameterName}");
-                        dynamicParameters.Add(parameterName, searchTermParsedValue);
+                        dynamicParameters.Add(parameterName, parsedJsonArray);
                         break;
                 }
                 counter++;
@@ -84,6 +87,25 @@ internal static class PaginationOffsetUtils
             : string.Empty;
 
         return (whereClause, dynamicParameters);
+    }
+
+    private static string ParseJsonArrayToSearchValue(object? searchTermParsedValueObject)
+    {
+        if (searchTermParsedValueObject is not string str ||
+            string.IsNullOrWhiteSpace(str))
+        {
+            return string.Empty;
+        }
+
+        try
+        {
+            var letters = JsonSerializer.Deserialize<List<string>>(str) ?? [];
+            return string.Concat(letters.Select(LettersNormalizer.NormalizeLetter));
+        }
+        catch
+        {
+            return string.Empty;
+        }
     }
 
     internal static string GetOrderByClause(

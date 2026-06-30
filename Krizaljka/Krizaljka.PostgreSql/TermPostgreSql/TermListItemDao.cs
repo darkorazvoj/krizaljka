@@ -35,7 +35,7 @@ internal record TermListItemDao(
                 { "termlength", new DaoColumn("termlength", typeof(int)) },
                 { "isactive", new DaoColumn("isactive", typeof(bool)) },
                 { "createdbyid", new DaoColumn("createdbyid", typeof(long)) },
-                { "letters", new DaoColumn("rawvalue", typeof(string)) },
+                { "letters", new DaoColumn("searchvalue", typeof(string)) },
             });
 
     public TCoreModel MapTo<TCoreModel>()

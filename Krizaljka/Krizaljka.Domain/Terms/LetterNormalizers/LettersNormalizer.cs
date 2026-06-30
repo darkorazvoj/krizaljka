@@ -1,7 +1,7 @@
 ﻿
 namespace Krizaljka.Domain.Terms.LetterNormalizers;
 
-public static class CroatianLettersNormalizer
+public static class LettersNormalizer
 {
     private const string Dz = "!";
     private const string Lj = "@";

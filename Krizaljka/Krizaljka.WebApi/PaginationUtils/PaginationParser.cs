@@ -39,7 +39,7 @@ internal static class PaginationParser
         }
     }
 
-    private static Dictionary<string, List<string>> ParseQueryString(string paginationQueryStringBase64 )
+    private static Dictionary<string, List<string>> ParseQueryString(string paginationQueryStringBase64)
     {
         Dictionary<string, List<string>> queryStringValues = [];
 

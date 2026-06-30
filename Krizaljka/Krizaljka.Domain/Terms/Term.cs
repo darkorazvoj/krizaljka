@@ -1,6 +1,4 @@
 ﻿
-using System.Buffers;
-
 namespace Krizaljka.Domain.Terms;
 
 public interface ITerm;
