@@ -1,0 +1,57 @@
+﻿using Krizaljka.Domain.Core.Stuff.Pagination;
+
+namespace Krizaljka.Domain.Idea;
+
+public interface IKrizaljkaIdeaRepo
+{
+    Task<string> InsertAsync(
+        KrizaljkaIdeaStatus status,
+        string themeName,
+        int templateRows,
+        int templateCols,
+        int templateZeroBlocksNum,
+        List<long> themeTerms,
+        List<long> otherTerms,
+        int minutesPerTemplate,
+        int maxNumOfCompletedTemplates,
+        List<long> templateIdsOnly,
+        List<long> templateIdsExcluded,
+        long createdById,
+        DateTimeOffset createdOn,
+        CancellationToken ct
+    );
+
+    Task<PaginatedResult<List<KrizaljkaIdeaListItem>>> GetListAsync(
+        IPaginationCore paginationCore,
+        CancellationToken ct);
+
+    Task<KrizaljkaIdea?> GetAsync(long id, CancellationToken ct);
+
+    Task<string?> UpdateConfigAsync(
+        string id,
+        string themeName,
+        int templateRows,
+        int templateCols,
+        int templateZeroBlocksNum,
+        int minutesPerTemplate,
+        int maxNumOfCompletedTemplates,
+        string changestamp,
+        CancellationToken ct
+    );
+
+    Task<string?> AddIdAsync(
+        string id,
+        string columnName,
+        long newId,
+        string changestamp,
+        CancellationToken ct
+    );
+
+    Task<string?> RemoveIdAsync(
+        string id,
+        string columnName,
+        long newId,
+        string changestamp,
+        CancellationToken ct
+    );
+}
