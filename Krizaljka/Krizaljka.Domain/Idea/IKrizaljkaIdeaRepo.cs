@@ -4,8 +4,8 @@ namespace Krizaljka.Domain.Idea;
 
 public interface IKrizaljkaIdeaRepo
 {
-    Task<string> InsertAsync(
-        KrizaljkaIdeaStatus status,
+    Task<string?> InsertAsync(
+        int status,
         string themeName,
         int templateRows,
         int templateCols,
@@ -16,7 +16,7 @@ public interface IKrizaljkaIdeaRepo
         int maxNumOfCompletedTemplates,
         List<long> templateIdsOnly,
         List<long> templateIdsExcluded,
-        long createdById,
+        long ranById,
         DateTimeOffset createdOn,
         CancellationToken ct
     );

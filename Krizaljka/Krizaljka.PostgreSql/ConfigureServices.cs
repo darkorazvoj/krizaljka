@@ -1,10 +1,12 @@
 ﻿
 using Dapper;
 using Krizaljka.Domain.Core.Stuff.DatabaseStuff;
+using Krizaljka.Domain.Idea;
 using Krizaljka.Domain.Template;
 using Krizaljka.Domain.TermDescription;
 using Krizaljka.Domain.Terms;
 using Krizaljka.Domain.User.Repo;
+using Krizaljka.PostgreSql.KrizaljkaIdeaPostgreSql;
 using Krizaljka.PostgreSql.KrizaljkaTemplatePostgreSql;
 using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.DapperSqlMappers;
@@ -47,7 +49,7 @@ public static class ConfigureServices
         services.AddScoped<ITermRepo, TermRepo>();
         services.AddScoped<ITermImportBatchRepo, TermImportBatchRepo>();
         services.AddScoped<IAppUserRepo, AppUserRepo>();
-
+        services.AddScoped<IKrizaljkaIdeaRepo, KrizaljkaIdeaRepo>();
 
         services.AddSingleton<ConnectionStrings>(_ => new ConnectionStrings(new Dictionary<ConnStrings, string>
         {

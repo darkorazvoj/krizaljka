@@ -36,7 +36,7 @@ internal class InsertKrizaljkaIdeaHandler(
         try
         {
             var newId = await repo.InsertAsync(
-                KrizaljkaIdeaStatus.NotReady,
+                (int)KrizaljkaIdeaStatus.NotReady,
                 validParameters.ThemeName,
                 validParameters.TemplateRows,
                 validParameters.TemplateColumns,
@@ -51,12 +51,25 @@ internal class InsertKrizaljkaIdeaHandler(
                 DateTimeOffset.UtcNow,
                 ct);
 
-            return new SuccessInsert<string>(newId);
+            if (!string.IsNullOrWhiteSpace(newId))
+            {
+                return new SuccessInsert<string?>(newId);
+            }
+
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(message: "Error inserting an idea. Missing insert ID from the store procedure.");
+            }
+            return new Error("InsertFailed");
 
         }
         catch (Exception e)
         {
-            logger.LogError("Error inserting an idea. {EMessage}", e.Message);
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError("Error inserting an idea. {EMessage}", e.Message);
+            }
+
             return new Error("InsertKrizaljkaIdeaHandlerFailed");
         }
     }
