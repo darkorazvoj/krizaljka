@@ -47,10 +47,15 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
             ConnStrings.Core,
             ct);
 
-    public Task<PaginatedResult<List<KrizaljkaIdeaListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<PaginatedResult<List<KrizaljkaIdeaListItem>>> GetListAsync(IPaginationCore paginationCore,
+        CancellationToken ct) =>
+        BaseGetPaginatedListAsync<KrizaljkaIdeaListItem, KrizaljkaIdeaListItemDao>(
+            paginationCore,
+            Procs.KrizaljkaIdeaView,
+            KrizaljkaIdeaListItemDao.ToDaoPaginationParameters,
+            "",
+            ConnStrings.Core,
+            ct);
 
     public Task<KrizaljkaIdea?> GetAsync(long id, CancellationToken ct)
     {
