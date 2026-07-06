@@ -64,4 +64,30 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
 
         return MapResult(result);
     }
+
+    [Route(BaseRute + "/{id}")]
+    [HttpGet]
+    public async Task<IActionResult> GetAsync([FromRoute] string id, CancellationToken ct)
+    {
+        var result = await dispatcher.DispatchAsync(new GetKrizaljkaIdeaConfigServiceRequest(id), ct);
+
+        if (result is Success<KrizaljkaIdeaConfig> successResult)
+        {
+            var idea = successResult.Data;
+            return Ok(new KrizaljkaIdeaConfigResponse(
+                idea.Id,
+                (int)idea.Status,
+                idea.ThemeName,
+                idea.TemplateRows,
+                idea.TemplateCols,
+                idea.TemplateZeroBlocksNum,
+                idea.MinutesPerTemplate,
+                idea.MaxNumOfCompletedTemplates,
+                idea.CreatedById,
+                idea.CreatedOn,
+                idea.Changestamp));
+        }
+
+        return MapResult(result);
+    }
 }

@@ -25,7 +25,7 @@ public interface IKrizaljkaIdeaRepo
         IPaginationCore paginationCore,
         CancellationToken ct);
 
-    Task<KrizaljkaIdea?> GetAsync(long id, CancellationToken ct);
+    Task<KrizaljkaIdeaConfig?> GetConfigAsync(string id, CancellationToken ct);
 
     Task<string?> UpdateConfigAsync(
         string id,

@@ -57,10 +57,13 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
             ConnStrings.Core,
             ct);
 
-    public Task<KrizaljkaIdea?> GetAsync(long id, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<KrizaljkaIdeaConfig?> GetConfigAsync(string id, CancellationToken ct) =>
+        BaseGetAsync<KrizaljkaIdeaConfig, KrizaljkaIdeaConfigDao>(
+            $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaIdeaConfigDao))} from {Procs.KrizaljkaIdeaView} where id = @id",
+            new SqlParams()
+                .Add("id", id),
+            ConnStrings.Core,
+            ct);
 
     public Task<string?> UpdateConfigAsync(string id, string themeName, int templateRows, int templateCols, int templateZeroBlocksNum,
         int minutesPerTemplate, int maxNumOfCompletedTemplates, string changestamp, CancellationToken ct)

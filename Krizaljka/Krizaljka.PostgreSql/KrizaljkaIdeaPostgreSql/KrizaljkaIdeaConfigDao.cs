@@ -3,19 +3,15 @@ using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 
 namespace Krizaljka.PostgreSql.KrizaljkaIdeaPostgreSql;
 
-internal record KrizaljkaIdeaDao(
+internal record KrizaljkaIdeaConfigDao(
     string Id,
     int Status,
     string ThemeName,
     int TemplateRows,
     int TemplateCols,
     int TemplateZeroBlocksNum,
-    List<long> ThemeTerms,
-    List<long> OtherTerms,
     int MinutesPerTemplate,
     int MaxNumOfCompletedTemplates,
-    List<long> TemplateIdsOnly,
-    List<long> TemplateIdsExcluded,
     long CreatedById,
     DateTimeOffset CreatedOn,
     string Changestamp
@@ -23,21 +19,17 @@ internal record KrizaljkaIdeaDao(
 {
     public TCoreModel MapTo<TCoreModel>()
     {
-        if (typeof(TCoreModel) == typeof(KrizaljkaIdea))
+        if (typeof(TCoreModel) == typeof(KrizaljkaIdeaConfig))
         {
-            object result = new KrizaljkaIdea(
+            object result = new KrizaljkaIdeaConfig(
                 Id,
                 (KrizaljkaIdeaStatus)Status,
                 ThemeName,
                 TemplateRows,
                 TemplateCols,
                 TemplateZeroBlocksNum,
-                ThemeTerms,
-                OtherTerms,
                 MinutesPerTemplate,
                 MaxNumOfCompletedTemplates,
-                TemplateIdsOnly,
-                TemplateIdsExcluded,
                 CreatedById,
                 CreatedOn,
                 Changestamp);
