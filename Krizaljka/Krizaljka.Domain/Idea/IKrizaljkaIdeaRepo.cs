@@ -5,6 +5,7 @@ namespace Krizaljka.Domain.Idea;
 public interface IKrizaljkaIdeaRepo
 {
     Task<string?> InsertAsync(
+        int languageId,
         int status,
         string themeName,
         int templateRows,

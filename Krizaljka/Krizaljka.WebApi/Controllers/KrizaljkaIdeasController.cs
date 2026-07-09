@@ -29,6 +29,7 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
         }
 
         var result = await dispatcher.DispatchAsync(new InsertKrizaljkaIdeaServiceRequest(
+            request.LanguageId,
             request.ThemeName,
             request.TemplateRows,
             request.TemplateCols, request.TemplateZeroBlocksNum,
@@ -76,6 +77,7 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
             var idea = successResult.Data;
             return Ok(new KrizaljkaIdeaConfigResponse(
                 idea.Id,
+                (int)idea.LanguageId,
                 (int)idea.Status,
                 idea.ThemeName,
                 idea.TemplateRows,

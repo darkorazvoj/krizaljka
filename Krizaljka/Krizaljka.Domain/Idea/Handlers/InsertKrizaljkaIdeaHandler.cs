@@ -1,11 +1,13 @@
 ﻿using Krizaljka.Domain.Core.Stuff;
 using Krizaljka.Domain.Core.Stuff.DispatcherStuff;
 using Krizaljka.Domain.Core.Stuff.Services;
+using Krizaljka.Domain.Terms;
 using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.Idea.Handlers;
 
 public record InsertKrizaljkaIdeaServiceRequest(
+    int? LanguageId,
     string? ThemeName,
     int? TemplateRows,
     int? TemplateCols,
@@ -36,6 +38,7 @@ internal class InsertKrizaljkaIdeaHandler(
         try
         {
             var newId = await repo.InsertAsync(
+                validParameters.LanguageId,
                 (int)KrizaljkaIdeaStatus.NotReady,
                 validParameters.ThemeName,
                 validParameters.TemplateRows,
@@ -78,6 +81,12 @@ internal class InsertKrizaljkaIdeaHandler(
     {
         List<string> errors = [];
 
+
+        if (!request.LanguageId.HasValue || !Enum.IsDefined((TermLanguage)request.LanguageId.Value))
+        {
+            errors.Add("missing_language");
+        }
+
         if (string.IsNullOrWhiteSpace(request.ThemeName))
         {
             errors.Add("missing_theme_name");
@@ -101,15 +110,16 @@ internal class InsertKrizaljkaIdeaHandler(
         return request switch
         {
             {
+                LanguageId: {} languageId,
                 ThemeName: { } themeName,
                 TemplateRows: { } templateRows,
                 TemplateCols: { } templateCols
-            } => new ValidParameters(themeName, templateRows, templateCols),
+            } => new ValidParameters(languageId, themeName, templateRows, templateCols),
 
             _ => new ValidationErrorsResult(["validation_failed"])
         };
     }
 
-    private record ValidParameters(string ThemeName, int TemplateRows, int TemplateColumns) : IServiceValidationResult;
+    private record ValidParameters(int LanguageId, string ThemeName, int TemplateRows, int TemplateColumns) : IServiceValidationResult;
 }
     

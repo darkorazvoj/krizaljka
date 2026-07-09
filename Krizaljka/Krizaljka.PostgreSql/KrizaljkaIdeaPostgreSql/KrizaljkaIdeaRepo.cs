@@ -12,6 +12,7 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
     : BaseRepo<ConnStrings>(dbSession), IKrizaljkaIdeaRepo
 {
     public Task<string?> InsertAsync(
+        int languageId,
         int status,
         string themeName,
         int templateRows,
@@ -27,8 +28,9 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
         DateTimeOffset createdOn,
         CancellationToken ct) =>
         BaseExecuteWithOutAsync<string>(
-            $"call {Procs.KrizaljkaIdeaInsert} (@status, @themeName, @templateRows, @templateCols, @templatezeroblocksnum, @themeTerms, @otherTerms, @minutesPerTemplate, @maxNumOfCompletedTemplates, @templateIdsOnly, @templateIdsExcluded, @createdOn, @RanById, null);",
+            $"call {Procs.KrizaljkaIdeaInsert} (@languageId, @status, @themeName, @templateRows, @templateCols, @templatezeroblocksnum, @themeTerms, @otherTerms, @minutesPerTemplate, @maxNumOfCompletedTemplates, @templateIdsOnly, @templateIdsExcluded, @createdOn, @RanById, null);",
             new SqlParams()
+                .Add("languageId", languageId)
                 .Add("status", status)
                 .Add("themeName", themeName)
                 .Add("templateRows", templateRows)

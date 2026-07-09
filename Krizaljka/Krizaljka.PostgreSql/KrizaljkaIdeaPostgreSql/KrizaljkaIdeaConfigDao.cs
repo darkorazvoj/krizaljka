@@ -1,10 +1,12 @@
 ﻿using Krizaljka.Domain.Idea;
+using Krizaljka.Domain.Terms;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 
 namespace Krizaljka.PostgreSql.KrizaljkaIdeaPostgreSql;
 
 internal record KrizaljkaIdeaConfigDao(
     string Id,
+    int LanguageId,
     int Status,
     string ThemeName,
     int TemplateRows,
@@ -23,6 +25,7 @@ internal record KrizaljkaIdeaConfigDao(
         {
             object result = new KrizaljkaIdeaConfig(
                 Id,
+                (TermLanguage)LanguageId,
                 (KrizaljkaIdeaStatus)Status,
                 ThemeName,
                 TemplateRows,
