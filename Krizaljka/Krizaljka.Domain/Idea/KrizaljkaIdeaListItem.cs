@@ -6,4 +6,5 @@ public record KrizaljkaIdeaListItem(
     KrizaljkaIdeaStatus Status,
     string ThemeName,
     long CreatedById,
+    DateTimeOffset CreatedOn,
     string Changestamp);

@@ -55,6 +55,7 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
                     x.Status,
                     x.ThemeName,
                     x.CreatedById,
+                    x.CreatedOn,
                     x.Changestamp))
                 .ToList();
 

@@ -9,6 +9,7 @@ internal record KrizaljkaIdeaListItemDao(
     int Status,
     string ThemeName,
     long CreatedById,
+    DateTimeOffset CreatedOn,
     string Changestamp): IDao
 {
     private static readonly DaoColumn IdColumn = new("id", typeof(long));
@@ -22,6 +23,7 @@ internal record KrizaljkaIdeaListItemDao(
                 { "status", new DaoColumn("status", typeof(int)) },
                 { "themename", new DaoColumn("themename", typeof(string)) },
                 { "createdbyid", new DaoColumn("createdbyid", typeof(long)) },
+                { "createdon", new DaoColumn("createdon", typeof(DateTimeOffset)) },
             },
             new Dictionary<string, DaoColumn>
             {
@@ -39,6 +41,7 @@ internal record KrizaljkaIdeaListItemDao(
                 (KrizaljkaIdeaStatus)Status,
                 ThemeName,
                 CreatedById,
+                CreatedOn,
                 Changestamp);
             return (TCoreModel)result;
         }
