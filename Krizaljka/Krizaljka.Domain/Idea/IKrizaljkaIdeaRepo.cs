@@ -30,6 +30,7 @@ public interface IKrizaljkaIdeaRepo
 
     Task<string?> UpdateConfigAsync(
         string id,
+        int languageId,
         string themeName,
         int templateRows,
         int templateCols,

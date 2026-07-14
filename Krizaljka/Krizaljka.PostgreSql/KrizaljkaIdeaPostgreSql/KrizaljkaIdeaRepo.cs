@@ -67,11 +67,33 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
             ConnStrings.Core,
             ct);
 
-    public Task<string?> UpdateConfigAsync(string id, string themeName, int templateRows, int templateCols, int templateZeroBlocksNum,
-        int minutesPerTemplate, int maxNumOfCompletedTemplates, string changestamp, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<string?> UpdateConfigAsync(
+        string id, 
+        int languageId,
+        string themeName, 
+        int templateRows, 
+        int templateCols,
+        int templateZeroBlocksNum,
+        int minutesPerTemplate, 
+        int maxNumOfCompletedTemplates, 
+        string changestamp, 
+        CancellationToken ct) =>
+        BaseExecuteWithOutAsync<string?>(
+            $"call {Procs.KrizaljkaIdeaUpdateConfig}(@id, @languageId, @themeName, @templateRows, @templateCols, @templateZeroBlocksNum, @minutesPerTemplate, @maxNumOfCompletedTemplates, @changestamp,  null);",
+            new SqlParams()
+                .Add("id", id)
+                .Add("languageId", languageId)
+                .Add("themeName", themeName)
+                .Add("templateRows", templateRows)
+                .Add("templateCols", templateCols)
+                .Add("templateZeroBlocksNum", templateZeroBlocksNum)
+                .Add("minutesPerTemplate", minutesPerTemplate)
+                .Add("maxNumOfCompletedTemplates", maxNumOfCompletedTemplates)
+                .Add("changestamp", changestamp)
+                .AddOutput("newchangestamp", dbType: DbType.String),
+            "newchangestamp",
+            ConnStrings.Core,
+            ct);
 
     public Task<string?> AddIdAsync(string id, string columnName, long newId, string changestamp, CancellationToken ct)
     {

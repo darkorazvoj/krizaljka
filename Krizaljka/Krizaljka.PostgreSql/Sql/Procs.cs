@@ -28,5 +28,6 @@ internal static class Procs
     public static string TermImportBatchInsert => "cr.termimportbatchinsert_v1";
 
     public static string KrizaljkaIdeaInsert => "cr.KrizaljkaIdeaInsert_v1";
+    public static string KrizaljkaIdeaUpdateConfig => "cr.krizaljkaIdeaUpdateConfig_v1";
     public static string KrizaljkaIdeaView => "cr.KrizaljkaIdeaView_V1";
 }
