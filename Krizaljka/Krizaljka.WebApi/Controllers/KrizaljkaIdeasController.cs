@@ -93,4 +93,29 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
 
         return MapResult(result);
     }
+
+    [Route(BaseRute + "/{id}/config")]
+    [HttpPut]
+    public async Task<IActionResult> UpdateTermAsync(
+        [FromRoute] string id,
+        [FromBody] UpdateIdeaRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new UpdateKrizaljkaIdeaConfigServiceRequest(
+                id,
+                request.LanguageId,
+                request.ThemeName,
+                request.TemplateRows,
+                request.TemplateCols,
+                request.TemplateZeroBlocksNum,
+                request.MinutesPerTemplate,
+                request.MaxNumOfCompletedTemplates,
+                request.Changestamp),
+            ct));
+    }
 }

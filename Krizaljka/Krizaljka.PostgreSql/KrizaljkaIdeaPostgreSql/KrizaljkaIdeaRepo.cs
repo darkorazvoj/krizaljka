@@ -79,7 +79,7 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
         string changestamp, 
         CancellationToken ct) =>
         BaseExecuteWithOutAsync<string?>(
-            $"call {Procs.KrizaljkaIdeaUpdateConfig}(@id, @languageId, @themeName, @templateRows, @templateCols, @templateZeroBlocksNum, @minutesPerTemplate, @maxNumOfCompletedTemplates, @changestamp,  null);",
+            $"call {Procs.KrizaljkaIdeaUpdateConfig} (@id, @languageId, @themeName, @templateRows, @templateCols, @templateZeroBlocksNum, @minutesPerTemplate, @maxNumOfCompletedTemplates, @changestamp,  null);",
             new SqlParams()
                 .Add("id", id)
                 .Add("languageId", languageId)
