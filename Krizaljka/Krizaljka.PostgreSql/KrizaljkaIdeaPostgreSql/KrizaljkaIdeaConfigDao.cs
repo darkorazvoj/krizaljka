@@ -14,6 +14,10 @@ internal record KrizaljkaIdeaConfigDao(
     int TemplateZeroBlocksNum,
     int MinutesPerTemplate,
     int MaxNumOfCompletedTemplates,
+    int ThemeTermsCount,
+    int OtherTermsCount,
+    int TemplateIdsOnlyCount,
+    int TemplateIdsExcludedCount,
     long CreatedById,
     DateTimeOffset CreatedOn,
     string Changestamp
@@ -33,6 +37,10 @@ internal record KrizaljkaIdeaConfigDao(
                 TemplateZeroBlocksNum,
                 MinutesPerTemplate,
                 MaxNumOfCompletedTemplates,
+                ThemeTermsCount,
+                OtherTermsCount,
+                TemplateIdsOnlyCount,
+                TemplateIdsExcludedCount,
                 CreatedById,
                 CreatedOn,
                 Changestamp);

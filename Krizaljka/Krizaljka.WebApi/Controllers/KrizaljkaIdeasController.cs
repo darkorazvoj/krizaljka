@@ -86,6 +86,10 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
                 idea.TemplateZeroBlocksNum,
                 idea.MinutesPerTemplate,
                 idea.MaxNumOfCompletedTemplates,
+                idea.ThemeTermsCount,
+                idea.OtherTermsCount,
+                idea.TemplateIdsOnlyCount,
+                idea.TemplateIdsExcludedCount,
                 idea.CreatedById,
                 idea.CreatedOn,
                 idea.Changestamp));

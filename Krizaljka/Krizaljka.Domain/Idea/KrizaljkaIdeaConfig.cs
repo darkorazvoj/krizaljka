@@ -13,6 +13,10 @@ public record KrizaljkaIdeaConfig(
     int TemplateZeroBlocksNum,
     int MinutesPerTemplate,
     int MaxNumOfCompletedTemplates,
+    int ThemeTermsCount,
+    int OtherTermsCount,
+    int TemplateIdsOnlyCount,
+    int TemplateIdsExcludedCount,
     long CreatedById,
     DateTimeOffset CreatedOn,
     string Changestamp);
