@@ -30,4 +30,5 @@ internal static class Procs
     public static string KrizaljkaIdeaInsert => "cr.KrizaljkaIdeaInsert_v1";
     public static string KrizaljkaIdeaUpdateConfig => "cr.krizaljkaIdeaUpdateConfig_v1";
     public static string KrizaljkaIdeaView => "cr.KrizaljkaIdeaView_V1";
+    public static string KrizaljkaIdeaAddId => "cr.krizaljkaideaaddid_v1";
 }

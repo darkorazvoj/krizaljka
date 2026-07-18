@@ -95,10 +95,23 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
             ConnStrings.Core,
             ct);
 
-    public Task<string?> AddIdAsync(string id, string columnName, long newId, string changestamp, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<string?> AddIdAsync(
+        string id,
+        string columnName,
+        long newId,
+        string changestamp,
+        CancellationToken ct) =>
+        BaseExecuteWithOutAsync<string?>(
+            $"call {Procs.KrizaljkaIdeaAddId} (@id, @columnName, @newId, @changestamp,  null);",
+            new SqlParams()
+                .Add("id", id)
+                .Add("columnName", columnName)
+                .Add("newId", newId)
+                .Add("changestamp", changestamp)
+                .AddOutput("newchangestamp", dbType: DbType.String),
+            "newchangestamp",
+            ConnStrings.Core,
+            ct);
 
     public Task<string?> RemoveIdAsync(string id, string columnName, long newId, string changestamp, CancellationToken ct)
     {

@@ -100,7 +100,7 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
 
     [Route(BaseRute + "/{id}/config")]
     [HttpPut]
-    public async Task<IActionResult> UpdateTermAsync(
+    public async Task<IActionResult> UpdateIdeaConfigAsync(
         [FromRoute] string id,
         [FromBody] UpdateIdeaRequest? request,
         CancellationToken ct)
@@ -119,6 +119,26 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
                 request.TemplateZeroBlocksNum,
                 request.MinutesPerTemplate,
                 request.MaxNumOfCompletedTemplates,
+                request.Changestamp),
+            ct));
+    }
+
+    [Route(BaseRute + "/{id}/item-id")]
+    [HttpPut]
+    public async Task<IActionResult> AddItemIdAsync(
+        [FromRoute] string id,
+        [FromBody] AddIdeaItemIdRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new AddIdKrizaljkaIdeaServiceRequest(
+                id,
+                request.ColumnName,
+                request.NewId,
                 request.Changestamp),
             ct));
     }

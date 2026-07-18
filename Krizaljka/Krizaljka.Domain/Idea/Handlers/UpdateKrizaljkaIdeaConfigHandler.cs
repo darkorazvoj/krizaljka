@@ -69,7 +69,7 @@ internal class UpdateKrizaljkaIdeaConfigHandler(
         {
             if (logger.IsEnabled(LogLevel.Error))
             {
-                logger.LogError(e, "Term update failed");
+                logger.LogError(e, "Idea update failed");
             }
 
             return new Error(string.Empty);
