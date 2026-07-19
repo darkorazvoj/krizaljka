@@ -15,7 +15,7 @@ public record KrizaljkaIdeaConfig(
     int MaxNumOfCompletedTemplates,
     int ThemeTermsCount,
     int OtherTermsCount,
-    int TemplateIdsOnlyCount,
+    long TemplateIdsOnlyCount,
     int TemplateIdsExcludedCount,
     long CreatedById,
     DateTimeOffset CreatedOn,
