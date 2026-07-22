@@ -142,4 +142,24 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
                 request.Changestamp),
             ct));
     }
+
+    [Route(BaseRute + "/{id}/item-id")]
+    [HttpDelete]
+    public async Task<IActionResult> RemoveItemIdAsync(
+        [FromRoute] string id,
+        [FromBody] RemoveIdeaItemIdRequest? request,
+        CancellationToken ct)
+    {
+        if (request is null)
+        {
+            return BadRequestBodyMissing();
+        }
+
+        return MapResult<string>(await dispatcher.DispatchAsync(new RemoveIdKrizaljkaIdeaServiceRequest(
+                id,
+                request.ColumnName,
+                request.ItemId,
+                request.Changestamp),
+            ct));
+    }
 }
