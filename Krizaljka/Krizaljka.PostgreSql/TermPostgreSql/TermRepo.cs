@@ -45,12 +45,24 @@ internal class TermRepo(IDbSession<ConnStrings> dbSession)
         ConnStrings.Core,
         ct);
 
-    public Task<PaginatedResult<List<TermListItem>>> GetListAsync(IPaginationCore paginationCore,
+    public Task<PaginatedResult<List<TermListItem>>> GetListAsync(
+        IPaginationCore paginationCore,
         CancellationToken ct) =>
         BaseGetPaginatedListAsync<TermListItem, TermListItemDao>(
             paginationCore,
             Procs.TermView,
             TermListItemDao.ToDaoPaginationParameters,
+            "isPrivate = false",
+            ConnStrings.Core,
+            ct);
+
+    public Task<PaginatedResult<List<TermLookupItem>>> GetLookupListAsync(
+        IPaginationCore paginationCore,
+        CancellationToken ct) =>
+        BaseGetPaginatedListAsync<TermLookupItem, TermLookupItemDao>(
+            paginationCore,
+            Procs.TermView,
+            TermLookupItemDao.ToDaoPaginationParameters,
             "isPrivate = false",
             ConnStrings.Core,
             ct);

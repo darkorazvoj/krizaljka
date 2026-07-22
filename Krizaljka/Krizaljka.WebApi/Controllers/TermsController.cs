@@ -138,6 +138,31 @@ public class TermsController(
         return MapResult(result);
     }
 
+    [Route(BaseRute + "/lookup")]
+    [HttpGet]
+    public async Task<IActionResult> GetLookupPaginatedListAsync([FromQuery] string? pg, CancellationToken ct)
+    {
+        var paginationCore = PaginationParser.Parse(pg);
+        var result =
+            await dispatcher.DispatchAsync(new GetTermsLookupPaginatedListServiceRequest(paginationCore), ct);
+
+        if (result is Success<PaginatedResult<List<TermLookupItem>>> successResult)
+        {
+            var list = successResult.Data.List
+                .Select(x => new TermLookupItemResponse(
+                    x.Id,
+                    x.RawValue,
+                    x.Length))
+                .ToList();
+
+            return Ok(new PaginationOffsetResponse<List<TermLookupItemResponse>>(
+                list,
+                successResult.Data.TotalRows));
+        }
+
+        return MapResult(result);
+    }
+
     [Route(BaseRute + "/{id:long}")]
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromRoute] long id, CancellationToken ct)

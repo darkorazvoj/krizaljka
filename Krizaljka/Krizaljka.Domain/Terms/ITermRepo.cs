@@ -21,6 +21,8 @@ public interface ITermRepo
 
     Task<PaginatedResult<List<TermListItem>>> GetListAsync(IPaginationCore paginationCore, CancellationToken ct);
 
+    Task<PaginatedResult<List<TermLookupItem>>> GetLookupListAsync(IPaginationCore paginationCore, CancellationToken ct);
+
     Task<Term?> GetAsync(long id, CancellationToken ct);
 
     Task<Term?> GetByLanguageAndLettersAsync(
