@@ -9,7 +9,7 @@ internal record KrizaljkaIdeaTermListItemDao(
     int TermType,
     string Id,
     long TermId,
-    int TermLanguageId,
+    string TermRawValue,
     int TermLength,
     bool TermIsActive): IDao
 {
@@ -24,6 +24,7 @@ internal record KrizaljkaIdeaTermListItemDao(
                 { "termtype", new DaoColumn("termtype", typeof(TermItemType)) },
                 { "termid", new DaoColumn("termid", typeof(string)) },
                 { "termlanguageid", new DaoColumn("termlanguageid", typeof(TermLanguage)) },
+                { "termrawvalue", new DaoColumn("termrawvalue", typeof(string)) },
                 { "termlength", new DaoColumn("termlength", typeof(int)) },
                 { "termisactive", new DaoColumn("termisactive", typeof(bool)) },
             },
@@ -33,6 +34,7 @@ internal record KrizaljkaIdeaTermListItemDao(
                 { "termtype", new DaoColumn("termtype", typeof(TermItemType)) },
                 { "termid", new DaoColumn("termid", typeof(string)) },
                 { "termlanguageid", new DaoColumn("termlanguageid", typeof(TermLanguage)) },
+                { "termrawvalue", new DaoColumn("termrawvalue", typeof(string)) },
                 { "termlength", new DaoColumn("termlength", typeof(int)) },
                 { "termisactive", new DaoColumn("termisactive", typeof(bool)) },
             });
@@ -45,7 +47,7 @@ internal record KrizaljkaIdeaTermListItemDao(
                 (TermItemType)TermType,
                 Id,
                 TermId,
-                (TermLanguage)TermLanguageId,
+                TermRawValue,
                 TermLength,
                 TermIsActive);
             return (TCoreModel)result;

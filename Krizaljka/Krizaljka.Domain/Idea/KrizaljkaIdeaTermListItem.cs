@@ -1,13 +1,10 @@
 ﻿
-
-using Krizaljka.Domain.Terms;
-
 namespace Krizaljka.Domain.Idea;
 
 public record KrizaljkaIdeaTermListItem(
     TermItemType TermType,
     string Id,
     long TermId,
-    TermLanguage TermLanguageId,
+    string TermRawValue,
     int TermLength,
     bool TermIsActive);
