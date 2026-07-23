@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Krizaljka.Domain.Idea.Handlers;
 
-public record GetKrizaljkaIdeaTermsPaginatedListServiceRequest(string KrizaljkaIdeaId, IPaginationCore PaginationCore) : IServiceRequest;
+public record GetKrizaljkaIdeaTermsPaginatedListServiceRequest(string? KrizaljkaIdeaId, IPaginationCore PaginationCore) : IServiceRequest;
 
 
 internal class GetKrizaljkaIdeaTermsPaginatedListHandler(
