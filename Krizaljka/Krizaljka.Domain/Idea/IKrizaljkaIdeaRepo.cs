@@ -26,6 +26,11 @@ public interface IKrizaljkaIdeaRepo
         IPaginationCore paginationCore,
         CancellationToken ct);
 
+    Task<PaginatedResult<List<KrizaljkaIdeaTermListItem>>> GetTermsListAsync(
+        IPaginationCore paginationCore,
+        List<(string, object?)>? additionalDynamicParameters,
+        CancellationToken ct);
+
     Task<KrizaljkaIdeaConfig?> GetConfigAsync(string id, CancellationToken ct);
 
     Task<string?> UpdateConfigAsync(

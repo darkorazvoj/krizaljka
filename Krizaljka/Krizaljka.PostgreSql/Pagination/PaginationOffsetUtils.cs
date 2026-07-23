@@ -4,7 +4,6 @@ using Krizaljka.PostgreSql.Postgres.Stuff;
 using Krizaljka.PostgreSql.Postgres.Stuff.Extensions;
 using Krizaljka.PostgreSql.Postgres.Stuff.Models;
 using Krizaljka.PostgreSql.Postgres.Stuff.Utils;
-using System.ComponentModel;
 using System.Text.Json;
 using Krizaljka.Domain.Terms.LetterNormalizers;
 

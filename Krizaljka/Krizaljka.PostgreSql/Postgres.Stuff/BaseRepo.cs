@@ -137,12 +137,28 @@ public abstract class BaseRepo<TDbKey>(IDbSession<TDbKey> dbSession)
         }
     }
 
+    internal Task<PaginatedResult<List<TCoreModel>>> BaseGetPaginatedListAsync<TCoreModel, TDao>(
+        IPaginationCore paginationCore,
+        string viewName,
+        Func<DaoPaginationParameters<TDao>> getDaoPaginationParameters,
+        string? fixedWhereCondition,
+        TDbKey connKey,
+        CancellationToken ct)
+        where TDao : IDao => BaseGetPaginatedListAsync<TCoreModel, TDao>(
+        paginationCore, viewName,
+        getDaoPaginationParameters,
+        fixedWhereCondition,
+        connKey,
+        null,
+        ct);
+
     internal async Task<PaginatedResult<List<TCoreModel>>> BaseGetPaginatedListAsync<TCoreModel, TDao>(
         IPaginationCore paginationCore,
         string viewName,
         Func<DaoPaginationParameters<TDao>> getDaoPaginationParameters,
         string? fixedWhereCondition,
         TDbKey connKey,
+        List<(string, object?)>? additionalDynamicParameters,
         CancellationToken ct)
         where TDao : IDao
     {
@@ -160,6 +176,14 @@ public abstract class BaseRepo<TDbKey>(IDbSession<TDbKey> dbSession)
 
         try
         {
+            if (additionalDynamicParameters?.Count > 0)
+            {
+                foreach (var (name, objValue) in additionalDynamicParameters)
+                {
+                    paginationParameters.DynamicParameters.Add(name, objValue);
+                }
+            }
+
             var listDao = (await conn.QueryAsync<TDao>(new CommandDefinition(
                     PaginationOffsetUtils.GetSqlQuery(typeof(TDao), viewName, paginationParameters,
                         fixedWhereCondition),

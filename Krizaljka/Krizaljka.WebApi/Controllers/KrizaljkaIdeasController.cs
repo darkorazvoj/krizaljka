@@ -67,6 +67,37 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
         return MapResult(result);
     }
 
+    [Route(BaseRute + "/{id}/terms")]
+    [HttpGet]
+    public async Task<IActionResult> GetIdeaTermsPaginatedListAsync(
+        [FromRoute] string? id, 
+        [FromQuery] string? pg,
+        CancellationToken ct)
+    {
+        var paginationCore = PaginationParser.Parse(pg);
+        var result =
+            await dispatcher.DispatchAsync(new GetKrizaljkaIdeaTermsPaginatedListServiceRequest(id, paginationCore), ct);
+
+        if (result is Success<PaginatedResult<List<KrizaljkaIdeaTermListItem>>> successResult)
+        {
+            var list = successResult.Data.List
+                .Select(x => new KrizaljkaIdeaTermListItemResponse(
+                    x.TermType,
+                    x.Id,
+                    x.TermId,
+                    x.TermLanguageId,
+                    x.TermLength,
+                    x.TermIsActive))
+                .ToList();
+
+            return Ok(new PaginationOffsetResponse<List<KrizaljkaIdeaTermListItemResponse>>(
+                list,
+                successResult.Data.TotalRows));
+        }
+
+        return MapResult(result);
+    }
+
     [Route(BaseRute + "/{id}")]
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromRoute] string id, CancellationToken ct)
