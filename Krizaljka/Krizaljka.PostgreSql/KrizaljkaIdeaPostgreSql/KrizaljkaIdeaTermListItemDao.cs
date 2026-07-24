@@ -8,10 +8,11 @@ namespace Krizaljka.PostgreSql.KrizaljkaIdeaPostgreSql;
 internal record KrizaljkaIdeaTermListItemDao(
     int TermType,
     string Id,
-    long TermId,
-    string TermRawValue,
-    int TermLength,
-    bool TermIsActive): IDao
+    long? TermId,
+    long TermArrayId,
+    string? TermRawValue,
+    int? TermLength,
+    bool? TermIsActive): IDao
 {
     private static readonly DaoColumn IdColumn = new("id", typeof(string));
 
@@ -47,6 +48,7 @@ internal record KrizaljkaIdeaTermListItemDao(
                 (TermItemType)TermType,
                 Id,
                 TermId,
+                TermArrayId,
                 TermRawValue,
                 TermLength,
                 TermIsActive);

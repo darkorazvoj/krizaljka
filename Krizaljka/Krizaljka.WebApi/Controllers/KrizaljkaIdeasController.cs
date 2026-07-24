@@ -85,6 +85,7 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
                     x.TermType,
                     x.Id,
                     x.TermId,
+                    x.TermArrayId,
                     x.TermRawValue,
                     x.TermLength,
                     x.TermIsActive))
