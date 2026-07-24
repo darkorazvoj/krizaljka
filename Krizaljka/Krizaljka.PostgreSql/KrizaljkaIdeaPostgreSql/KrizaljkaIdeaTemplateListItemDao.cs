@@ -8,7 +8,8 @@ internal record KrizaljkaIdeaTemplateListItemDao(
     int TemplateType,
     string Id,
     long TemplateArrayId,
-    long? TemplateId): IDao
+    long? TemplateId,
+    string? Name): IDao
 {
     private static readonly DaoColumn IdColumn = new("id", typeof(string));
 
@@ -21,6 +22,7 @@ internal record KrizaljkaIdeaTemplateListItemDao(
                 { "templatetype", new DaoColumn("templatetype", typeof(TemplateItemType)) },
                 { "templatearrayid", new DaoColumn("templatearrayid", typeof(long)) },
                 { "templateid", new DaoColumn("templateid", typeof(long)) },
+                { "name", new DaoColumn("name", typeof(string)) },
             },
             new Dictionary<string, DaoColumn>
             {
@@ -28,6 +30,7 @@ internal record KrizaljkaIdeaTemplateListItemDao(
                 { "templatetype", new DaoColumn("templatetype", typeof(TemplateItemType)) },
                 { "templatearrayid", new DaoColumn("templatearrayid", typeof(long)) },
                 { "templateid", new DaoColumn("templateid", typeof(long)) },
+                { "name", new DaoColumn("name", typeof(string)) },
             });
 
     public TCoreModel MapTo<TCoreModel>()
@@ -38,7 +41,8 @@ internal record KrizaljkaIdeaTemplateListItemDao(
                 (TemplateItemType)TemplateType,
                 Id,
                 TemplateArrayId,
-                TemplateId);
+                TemplateId,
+                Name);
             return (TCoreModel)result;
         }
 

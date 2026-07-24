@@ -6,4 +6,5 @@ public record KrizaljkaIdeaTemplateListItemResponse(
     TemplateItemType TemplateType,
     string Id,
     long TemplateArrayId,
-    long? TemplateId);
+    long? TemplateId,
+    string? Name);

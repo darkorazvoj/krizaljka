@@ -116,7 +116,8 @@ public class KrizaljkaIdeasController(AppDispatcher dispatcher) : BaseController
                     x.TemplateType,
                     x.Id,
                     x.TemplateArrayId,
-                    x.TemplateId))
+                    x.TemplateId,
+                    x.Name))
                 .ToList();
 
             return Ok(new PaginationOffsetResponse<List<KrizaljkaIdeaTemplateListItemResponse>>(
