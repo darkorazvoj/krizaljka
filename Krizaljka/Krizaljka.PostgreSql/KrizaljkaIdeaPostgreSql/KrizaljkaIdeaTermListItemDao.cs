@@ -13,7 +13,7 @@ internal record KrizaljkaIdeaTermListItemDao(
     int TermLength,
     bool TermIsActive): IDao
 {
-    private static readonly DaoColumn IdColumn = new("id", typeof(long));
+    private static readonly DaoColumn IdColumn = new("id", typeof(string));
 
     public static DaoPaginationParameters<KrizaljkaIdeaTermListItemDao> ToDaoPaginationParameters() =>
         new(

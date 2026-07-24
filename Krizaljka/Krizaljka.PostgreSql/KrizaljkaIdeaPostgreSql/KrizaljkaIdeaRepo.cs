@@ -72,6 +72,19 @@ internal class KrizaljkaIdeaRepo(IDbSession<ConnStrings> dbSession)
             additionalDynamicParameters,
             ct);
 
+    public Task<PaginatedResult<List<KrizaljkaIdeaTemplateListItem>>> GetTemplatesListAsync(
+        IPaginationCore paginationCore,
+        List<(string, object?)>? additionalDynamicParameters,
+        CancellationToken ct) =>
+        BaseGetPaginatedListAsync<KrizaljkaIdeaTemplateListItem, KrizaljkaIdeaTemplateListItemDao>(
+            paginationCore,
+            Procs.KrizaljkaIdeaTemplatesView,
+            KrizaljkaIdeaTemplateListItemDao.ToDaoPaginationParameters,
+            "id = @ideaId",
+            ConnStrings.Core,
+            additionalDynamicParameters,
+            ct);
+
     public Task<KrizaljkaIdeaConfig?> GetConfigAsync(string id, CancellationToken ct) =>
         BaseGetAsync<KrizaljkaIdeaConfig, KrizaljkaIdeaConfigDao>(
             $"select {DaoUtils.GetSelectColumns(typeof(KrizaljkaIdeaConfigDao))} from {Procs.KrizaljkaIdeaView} where id = @id",

@@ -33,4 +33,5 @@ internal static class Procs
     public static string KrizaljkaIdeaAddId => "cr.krizaljkaideaaddid_v1";
     public static string KrizaljkaIdeaRemoveId => "cr.krizaljkaidearemoveid_v1";
     public static string KrizaljkaIdeaTermsView => "cr.KrizaljkaIdeaTermsView_V1";
+    public static string KrizaljkaIdeaTemplatesView => "cr.KrizaljkaIdeaTemplatesView_V1";
 }
