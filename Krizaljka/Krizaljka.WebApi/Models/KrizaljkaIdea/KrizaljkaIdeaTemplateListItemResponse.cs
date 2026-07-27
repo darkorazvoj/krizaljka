@@ -7,4 +7,5 @@ public record KrizaljkaIdeaTemplateListItemResponse(
     string Id,
     long TemplateArrayId,
     long? TemplateId,
-    string? Name);
+    string? Name,
+    bool? IsActive);

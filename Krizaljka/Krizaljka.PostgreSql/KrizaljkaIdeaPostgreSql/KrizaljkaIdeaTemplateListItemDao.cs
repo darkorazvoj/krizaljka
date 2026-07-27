@@ -9,7 +9,8 @@ internal record KrizaljkaIdeaTemplateListItemDao(
     string Id,
     long TemplateArrayId,
     long? TemplateId,
-    string? Name): IDao
+    string? Name,
+    bool? IsActive): IDao
 {
     private static readonly DaoColumn IdColumn = new("id", typeof(string));
 
@@ -42,7 +43,8 @@ internal record KrizaljkaIdeaTemplateListItemDao(
                 Id,
                 TemplateArrayId,
                 TemplateId,
-                Name);
+                Name,
+                IsActive);
             return (TCoreModel)result;
         }
 
