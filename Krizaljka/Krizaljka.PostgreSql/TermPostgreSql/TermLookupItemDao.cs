@@ -17,22 +17,12 @@ internal record TermLookupItemDao(
             new Dictionary<string, DaoColumn>
             {
                 { "id", IdColumn },
-                { "languageid", new DaoColumn("languageid", typeof(int)) },
-                { "description", new DaoColumn("description", typeof(string)) },
-                { "rawvalue", new DaoColumn("rawvalue", typeof(string)) },
-                { "termlength", new DaoColumn("termlength", typeof(int)) },
-                { "isactive", new DaoColumn("isactive", typeof(bool)) },
-                { "createdbyid", new DaoColumn("createdbyid", typeof(long)) },
+                { "rawvalue", new DaoColumn("rawvalue", typeof(string)) }
             },
             new Dictionary<string, DaoColumn>
             {
-                { "languageid", new DaoColumn("languageid", typeof(int)) },
-                { "description", new DaoColumn("description", typeof(string)) },
                 { "rawvalue", new DaoColumn("rawvalue", typeof(string)) },
-                { "termlength", new DaoColumn("termlength", typeof(int)) },
-                { "isactive", new DaoColumn("isactive", typeof(bool)) },
-                { "createdbyid", new DaoColumn("createdbyid", typeof(long)) },
-                { "letters", new DaoColumn("searchvalue", typeof(string)) },
+                { "termlength", new DaoColumn("termlength", typeof(int)) }
             });
 
     public TCoreModel MapTo<TCoreModel>()
