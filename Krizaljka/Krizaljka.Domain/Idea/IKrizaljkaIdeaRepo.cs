@@ -36,6 +36,11 @@ public interface IKrizaljkaIdeaRepo
         List<(string, object?)>? additionalDynamicParameters,
         CancellationToken ct);
 
+    Task<PaginatedResult<List<KrizaljkaIdeaAllTemplatesListItem>>> GetAllTemplatesListAsync(
+        IPaginationCore paginationCore,
+        List<(string, object?)>? additionalDynamicParameters,
+        CancellationToken ct);
+
     Task<KrizaljkaIdeaConfig?> GetConfigAsync(string id, CancellationToken ct);
 
     Task<string?> UpdateConfigAsync(
